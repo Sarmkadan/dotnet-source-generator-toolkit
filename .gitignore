@@ -64,6 +64,13 @@ Thumbs.db
 .env
 .env.local
 appsettings.local.json
+appsettings.Development.json
+
+# NuGet packages directory
+packages/
+
+# Rider settings
+*.DotSettings.user
 
 # Testing
 TestResults/
