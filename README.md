@@ -1,3 +1,7 @@
+[![Build](https://github.com/sarmkadan/dotnet-source-generator-toolkit/actions/workflows/build.yml/badge.svg)](https://github.com/sarmkadan/dotnet-source-generator-toolkit/actions/workflows/build.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
+
 # .NET Source Generator Toolkit
 
 **A Roslyn-powered code generation toolkit for generating repositories, mappers, validators, and serializers from attributes.**
