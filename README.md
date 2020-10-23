@@ -19,6 +19,7 @@
 - [CLI Reference](#cli-reference)
 - [Troubleshooting](#troubleshooting)
 - [Performance](#performance)
+- [Testing](#testing)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
@@ -806,6 +807,43 @@ Run your own benchmarks with:
 
 ```bash
 dotnet run -- --path ./MyProject --verbose --log-level Debug 2>&1 | grep "ms"
+```
+
+## Testing
+
+### Run the Full Test Suite
+
+```bash
+dotnet test
+```
+
+### Run Tests with Verbose Output
+
+```bash
+dotnet test --logger "console;verbosity=detailed"
+```
+
+### Run a Specific Test Class
+
+```bash
+dotnet test --filter "FullyQualifiedName~ConfigurationValidatorTests"
+```
+
+### Test Coverage
+
+The test suite covers three primary areas:
+
+| Area | Test File | Coverage |
+|------|-----------|----------|
+| Configuration validation | `ConfigurationValidatorTests.cs` | `ConfigurationValidator`, `ToolkitOptions` |
+| Domain model | `EntityDomainTests.cs` | `Entity`, `EntityProperty`, `GenerationResult` |
+| String utilities | `StringUtilitiesTests.cs` | `StringExtensions`, `StringValidator` |
+
+Run all tests from the solution root:
+
+```bash
+cd tests/dotnet-source-generator-toolkit.Tests
+dotnet test --configuration Release
 ```
 
 ## Related Projects
