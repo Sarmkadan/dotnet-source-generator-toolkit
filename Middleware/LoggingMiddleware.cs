@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Middleware;
 /// Middleware that logs pipeline execution details for debugging and auditing.
 /// Records request start, completion, and any errors encountered.
 /// </summary>
-public class LoggingMiddleware : IMiddleware
+public sealed class LoggingMiddleware : IMiddleware
 {
     private readonly ILogger<LoggingMiddleware> _logger;
 

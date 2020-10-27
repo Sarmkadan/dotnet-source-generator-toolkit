@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 /// Analyzes C# source code to extract attribute information.
 /// Uses regex patterns for quick parsing without full compilation.
 /// </summary>
-public class AttributeAnalyzer : IAttributeAnalyzer
+public sealed class AttributeAnalyzer : IAttributeAnalyzer
 {
     private readonly ILogger<AttributeAnalyzer> _logger;
 

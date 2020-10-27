@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Configuration;
 /// Loads and merges configuration from JSON files and environment.
 /// Provides sensible defaults and command-line override support.
 /// </summary>
-public class ConfigurationLoader
+public sealed class ConfigurationLoader
 {
     private readonly ILogger<ConfigurationLoader> _logger;
     private readonly IConfigurationValidator _validator;
@@ -38,7 +40,7 @@ public class ConfigurationLoader
                 var json = await File.ReadAllTextAsync(configPath);
                 var loadedOptions = JsonSerializer.Deserialize<ToolkitOptions>(json);
 
-                if (loadedOptions != null)
+                if (loadedOptions is not null)
                 {
                     options = MergeOptions(options, loadedOptions);
                     _logger.LogInformation("Configuration loaded successfully");

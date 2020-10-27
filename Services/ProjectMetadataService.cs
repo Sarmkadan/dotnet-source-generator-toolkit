@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -35,7 +37,7 @@ public interface IProjectMetadataService
 /// <summary>
 /// Represents project metadata extracted from project file.
 /// </summary>
-public class ProjectMetadata
+public sealed class ProjectMetadata
 {
     public string ProjectName { get; set; } = string.Empty;
     public string ProjectPath { get; set; } = string.Empty;
@@ -50,7 +52,7 @@ public class ProjectMetadata
 /// <summary>
 /// Represents a NuGet package dependency.
 /// </summary>
-public class Dependency
+public sealed class Dependency
 {
     public string Name { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
@@ -60,7 +62,7 @@ public class Dependency
 /// <summary>
 /// Extracts metadata from .NET projects including frameworks and dependencies.
 /// </summary>
-public class ProjectMetadataService : IProjectMetadataService
+public sealed class ProjectMetadataService : IProjectMetadataService
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<ProjectMetadataService> _logger;
@@ -109,7 +111,7 @@ public class ProjectMetadataService : IProjectMetadataService
 
             // Extract dependencies
             var itemGroup = root?.Elements("ItemGroup").FirstOrDefault();
-            if (itemGroup != null)
+            if (itemGroup is not null)
             {
                 foreach (var pkgRef in itemGroup.Elements("PackageReference"))
                 {

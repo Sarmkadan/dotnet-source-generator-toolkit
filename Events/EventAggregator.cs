@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Events;
 /// Implements pub-sub event pattern using service provider for handler discovery.
 /// Executes all matching handlers sequentially and logs event flow.
 /// </summary>
-public class EventAggregator : IEventPublisher
+public sealed class EventAggregator : IEventPublisher
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<EventAggregator> _logger;
@@ -25,7 +27,7 @@ public class EventAggregator : IEventPublisher
 
     public async Task PublishAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent
     {
-        if (@event == null)
+        if (@event is null)
             throw new ArgumentNullException(nameof(@event));
 
         var eventType = typeof(TEvent);
@@ -46,7 +48,7 @@ public class EventAggregator : IEventPublisher
 
             var handlers = handlersMethod.Invoke(null, new object[] { _serviceProvider }) as System.Collections.IEnumerable;
 
-            if (handlers == null)
+            if (handlers is null)
             {
                 _logger.LogWarning(
                     "[{RequestId}] No handlers found for event {EventType}",

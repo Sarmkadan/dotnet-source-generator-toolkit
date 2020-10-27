@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents a property of an entity with metadata for code generation.
 /// Includes type information, validation rules, and database mapping.
 /// </summary>
-public class EntityProperty
+public sealed class EntityProperty
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 

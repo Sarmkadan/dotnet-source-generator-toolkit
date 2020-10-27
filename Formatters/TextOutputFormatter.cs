@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// Human-readable text format for generation results.
 /// Designed for console output and quick visual inspection.
 /// </summary>
-public class TextOutputFormatter : IOutputFormatter
+public sealed class TextOutputFormatter : IOutputFormatter
 {
     public string FileExtension => ".txt";
     public string FormatName => "Text";

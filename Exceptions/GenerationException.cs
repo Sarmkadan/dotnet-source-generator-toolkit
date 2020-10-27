@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,7 +10,7 @@ namespace DotNetSourceGeneratorToolkit.Exceptions;
 /// <summary>
 /// Base exception for source code generation errors.
 /// </summary>
-public class GenerationException : Exception
+public sealed class GenerationException : Exception
 {
     public string? GeneratorType { get; set; }
 
@@ -30,7 +32,7 @@ public class GenerationException : Exception
 /// <summary>
 /// Thrown when entity analysis fails.
 /// </summary>
-public class EntityAnalysisException : GenerationException
+public sealed class EntityAnalysisException : GenerationException
 {
     public EntityAnalysisException(string message) : base(message) { }
 
@@ -41,7 +43,7 @@ public class EntityAnalysisException : GenerationException
 /// <summary>
 /// Thrown when repository generation fails.
 /// </summary>
-public class RepositoryGenerationException : GenerationException
+public sealed class RepositoryGenerationException : GenerationException
 {
     public RepositoryGenerationException(string message) : base(message) { }
 
@@ -52,7 +54,7 @@ public class RepositoryGenerationException : GenerationException
 /// <summary>
 /// Thrown when mapper generation fails.
 /// </summary>
-public class MapperGenerationException : GenerationException
+public sealed class MapperGenerationException : GenerationException
 {
     public MapperGenerationException(string message) : base(message) { }
 
@@ -63,7 +65,7 @@ public class MapperGenerationException : GenerationException
 /// <summary>
 /// Thrown when validator generation fails.
 /// </summary>
-public class ValidatorGenerationException : GenerationException
+public sealed class ValidatorGenerationException : GenerationException
 {
     public ValidatorGenerationException(string message) : base(message) { }
 
@@ -74,7 +76,7 @@ public class ValidatorGenerationException : GenerationException
 /// <summary>
 /// Thrown when validation of entities or templates fails.
 /// </summary>
-public class ValidationException : GenerationException
+public sealed class ValidationException : GenerationException
 {
     public List<string> ValidationErrors { get; }
 
@@ -88,7 +90,7 @@ public class ValidationException : GenerationException
 /// <summary>
 /// Thrown when configuration is invalid.
 /// </summary>
-public class ConfigurationException : GenerationException
+public sealed class ConfigurationException : GenerationException
 {
     public ConfigurationException(string message) : base(message) { }
 

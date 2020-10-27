@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -54,7 +56,7 @@ public static class PathHelper
     /// </summary>
     public static string? GetCommonPath(params string[] paths)
     {
-        if (paths == null || paths.Length == 0)
+        if (paths is null || paths.Length == 0)
             return null;
 
         if (paths.Length == 1)

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Events;
 /// Published when generation process begins for a project.
 /// Allows subscribers to initialize resources or log activity.
 /// </summary>
-public class GenerationStartedEvent : IDomainEvent
+public sealed class GenerationStartedEvent : IDomainEvent
 {
     public string EventId { get; } = Guid.NewGuid().ToString();
     public DateTime OccurredAt { get; } = DateTime.UtcNow;

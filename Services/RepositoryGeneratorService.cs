@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -13,7 +15,7 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates repository pattern implementations including interfaces and concrete classes
 /// with full CRUD operations and query methods for entities.
 /// </summary>
-public class RepositoryGeneratorService : IRepositoryGeneratorService
+public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
 {
     private readonly ILogger<RepositoryGeneratorService> _logger;
 
@@ -24,7 +26,7 @@ public class RepositoryGeneratorService : IRepositoryGeneratorService
 
     public async Task<GenerationResult> GenerateRepositoryAsync(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         _logger.LogInformation("Generating repository for entity: {EntityName}", entity.Name);
@@ -59,7 +61,7 @@ public class RepositoryGeneratorService : IRepositoryGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllRepositoriesAsync(List<Entity> entities)
     {
-        if (entities == null || entities.Count == 0)
+        if (entities is null || entities.Count == 0)
             throw new ArgumentException("Entities collection cannot be null or empty");
 
         _logger.LogInformation("Generating repositories for {Count} entities", entities.Count);
@@ -143,7 +145,7 @@ namespace {entity.Namespace}.Repositories
     /// <summary>
     /// Repository implementation for {entity.Name} entity providing complete data access.
     /// </summary>
-    public class {entity.Name}Repository : I{entity.Name}Repository
+    public sealed class {entity.Name}Repository : I{entity.Name}Repository
     {{
         private List<{entity.Name}> _data = new();
 
@@ -177,7 +179,7 @@ namespace {entity.Namespace}.Repositories
 
         public async Task<{entity.Name}> CreateAsync({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 throw new ArgumentNullException(nameof(entity));
 
             _data.Add(entity);
@@ -186,11 +188,11 @@ namespace {entity.Namespace}.Repositories
 
         public async Task<{entity.Name}> UpdateAsync({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 throw new ArgumentNullException(nameof(entity));
 
             var existing = _data.FirstOrDefault(e => e.Id.Equals(entity.Id));
-            if (existing == null)
+            if (existing is null)
                 throw new InvalidOperationException($""Entity with id {{entity.Id}} not found"");
 
             _data.Remove(existing);
@@ -202,7 +204,7 @@ namespace {entity.Namespace}.Repositories
         public async Task<bool> DeleteAsync({pkType} id)
         {{
             var entity = _data.FirstOrDefault(e => e.Id.Equals(id));
-            if (entity == null)
+            if (entity is null)
                 return await Task.FromResult(false);
 
             return _data.Remove(entity) ? await Task.FromResult(true) : await Task.FromResult(false);

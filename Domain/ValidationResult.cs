@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,7 +10,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// <summary>
 /// Result of a validation operation with errors and warnings.
 /// </summary>
-public class ValidationResult
+public sealed class ValidationResult
 {
     public bool IsValid { get; private set; } = true;
     public List<string> Errors { get; } = new();

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents a domain entity that will be processed by the source generator toolkit.
 /// Contains metadata about the entity and its properties for generation.
 /// </summary>
-public class Entity
+public sealed class Entity
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -44,7 +46,7 @@ public class Entity
     /// </summary>
     public void AddProperty(EntityProperty property)
     {
-        if (property == null)
+        if (property is null)
             throw new ArgumentNullException(nameof(property));
 
         if (Properties.Any(p => p.Name == property.Name))
@@ -59,7 +61,7 @@ public class Entity
     public bool RemoveProperty(string propertyName)
     {
         var property = Properties.FirstOrDefault(p => p.Name == propertyName);
-        if (property != null)
+        if (property is not null)
         {
             Properties.Remove(property);
             return true;

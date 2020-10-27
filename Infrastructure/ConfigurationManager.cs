@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 /// Manages application configuration with support for default values,
 /// environment variables, and configuration file overrides.
 /// </summary>
-public class ConfigurationManager : IConfigurationManager
+public sealed class ConfigurationManager : IConfigurationManager
 {
     private readonly Dictionary<string, string> _config;
     private readonly ILogger<ConfigurationManager> _logger;

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -27,7 +29,7 @@ public static class ServiceCollectionExtensions
     /// <returns>The same <paramref name="services"/> instance to allow call chaining.</returns>
     public static IServiceCollection AddSourceGeneratorToolkit(this IServiceCollection services)
     {
-        if (services == null)
+        if (services is null)
             throw new ArgumentNullException(nameof(services));
 
         // Shared infrastructure — singletons to avoid redundant allocations across scopes
@@ -69,7 +71,7 @@ public static class ServiceCollectionExtensions
     /// <returns>The same <paramref name="services"/> instance to allow call chaining.</returns>
     public static IServiceCollection AddIncrementalGeneration(this IServiceCollection services)
     {
-        if (services == null)
+        if (services is null)
             throw new ArgumentNullException(nameof(services));
 
         services.TryAddSingleton<ICache, MemoryCache>();

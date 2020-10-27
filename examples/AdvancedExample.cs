@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,12 +10,12 @@ using DotNetSourceGeneratorToolkit.Domain;
 namespace DotNetSourceGeneratorToolkit.Examples;
 
 /// Advanced example showing custom middleware, event handling, and batch processing
-public class AdvancedExample
+public sealed class AdvancedExample
 {
     [Repository]
     [Mapper]
     [Validator]
-    public class BlogPost
+    public sealed class BlogPost
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -26,7 +28,7 @@ public class AdvancedExample
     }
 
     [Mapper]
-    public class BlogPostDto
+    public sealed class BlogPostDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -36,7 +38,7 @@ public class AdvancedExample
     }
 
     /// Custom middleware for performance tracking
-    public class PerformanceTrackingMiddleware : IMiddleware
+    public sealed class PerformanceTrackingMiddleware : IMiddleware
     {
         private readonly IMetricsCollector _metricsCollector;
 
@@ -67,7 +69,7 @@ public class AdvancedExample
     }
 
     /// Event-driven architecture example
-    public class BlogPostService
+    public sealed class BlogPostService
     {
         private readonly IBlogPostRepository _repository;
         private readonly IBlogPostMapper _mapper;
@@ -105,7 +107,7 @@ public class AdvancedExample
             var post = await _repository.FirstOrDefaultAsync(p =>
                 p.Id == postId && p.IsPublished);
 
-            if (post == null)
+            if (post is null)
                 return null;
 
             var dto = _mapper.MapToDto(post);
@@ -136,7 +138,7 @@ public class AdvancedExample
         public async Task<BlogPostDto> PublishPostAsync(int postId)
         {
             var post = await _repository.GetByIdAsync(postId);
-            if (post == null)
+            if (post is null)
                 throw new ArgumentException("Post not found");
 
             post.IsPublished = true;
@@ -181,7 +183,7 @@ public class AdvancedExample
     }
 
     /// Example of batch processing multiple entities
-    public class BatchProcessingExample
+    public sealed class BatchProcessingExample
     {
         public async Task ProcessMultipleEntitiesAsync(
             ISourceGeneratorService service,

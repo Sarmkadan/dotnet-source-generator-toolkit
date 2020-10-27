@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ using DotNetSourceGeneratorToolkit.Domain;
 
 // Define a simple entity with generation attributes
 [Mapper]
-public class Product
+public sealed class Product
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -20,7 +22,7 @@ public class Product
 
 // Define a DTO for API responses
 [Mapper]
-public class ProductDto
+public sealed class ProductDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -30,7 +32,7 @@ public class ProductDto
 }
 
 // Custom converter for price formatting
-public class PriceConverter : IValueConverter<decimal, string>
+public sealed class PriceConverter : IValueConverter<decimal, string>
 {
     public string Convert(decimal value, object? context = null)
     {
@@ -39,7 +41,7 @@ public class PriceConverter : IValueConverter<decimal, string>
 }
 
 // Custom converter for date formatting
-public class DateConverter : IValueConverter<DateTime, string>
+public sealed class DateConverter : IValueConverter<DateTime, string>
 {
     public string Convert(DateTime value, object? context = null)
     {
@@ -48,7 +50,7 @@ public class DateConverter : IValueConverter<DateTime, string>
 }
 
 // Custom converter for boolean status
-public class AvailabilityConverter : IValueConverter<bool, string>
+public sealed class AvailabilityConverter : IValueConverter<bool, string>
 {
     public string Convert(bool value, object? context = null)
     {
@@ -57,7 +59,7 @@ public class AvailabilityConverter : IValueConverter<bool, string>
 }
 
 // Usage example
-public class ProductService
+public sealed class ProductService
 {
     public ProductDto MapProductToDto(Product product)
     {

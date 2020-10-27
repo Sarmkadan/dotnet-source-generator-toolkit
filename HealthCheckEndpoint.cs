@@ -4,7 +4,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace DotNetSourceGeneratorToolkit
 {
-    public class HealthCheckEndpoint
+    public sealed class HealthCheckEndpoint
     {
         public HealthCheckEndpoint()
         {
