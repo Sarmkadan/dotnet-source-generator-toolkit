@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-03-19
+
+### Added
+- **Docker multi-stage build**: Optimized Dockerfile with separate restore, build, and runtime stages
+- **HEALTHCHECK directive**: Container health monitoring via `dotnet --list-runtimes`
+- **Port 8080 exposure**: Explicit HTTP port configuration for reverse proxy and orchestrator compatibility
+- **OCI image labels**: Standard metadata labels for container registries
+- **Named volumes**: Log persistence via Docker named volumes instead of bind mounts
+- **Migration guide**: `docs/MIGRATION_v2.md` with step-by-step upgrade instructions
+
+### Changed
+- Runtime base image switched from `dotnet/runtime` to `dotnet/aspnet` for HTTP hosting support
+- Docker Compose updated to V2 specification (removed deprecated `version` key)
+- Container user setup uses `addgroup`/`adduser` system commands for smaller image footprint
+- Health check changed from `dotnet --version` to `dotnet --list-runtimes` for runtime verification
+- Restart policy changed from `on-failure:3` to `unless-stopped`
+- Package version bumped to 2.0.0
+
+### Fixed
+- Docker build cache invalidation - restore stage now properly separates dependency resolution from source compilation
+
 ## [1.0.0] - 2025-11-24
 
 ### Added
