@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates serializer classes for converting entities to/from various formats
 /// including JSON, XML, and binary representations.
 /// </summary>
-public class SerializerGeneratorService : ISerializerGeneratorService
+public sealed class SerializerGeneratorService : ISerializerGeneratorService
 {
     private readonly ILogger<SerializerGeneratorService> _logger;
 
@@ -23,7 +25,7 @@ public class SerializerGeneratorService : ISerializerGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities)
     {
-        if (entities == null || entities.Count == 0)
+        if (entities is null || entities.Count == 0)
             throw new ArgumentException("Entities collection cannot be null or empty");
 
         _logger.LogInformation("Generating serializers for {Count} entities", entities.Count);
@@ -49,7 +51,7 @@ public class SerializerGeneratorService : ISerializerGeneratorService
 
     public async Task<GenerationResult> GenerateSerializerAsync(Entity entity, SerializerFormat format)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         var formatName = format.ToString();
@@ -109,7 +111,7 @@ namespace {entity.Namespace}.Serializers
     /// JSON serializer for {entity.Name} entity.
     /// Provides methods for converting entities to/from JSON format.
     /// </summary>
-    public class {entity.Name}JsonSerializer
+    public sealed class {entity.Name}JsonSerializer
     {{
         private static readonly JsonSerializerOptions Options = new()
         {{
@@ -121,7 +123,7 @@ namespace {entity.Namespace}.Serializers
         /// <summary>Serializes an entity to JSON string.</summary>
         public static string Serialize({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 throw new ArgumentNullException(nameof(entity));
 
             return JsonSerializer.Serialize(entity, Options);
@@ -167,14 +169,14 @@ namespace {entity.Namespace}.Serializers
     /// XML serializer for {entity.Name} entity.
     /// Provides methods for converting entities to/from XML format.
     /// </summary>
-    public class {entity.Name}XmlSerializer
+    public sealed class {entity.Name}XmlSerializer
     {{
         private const string RootElementName = ""{entity.Name}"";
 
         /// <summary>Serializes an entity to XML string.</summary>
         public static string Serialize({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 throw new ArgumentNullException(nameof(entity));
 
             var doc = new XDocument(
@@ -225,12 +227,12 @@ namespace {entity.Namespace}.Serializers
     /// Binary serializer for {entity.Name} entity.
     /// Provides methods for converting entities to/from binary format.
     /// </summary>
-    public class {entity.Name}BinarySerializer
+    public sealed class {entity.Name}BinarySerializer
     {{
         /// <summary>Serializes an entity to binary byte array.</summary>
         public static byte[] Serialize({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 throw new ArgumentNullException(nameof(entity));
 
             using (var ms = new MemoryStream())
@@ -244,7 +246,7 @@ namespace {entity.Namespace}.Serializers
         /// <summary>Deserializes binary byte array to entity.</summary>
         public static {entity.Name} Deserialize(byte[] data)
         {{
-            if (data == null || data.Length == 0)
+            if (data is null || data.Length == 0)
                 throw new ArgumentNullException(nameof(data));
 
             using (var ms = new MemoryStream(data))

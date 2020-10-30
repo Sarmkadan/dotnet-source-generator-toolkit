@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -28,7 +30,7 @@ public interface IGenerationResultRepository
 /// In-memory implementation of generation result repository.
 /// Suitable for single-session use; extend with persistence for production.
 /// </summary>
-public class GenerationResultRepository : IGenerationResultRepository
+public sealed class GenerationResultRepository : IGenerationResultRepository
 {
     private readonly Dictionary<string, GenerationResult> _results = new();
     private readonly ILogger<GenerationResultRepository> _logger;
@@ -40,7 +42,7 @@ public class GenerationResultRepository : IGenerationResultRepository
 
     public async Task AddAsync(GenerationResult result)
     {
-        if (result == null)
+        if (result is null)
             throw new ArgumentNullException(nameof(result));
 
         _results[result.Id] = result;

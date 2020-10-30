@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -29,7 +31,7 @@ public interface IBatchProcessor<T>
 /// <summary>
 /// Result of processing a single batch item.
 /// </summary>
-public class BatchResult<T>
+public sealed class BatchResult<T>
 {
     public T Item { get; set; } = default!;
     public bool IsSuccessful { get; set; }
@@ -40,7 +42,7 @@ public class BatchResult<T>
 /// <summary>
 /// Progress report for batch processing.
 /// </summary>
-public class BatchProgress
+public sealed class BatchProgress
 {
     public int ProcessedCount { get; set; }
     public int TotalCount { get; set; }

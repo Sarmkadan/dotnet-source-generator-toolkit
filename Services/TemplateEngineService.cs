@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -29,7 +31,7 @@ public interface ITemplateEngineService
     void RegisterFilter(string filterName, Func<object, string> filterFunc);
 }
 
-public class TemplateEngineService : ITemplateEngineService
+public sealed class TemplateEngineService : ITemplateEngineService
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<TemplateEngineService> _logger;
@@ -47,7 +49,7 @@ public class TemplateEngineService : ITemplateEngineService
         if (string.IsNullOrEmpty(template))
             return template;
 
-        if (context == null)
+        if (context is null)
             context = [];
 
         _logger.LogInformation("Rendering template with {Count} context variables", context.Count);
@@ -120,7 +122,7 @@ public class TemplateEngineService : ITemplateEngineService
         if (string.IsNullOrWhiteSpace(filterName))
             throw new ArgumentNullException(nameof(filterName));
 
-        if (filterFunc == null)
+        if (filterFunc is null)
             throw new ArgumentNullException(nameof(filterFunc));
 
         _filters[filterName] = filterFunc;

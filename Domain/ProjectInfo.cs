@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents metadata and structure information about a .NET project
 /// that has been analyzed for source generation.
 /// </summary>
-public class ProjectInfo
+public sealed class ProjectInfo
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -42,7 +44,7 @@ public class ProjectInfo
     /// </summary>
     public void AddEntity(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         var validationErrors = entity.Validate();
@@ -60,7 +62,7 @@ public class ProjectInfo
     /// </summary>
     public void AddTemplate(GenerationTemplate template)
     {
-        if (template == null)
+        if (template is null)
             throw new ArgumentNullException(nameof(template));
 
         var validationErrors = template.Validate();
@@ -75,7 +77,7 @@ public class ProjectInfo
     /// </summary>
     public void RecordGenerationResult(GenerationResult result)
     {
-        if (result != null)
+        if (result is not null)
             GenerationResults.Add(result);
     }
 
@@ -129,7 +131,7 @@ public class ProjectInfo
     }
 }
 
-public class ProjectStatistics
+public sealed class ProjectStatistics
 {
     public int TotalEntities { get; set; }
 

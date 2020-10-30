@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Caching;
 /// In-memory implementation of cache with automatic expiration support.
 /// Thread-safe for concurrent access from multiple generation tasks.
 /// </summary>
-public class MemoryCache : ICache
+public sealed class MemoryCache : ICache
 {
     private readonly Dictionary<string, CacheEntry> _cache = new();
     private readonly object _lock = new();
@@ -47,7 +49,7 @@ public class MemoryCache : ICache
 
     public void Set<T>(string key, T value, TimeSpan? expiration = null)
     {
-        if (value == null)
+        if (value is null)
             throw new ArgumentNullException(nameof(value));
 
         lock (_lock)

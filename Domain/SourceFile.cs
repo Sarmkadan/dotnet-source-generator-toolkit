@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents a C# source file with its metadata, content, and processing state.
 /// Used for both analyzing existing files and tracking generated artifacts.
 /// </summary>
-public class SourceFile
+public sealed class SourceFile
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 

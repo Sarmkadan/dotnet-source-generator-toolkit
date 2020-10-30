@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -38,7 +40,7 @@ public interface IAttributeAnalyzer
 /// <summary>
 /// Information about a discovered attribute.
 /// </summary>
-public class AttributeInfo
+public sealed class AttributeInfo
 {
     public string Name { get; set; } = string.Empty;
     public Dictionary<string, string> Parameters { get; set; } = new();

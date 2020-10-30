@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// Factory for creating output formatter instances based on format name.
 /// Provides type-safe formatter selection and extensibility.
 /// </summary>
-public class FormatterFactory : IFormatterFactory
+public sealed class FormatterFactory : IFormatterFactory
 {
     private readonly Dictionary<string, Func<IOutputFormatter>> _formatters = new(StringComparer.OrdinalIgnoreCase);
 

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -54,7 +56,7 @@ public interface ITimer : IDisposable
 /// <summary>
 /// Snapshot of metrics at a point in time.
 /// </summary>
-public class MetricsSnapshot
+public sealed class MetricsSnapshot
 {
     public Dictionary<string, long> Gauges { get; set; } = new();
     public Dictionary<string, long> Counters { get; set; } = new();
@@ -65,7 +67,7 @@ public class MetricsSnapshot
 /// <summary>
 /// Histogram metric data including statistics.
 /// </summary>
-public class HistogramData
+public sealed class HistogramData
 {
     public long Count { get; set; }
     public long Sum { get; set; }

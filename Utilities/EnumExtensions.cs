@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -19,7 +21,7 @@ public static class EnumExtensions
     public static string GetDescription<T>(this T value) where T : Enum
     {
         var field = value.GetType().GetField(value.ToString());
-        if (field == null)
+        if (field is null)
             return value.ToString();
 
         var attribute = field.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();

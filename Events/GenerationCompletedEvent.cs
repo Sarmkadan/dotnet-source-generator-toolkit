@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Events;
 /// Published when generation process completes (success or failure).
 /// Allows subscribers to clean up resources or persist results.
 /// </summary>
-public class GenerationCompletedEvent : IDomainEvent
+public sealed class GenerationCompletedEvent : IDomainEvent
 {
     public string EventId { get; } = Guid.NewGuid().ToString();
     public DateTime OccurredAt { get; } = DateTime.UtcNow;
