@@ -10,28 +10,53 @@ using DotNetSourceGeneratorToolkit.Domain;
 namespace DotNetSourceGeneratorToolkit.Services;
 
 /// <summary>
-/// Orchestrates the entire source generation workflow for a project.
-/// Coordinates analysis, code generation, and output management.
+/// Orchestrates the entire source generation workflow for a .NET project. Coordinates
+/// Roslyn-based analysis, template-driven code generation, and output file management.
 /// </summary>
+/// <remarks>
+/// <para>
+/// The typical generation workflow is:
+/// <list type="number">
+///   <item>Analyze the project via <see cref="AnalyzeProjectAsync"/> to extract entity metadata</item>
+///   <item>Validate the project structure via <see cref="ValidateProjectAsync"/></item>
+///   <item>Generate artifacts via <see cref="GenerateAllAsync"/> or <see cref="GenerateForEntityAsync"/></item>
+/// </list>
+/// </para>
+/// <para>
+/// The toolkit can generate repositories, mappers, validators, and serializers. Each generator
+/// is available as a separate service (<see cref="IRepositoryGeneratorService"/>,
+/// <see cref="IMapperGeneratorService"/>, <see cref="IValidatorGeneratorService"/>,
+/// <see cref="ISerializerGeneratorService"/>) and can be used independently.
+/// </para>
+/// </remarks>
 public interface ISourceGeneratorService
 {
     /// <summary>
-    /// Analyzes a .NET project and extracts entity definitions.
+    /// Analyzes a .NET project at the given path, extracting entity definitions,
+    /// property metadata, and attribute annotations using Roslyn.
     /// </summary>
+    /// <param name="projectPath">Absolute path to the .csproj file or project directory.</param>
+    /// <returns>A <see cref="ProjectInfo"/> containing all discovered entities and project metadata.</returns>
     Task<ProjectInfo> AnalyzeProjectAsync(string projectPath);
 
     /// <summary>
-    /// Generates all code artifacts for a project's entities.
+    /// Generates all code artifacts (repositories, mappers, validators, serializers) for every
+    /// entity in the analyzed project.
     /// </summary>
+    /// <param name="projectInfo">The analyzed project metadata from <see cref="AnalyzeProjectAsync"/>.</param>
+    /// <returns>A collection of <see cref="GenerationResult"/> objects, one per generated file.</returns>
     Task<IEnumerable<GenerationResult>> GenerateAllAsync(ProjectInfo projectInfo);
 
     /// <summary>
-    /// Generates code artifacts for a specific entity.
+    /// Generates code artifacts for a single entity within the project context.
     /// </summary>
+    /// <param name="entity">The entity to generate artifacts for.</param>
+    /// <param name="projectInfo">Project metadata providing namespace and output path context.</param>
     Task<IEnumerable<GenerationResult>> GenerateForEntityAsync(Entity entity, ProjectInfo projectInfo);
 
     /// <summary>
-    /// Validates the project structure before generation.
+    /// Validates that the project structure and entity definitions are suitable for code generation.
+    /// Returns warnings for non-critical issues and errors for blocking problems.
     /// </summary>
     Task<ValidationResult> ValidateProjectAsync(ProjectInfo projectInfo);
 }
