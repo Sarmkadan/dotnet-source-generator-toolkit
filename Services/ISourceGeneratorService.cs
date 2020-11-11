@@ -38,21 +38,6 @@ public interface ISourceGeneratorService
 
 
 
-/// <summary>
-/// Generates validation logic for entities.
-/// </summary>
-public interface IValidatorGeneratorService
-{
-    /// <summary>
-    /// Generates validators for all entities.
-    /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(List<Entity> entities);
-
-    /// <summary>
-    /// Generates a FluentValidation validator for an entity.
-    /// </summary>
-    Task<GenerationResult> GenerateValidatorAsync(Entity entity);
-}
 
 /// <summary>
 /// Generates serialization/deserialization code.
