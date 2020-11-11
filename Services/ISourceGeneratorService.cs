@@ -40,12 +40,6 @@ public interface ISourceGeneratorService
 
 
 
-public enum SerializerFormat
-{
-    Json,
-    Xml,
-    Binary,
-}
 
 public sealed class ValidationResult
 {
