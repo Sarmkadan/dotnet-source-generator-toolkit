@@ -39,21 +39,6 @@ public interface ISourceGeneratorService
 
 
 
-/// <summary>
-/// Generates serialization/deserialization code.
-/// </summary>
-public interface ISerializerGeneratorService
-{
-    /// <summary>
-    /// Generates serializers for all entities.
-    /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities);
-
-    /// <summary>
-    /// Generates a serializer for a specific entity.
-    /// </summary>
-    Task<GenerationResult> GenerateSerializerAsync(Entity entity, SerializerFormat format);
-}
 
 public enum SerializerFormat
 {
