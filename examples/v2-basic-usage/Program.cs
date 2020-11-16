@@ -7,6 +7,12 @@
 
 using DotNetSourceGeneratorToolkit.Domain;
 
+Console.WriteLine("v2.0 Basic Usage Example - Attribute-driven mapper with custom converters");
+Console.WriteLine("This example demonstrates the new v2.0 features:");
+Console.WriteLine("- Attribute-driven mapper generation");
+Console.WriteLine("- Custom value converters (IValueConverter<TSource, TDestination>)");
+Console.WriteLine("- Automatic converter selection based on mapping context");
+
 // Example demonstrating v2.0 attribute-driven mapper generator with custom converters
 
 // Define a simple entity with generation attributes
@@ -69,9 +75,3 @@ public sealed class ProductService
         return mapper.MapToDto(product);
     }
 }
-
-Console.WriteLine("v2.0 Basic Usage Example - Attribute-driven mapper with custom converters");
-Console.WriteLine("This example demonstrates the new v2.0 features:");
-Console.WriteLine("- Attribute-driven mapper generation");
-Console.WriteLine("- Custom value converters (IValueConverter<TSource, TDestination>)");
-Console.WriteLine("- Automatic converter selection based on mapping context");
