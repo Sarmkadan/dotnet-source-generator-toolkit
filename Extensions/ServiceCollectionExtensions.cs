@@ -52,6 +52,10 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IValidatorGeneratorService, ValidatorGeneratorService>();
         services.TryAddScoped<ISerializerGeneratorService, SerializerGeneratorService>();
 
+        // Template Engine and Project Metadata
+        services.TryAddSingleton<ITemplateEngineService, TemplateEngineService>();
+        services.TryAddSingleton<IProjectMetadataService, ProjectMetadataService>();
+
         // Incremental generation support
         services.TryAddScoped<IIncrementalGeneratorService, IncrementalGeneratorService>();
 
