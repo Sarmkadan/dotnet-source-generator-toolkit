@@ -57,20 +57,25 @@ public sealed class EntityAnalyzer : IEntityAnalyzer
                     BaseClass = baseClass,
                 };
 
-                // Extract properties
-                var propPattern = @"public\s+(\w+(?:<[^>]+>)?)\s+(\w+)\s*{\s*get;?\s*set;?\s*}";
+                // Extract properties — the \?? at the end of the type group captures nullable
+                // annotations such as `AddressRecord?` so they are not silently dropped.
+                var propPattern = @"public\s+(\w+(?:<[^>]+>)?\??)\s+(\w+)\s*{\s*get;?\s*set;?\s*}";
                 var propMatches = Regex.Matches(content[classMatch.Index..], propPattern);
 
                 foreach (Match propMatch in propMatches)
                 {
-                    var propType = propMatch.Groups[1].Value;
+                    var rawPropType = propMatch.Groups[1].Value;
                     var propName = propMatch.Groups[2].Value;
+                    var isNullable = rawPropType.EndsWith('?');
+                    // Store the base type without the nullable suffix; IsNullable carries that flag.
+                    var propType = isNullable ? rawPropType[..^1] : rawPropType;
 
                     var property = new EntityProperty
                     {
                         Name = propName,
                         Type = propType,
-                        IsRequired = !propType.Contains("?"),
+                        IsNullable = isNullable,
+                        IsRequired = !isNullable,
                     };
 
                     entity.AddProperty(property);
@@ -116,20 +121,24 @@ public sealed class EntityAnalyzer : IEntityAnalyzer
             Namespace = fileNamespace,
         };
 
-        // Extract properties
-        var propPattern = @"(?:\w+\s+)?public\s+(\w+(?:<[^>]+>)?)\s+(\w+)\s*{\s*get;?\s*set;?\s*}";
+        // Extract properties — the \?? at the end of the type group captures nullable
+        // annotations such as `AddressRecord?` so they are not silently dropped.
+        var propPattern = @"(?:\w+\s+)?public\s+(\w+(?:<[^>]+>)?\??)\s+(\w+)\s*{\s*get;?\s*set;?\s*}";
         var matches = Regex.Matches(classContent, propPattern);
 
         foreach (Match match in matches)
         {
-            var type = match.Groups[1].Value;
+            var rawType = match.Groups[1].Value;
             var name = match.Groups[2].Value;
+            var isNullable = rawType.EndsWith('?');
+            var type = isNullable ? rawType[..^1] : rawType;
 
             var property = new EntityProperty
             {
                 Name = name,
                 Type = type,
-                IsRequired = !type.Contains("?"),
+                IsNullable = isNullable,
+                IsRequired = !isNullable,
             };
 
             entity.AddProperty(property);
