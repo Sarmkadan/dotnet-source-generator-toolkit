@@ -150,6 +150,13 @@ namespace {entity.Namespace}.Validators
             if (!string.IsNullOrEmpty(prop.RegexPattern))
                 rules.Add($"                .Matches(@\"{prop.RegexPattern}\").WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} format is invalid.\")");
 
+            if (prop.MinValue.HasValue && prop.MaxValue.HasValue)
+                rules.Add($"                .InclusiveBetween({prop.MinValue}, {prop.MaxValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be between {{prop.MinValue}} and {{prop.MaxValue}}.\")");
+            else if (prop.MinValue.HasValue)
+                rules.Add($"                .GreaterThanOrEqualTo({prop.MinValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be at least {{prop.MinValue}}.\")");
+            else if (prop.MaxValue.HasValue)
+                rules.Add($"                .LessThanOrEqualTo({prop.MaxValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must not exceed {{prop.MaxValue}}.\")");
+
             rules.Add("                ;");
             rules.Add("");
         }
@@ -189,6 +196,23 @@ namespace {entity.Namespace}.Validators
 
                 if (prop.MinLength.HasValue && prop.Type.Contains("string", StringComparison.OrdinalIgnoreCase))
                     logic.Add($"            if (entity.{prop.Name}?.Length < {prop.MinLength}) errors.Add(\"{prop.Name} is too short.\");");
+            }
+        }
+
+        var rangeProps = entity.Properties.Where(p => p.MinValue.HasValue || p.MaxValue.HasValue).ToList();
+        if (rangeProps.Count > 0)
+        {
+            logic.Add("");
+            logic.Add($"            // Validate numeric range constraints");
+
+            foreach (var prop in rangeProps)
+            {
+                if (prop.MinValue.HasValue && prop.MaxValue.HasValue)
+                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue}m || entity.{prop.Name} > {prop.MaxValue}m) errors.Add(\"{prop.Name} must be between {prop.MinValue} and {prop.MaxValue}.\");");
+                else if (prop.MinValue.HasValue)
+                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue}m) errors.Add(\"{prop.Name} must be at least {prop.MinValue}.\");");
+                else if (prop.MaxValue.HasValue)
+                    logic.Add($"            if (entity.{prop.Name} > {prop.MaxValue}m) errors.Add(\"{prop.Name} must not exceed {prop.MaxValue}.\");");
             }
         }
 
