@@ -4,7 +4,7 @@
 # =============================================================================
 
 # Stage 1 - Restore dependencies
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
 WORKDIR /src
 COPY ["dotnet-source-generator-toolkit.csproj", "./"]
 RUN dotnet restore "dotnet-source-generator-toolkit.csproj"
@@ -17,7 +17,7 @@ RUN dotnet publish -c Release -o /app/publish --no-restore \
     /p:PublishTrimmed=false
 
 # Stage 3 - Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 LABEL maintainer="Vladyslav Zaiets <vladyslav@sarmkadan.com>"
 LABEL org.opencontainers.image.source="https://github.com/sarmkadan/dotnet-source-generator-toolkit"
