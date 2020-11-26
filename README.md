@@ -288,6 +288,13 @@ var validationResult = await validator.ValidateAsync(product);
 
 ## Usage Examples
 
+Additional comprehensive examples can be found in the [examples/](examples/) directory:
+- [BasicUsage.cs](examples/BasicUsage.cs) - Minimal setup.
+- [AdvancedUsage.cs](examples/AdvancedUsage.cs) - Advanced configuration and error handling.
+- [IntegrationExample.cs](examples/IntegrationExample.cs) - ASP.NET Core DI registration.
+
+---
+
 ### Example 1: Basic Entity with Repository Generation
 
 ```csharp
