@@ -65,6 +65,62 @@ public sealed class StringExtensionsTests
         result.Should().EndWith("...");
         result.Length.Should().Be(13);
     }
+
+    [Fact]
+    public void Repeat_WithCountThree_ReturnsRepeatedString()
+    {
+        // Arrange & Act & Assert
+        "a".Repeat(3).Should().Be("aaa");
+    }
+
+    [Fact]
+    public void Repeat_WithCountZero_ReturnsEmpty()
+    {
+        // Arrange & Act & Assert
+        "a".Repeat(0).Should().Be("");
+    }
+
+    [Fact]
+    public void IsNumeric_WithOnlyDigits_ReturnsTrue()
+    {
+        // Arrange & Act & Assert
+        "123".IsNumeric().Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsNumeric_WithLetters_ReturnsFalse()
+    {
+        // Arrange & Act & Assert
+        "1a2".IsNumeric().Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsLettersOnly_WithOnlyLetters_ReturnsTrue()
+    {
+        // Arrange & Act & Assert
+        "abc".IsLettersOnly().Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsLettersOnly_WithDigits_ReturnsFalse()
+    {
+        // Arrange & Act & Assert
+        "a1b".IsLettersOnly().Should().BeFalse();
+    }
+
+    [Fact]
+    public void CountWord_WithOccurrences_ReturnsCount()
+    {
+        // Arrange & Act & Assert
+        "hello world hello".CountWord("hello").Should().Be(2);
+    }
+
+    [Fact]
+    public void Truncate_WhenEllipsisDisabled_ReturnsPlainTruncation()
+    {
+        // Arrange & Act & Assert
+        "This is a very long string".Truncate(10, false).Should().Be("This is a ");
+    }
 }
 
 public sealed class StringValidatorTests
