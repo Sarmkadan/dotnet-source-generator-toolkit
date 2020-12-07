@@ -39,7 +39,7 @@ public static class EnumExtensions
     /// <summary>
     /// Try to parse a string to enum value with case-insensitive matching.
     /// </summary>
-    public static bool TryParse<T>(string value, out T result) where T : Enum
+    public static bool TryParse<T>(string value, out T result) where T : struct, Enum
     {
         return Enum.TryParse<T>(value, ignoreCase: true, out result);
     }

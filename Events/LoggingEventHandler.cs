@@ -26,25 +26,25 @@ public sealed class LoggingEventHandler :
     public Task HandleAsync(GenerationStartedEvent @event)
     {
         _logger.LogInformation(
-            "[{RequestId}] EVENT: Generation started for project '{ProjectName}' at {Timestamp}",
+            "[{RequestId}] EVENT: Generation started for project '{ProjectPath}' at {Timestamp} ({EntityCount} entities)",
             @event.RequestId,
-            @event.ProjectName,
-            @event.Timestamp);
-            
+            @event.ProjectPath,
+            @event.OccurredAt,
+            @event.EntityCount);
+
         return Task.CompletedTask;
     }
 
     public Task HandleAsync(GenerationCompletedEvent @event)
     {
         _logger.LogInformation(
-            "[{RequestId}] EVENT: Generation completed for project '{ProjectName}'. Status: {Status}, Duration: {DurationMs}ms, Warnings: {Warnings}, Errors: {Errors}",
+            "[{RequestId}] EVENT: Generation completed. Success: {IsSuccessful}, Duration: {DurationMs}ms, FilesGenerated: {FilesGenerated}, Errors: {ErrorCount}",
             @event.RequestId,
-            @event.ProjectName,
-            @event.Status,
-            @event.DurationMs,
-            @event.WarningCount,
-            @event.ErrorCount);
-            
+            @event.IsSuccessful,
+            @event.ExecutionTimeMs,
+            @event.FilesGenerated,
+            @event.Errors.Count);
+
         return Task.CompletedTask;
     }
 }

@@ -42,6 +42,16 @@ public sealed class GenerationResult
     public Dictionary<string, string> Metadata { get; } = [];
 
     /// <summary>
+    /// Alias for <see cref="GenerationDurationMs"/>, used by output formatters.
+    /// </summary>
+    public long ExecutionTimeMs => GenerationDurationMs;
+
+    /// <summary>
+    /// Combined error message for output formatters, or null when no errors occurred.
+    /// </summary>
+    public string? ErrorMessage => Errors.Count > 0 ? string.Join("; ", Errors) : null;
+
+    /// <summary>
     /// Marks the generation as completed and sets the duration.
     /// </summary>
     public void MarkAsCompleted(GenerationStatus status, long durationMs)

@@ -5,7 +5,14 @@
 // CTO & Software Architect
 // =============================================================================
 
+using DotNetSourceGeneratorToolkit.Batch;
+using DotNetSourceGeneratorToolkit.Caching;
+using DotNetSourceGeneratorToolkit.Events;
+using DotNetSourceGeneratorToolkit.Formatters;
 using DotNetSourceGeneratorToolkit.Infrastructure;
+using DotNetSourceGeneratorToolkit.Integration;
+using DotNetSourceGeneratorToolkit.Middleware;
+using DotNetSourceGeneratorToolkit.Repositories;
 using DotNetSourceGeneratorToolkit.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -52,12 +59,12 @@ class Program
             // Generate mappers
             var mapperGenerator = provider.GetRequiredService<IMapperGeneratorService>();
             var mappers = await mapperGenerator.GenerateAllMappersAsync(projectInfo.Entities);
-            Console.WriteLine($"✓ Generated {mappers.Count} mapper(s)");
+            Console.WriteLine($"✓ Generated {mappers.Count()} mapper(s)");
 
             // Generate validators
             var validatorGenerator = provider.GetRequiredService<IValidatorGeneratorService>();
             var validators = await validatorGenerator.GenerateAllValidatorsAsync(projectInfo.Entities);
-            Console.WriteLine($"✓ Generated {validators.Count} validator(s)");
+            Console.WriteLine($"✓ Generated {validators.Count()} validator(s)");
 
             Console.WriteLine();
             Console.WriteLine("Generation completed successfully!");

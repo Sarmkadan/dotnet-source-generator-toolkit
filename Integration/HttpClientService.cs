@@ -7,6 +7,7 @@
 
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using DotNetSourceGeneratorToolkit.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit.Integration;
@@ -37,7 +38,7 @@ public sealed class HttpClientService : IHttpClientService
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadAsAsync<T>();
+            var result = await response.Content.ReadFromJsonAsync<T>();
             _logger.LogInformation("GET {Url} completed successfully", url);
             return result;
         }
@@ -61,7 +62,7 @@ public sealed class HttpClientService : IHttpClientService
             var response = await _httpClient.PostAsJsonAsync(url, body);
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadAsAsync<TResponse>();
+            var result = await response.Content.ReadFromJsonAsync<TResponse>();
             _logger.LogInformation("POST {Url} completed successfully", url);
             return result;
         }

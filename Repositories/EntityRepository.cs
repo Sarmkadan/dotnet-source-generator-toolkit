@@ -127,12 +127,12 @@ public sealed class EntityRepository : IEntityRepository
 /// In-memory repository implementation for GenerationResult persistence and querying.
 /// Tracks and provides access to code generation operation results.
 /// </summary>
-public sealed class GenerationResultRepository : IGenerationResultRepository
+public sealed class GenerationResultEntityRepository
 {
     private readonly List<GenerationResult> _results = [];
-    private readonly ILogger<GenerationResultRepository> _logger;
+    private readonly ILogger<GenerationResultEntityRepository> _logger;
 
-    public GenerationResultRepository(ILogger<GenerationResultRepository> logger)
+    public GenerationResultEntityRepository(ILogger<GenerationResultEntityRepository> logger)
     {
         _logger = logger;
     }

@@ -8,6 +8,7 @@
 using DotNetSourceGeneratorToolkit.Configuration;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace DotNetSourceGeneratorToolkit.Tests;
 
