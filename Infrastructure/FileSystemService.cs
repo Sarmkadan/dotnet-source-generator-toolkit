@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 /// Provides file system operations including reading, writing, and directory management.
 /// Includes error handling and logging for all operations.
 /// </summary>
-public class FileSystemService : IFileSystemService
+public sealed class FileSystemService : IFileSystemService
 {
     private readonly ILogger<FileSystemService> _logger;
 
@@ -171,7 +173,7 @@ public class FileSystemService : IFileSystemService
 
     public string CombinePath(params string[] segments)
     {
-        if (segments == null || segments.Length == 0)
+        if (segments is null || segments.Length == 0)
             return string.Empty;
 
         return Path.Combine(segments);

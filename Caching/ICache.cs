@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -58,7 +60,7 @@ public interface ICache
 /// <summary>
 /// Statistics about cache performance and usage.
 /// </summary>
-public class CacheStatistics
+public sealed class CacheStatistics
 {
     public int EntryCount { get; set; }
     public int HitCount { get; set; }

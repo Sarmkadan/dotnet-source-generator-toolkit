@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Middleware;
 /// Middleware that provides centralized error handling and recovery strategies.
 /// Catches exceptions and decides whether to retry, short-circuit, or propagate.
 /// </summary>
-public class ErrorHandlingMiddleware : IMiddleware
+public sealed class ErrorHandlingMiddleware : IMiddleware
 {
     private readonly ILogger<ErrorHandlingMiddleware> _logger;
     private const int MaxRetries = 3;

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Metrics;
 /// Collects performance metrics including timers, counters, gauges, and histograms.
 /// Thread-safe for concurrent metric collection from parallel tasks.
 /// </summary>
-public class MetricsCollector : IMetricsCollector
+public sealed class MetricsCollector : IMetricsCollector
 {
     private readonly Dictionary<string, long> _gauges = new();
     private readonly Dictionary<string, long> _counters = new();

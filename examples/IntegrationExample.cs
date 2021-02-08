@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DotNetSourceGeneratorToolkit.Examples;
 
 /// Integration example showing how to use generated code in a real application
-public class IntegrationExample
+public sealed class IntegrationExample
 {
     [Repository]
     [Mapper]
     [Validator]
-    public class Customer
+    public sealed class Customer
     {
         public int Id { get; set; }
         public string CompanyName { get; set; } = string.Empty;
@@ -25,7 +27,7 @@ public class IntegrationExample
     }
 
     [Mapper]
-    public class CustomerDto
+    public sealed class CustomerDto
     {
         public int Id { get; set; }
         public string CompanyName { get; set; } = string.Empty;
@@ -34,7 +36,7 @@ public class IntegrationExample
     }
 
     /// Example of proper dependency injection setup
-    public class DependencyInjectionSetup
+    public sealed class DependencyInjectionSetup
     {
         public static void ConfigureServices(IServiceCollection services)
         {
@@ -62,7 +64,7 @@ public class IntegrationExample
         Task DeleteCustomerAsync(int customerId);
     }
 
-    public class CustomerApplicationService : ICustomerApplicationService
+    public sealed class CustomerApplicationService : ICustomerApplicationService
     {
         private readonly ICustomerRepository _repository;
         private readonly ICustomerMapper _mapper;
@@ -82,7 +84,7 @@ public class IntegrationExample
         public async Task<CustomerDto?> GetCustomerAsync(int customerId)
         {
             var customer = await _repository.GetByIdAsync(customerId);
-            if (customer == null)
+            if (customer is null)
                 return null;
 
             // Validate before returning
@@ -121,7 +123,7 @@ public class IntegrationExample
         {
             // Get existing customer
             var existingCustomer = await _repository.GetByIdAsync(customerId);
-            if (existingCustomer == null)
+            if (existingCustomer is null)
                 throw new ArgumentException("Customer not found");
 
             // Map DTO to entity
@@ -142,7 +144,7 @@ public class IntegrationExample
         public async Task DeleteCustomerAsync(int customerId)
         {
             var customer = await _repository.GetByIdAsync(customerId);
-            if (customer == null)
+            if (customer is null)
                 throw new ArgumentException("Customer not found");
 
             await _repository.DeleteAsync(customerId);
@@ -150,7 +152,7 @@ public class IntegrationExample
     }
 
     /// Example of using the application service in a REST API controller
-    public class CustomerController
+    public sealed class CustomerController
     {
         private readonly ICustomerApplicationService _service;
 
@@ -165,7 +167,7 @@ public class IntegrationExample
             try
             {
                 var customer = await _service.GetCustomerAsync(id);
-                if (customer == null)
+                if (customer is null)
                     return Results.NotFound();
 
                 return Results.Ok(customer);
@@ -242,7 +244,7 @@ public class IntegrationExample
     }
 
     /// Example of wiring up ASP.NET Core Minimal APIs
-    public class WebApiSetup
+    public sealed class WebApiSetup
     {
         public static void MapCustomerEndpoints(WebApplication app)
         {
@@ -283,7 +285,7 @@ public class IntegrationExample
             ICustomerApplicationService service)
         {
             var customer = await service.GetCustomerAsync(id);
-            return customer != null ? Results.Ok(customer) : Results.NotFound();
+            return customer is not null ? Results.Ok(customer) : Results.NotFound();
         }
 
         private static async Task<IResult> CreateCustomer(

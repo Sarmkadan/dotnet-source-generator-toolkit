@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -16,7 +18,7 @@ public static class TypeExtensions
     /// </summary>
     public static bool IsNullable(this Type type)
     {
-        return !type.IsValueType || (Nullable.GetUnderlyingType(type) != null);
+        return !type.IsValueType || (Nullable.GetUnderlyingType(type) is not null);
     }
 
     /// <summary>
@@ -69,7 +71,7 @@ public static class TypeExtensions
     /// </summary>
     public static object? GetDefaultValue(this Type type)
     {
-        if (type == null)
+        if (type is null)
             return null;
 
         if (type.IsValueType)
@@ -92,7 +94,7 @@ public static class TypeExtensions
     public static IEnumerable<Type> GetBaseTypes(this Type type)
     {
         var baseType = type.BaseType;
-        while (baseType != null && baseType != typeof(object))
+        while (baseType is not null && baseType != typeof(object))
         {
             yield return baseType;
             baseType = baseType.BaseType;

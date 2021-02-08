@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,13 +11,13 @@ namespace DotNetSourceGeneratorToolkit.Configuration;
 /// Validates ToolkitOptions and provides sensible defaults.
 /// Ensures configuration is safe and valid before toolkit execution.
 /// </summary>
-public class ConfigurationValidator : IConfigurationValidator
+public sealed class ConfigurationValidator : IConfigurationValidator
 {
     public ValidationResult Validate(ToolkitOptions options)
     {
         var result = new ValidationResult();
 
-        if (options == null)
+        if (options is null)
         {
             result.IsValid = false;
             result.AddError("Options cannot be null");

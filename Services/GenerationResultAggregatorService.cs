@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -30,7 +32,7 @@ public interface IGenerationResultAggregatorService
 /// <summary>
 /// Contains aggregated analysis of generation results.
 /// </summary>
-public class GenerationReport
+public sealed class GenerationReport
 {
     public int TotalResults { get; set; }
     public int SuccessCount { get; set; }
@@ -50,7 +52,7 @@ public class GenerationReport
 /// <summary>
 /// Contains statistical analysis of generation performance.
 /// </summary>
-public class GenerationStatistics
+public sealed class GenerationStatistics
 {
     public int TotalCount { get; set; }
     public int CompletedCount { get; set; }
@@ -68,7 +70,7 @@ public class GenerationStatistics
 /// <summary>
 /// Analyzes and reports on code generation results and performance metrics.
 /// </summary>
-public class GenerationResultAggregatorService : IGenerationResultAggregatorService
+public sealed class GenerationResultAggregatorService : IGenerationResultAggregatorService
 {
     private readonly ILogger<GenerationResultAggregatorService> _logger;
 
@@ -79,7 +81,7 @@ public class GenerationResultAggregatorService : IGenerationResultAggregatorServ
 
     public GenerationReport Analyze(IEnumerable<GenerationResult> results)
     {
-        if (results == null)
+        if (results is null)
             throw new ArgumentNullException(nameof(results));
 
         var resultsList = results.ToList();
@@ -124,7 +126,7 @@ public class GenerationResultAggregatorService : IGenerationResultAggregatorServ
 
     public string GenerateReport(GenerationReport report)
     {
-        if (report == null)
+        if (report is null)
             throw new ArgumentNullException(nameof(report));
 
         var sb = new System.Text.StringBuilder();
@@ -192,7 +194,7 @@ public class GenerationResultAggregatorService : IGenerationResultAggregatorServ
 
     public GenerationStatistics GetStatistics(IEnumerable<GenerationResult> results)
     {
-        if (results == null)
+        if (results is null)
             throw new ArgumentNullException(nameof(results));
 
         var resultsList = results.ToList();
@@ -243,7 +245,7 @@ public class GenerationResultAggregatorService : IGenerationResultAggregatorServ
 
     public async Task<string> ExportToJsonAsync(GenerationReport report)
     {
-        if (report == null)
+        if (report is null)
             throw new ArgumentNullException(nameof(report));
 
         _logger.LogInformation("Exporting report to JSON format");

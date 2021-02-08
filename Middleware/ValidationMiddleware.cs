@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Middleware;
 /// Middleware that validates CLI options and project structure before generation.
 /// Prevents invalid configurations from reaching generators and wasting resources.
 /// </summary>
-public class ValidationMiddleware : IMiddleware
+public sealed class ValidationMiddleware : IMiddleware
 {
     private readonly ILogger<ValidationMiddleware> _logger;
     private readonly CLI.ICliArgumentParser _argumentParser;
@@ -31,7 +33,7 @@ public class ValidationMiddleware : IMiddleware
         _logger.LogInformation("[{RequestId}] Starting validation phase", requestId);
 
         // Validate CLI options
-        if (context.CliOptions == null)
+        if (context.CliOptions is null)
         {
             var msg = "CLI options are not set in context";
             _logger.LogError("[{RequestId}] {Message}", requestId, msg);

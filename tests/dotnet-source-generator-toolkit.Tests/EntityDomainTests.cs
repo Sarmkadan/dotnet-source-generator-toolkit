@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,7 +10,7 @@ using FluentAssertions;
 
 namespace DotNetSourceGeneratorToolkit.Tests;
 
-public class EntityTests
+public sealed class EntityTests
 {
     [Fact]
     public void AddProperty_WhenDuplicatePropertyName_ThrowsInvalidOperationException()
@@ -59,7 +61,7 @@ public class EntityTests
     }
 }
 
-public class EntityPropertyTests
+public sealed class EntityPropertyTests
 {
     [Fact]
     public void GetClrTypeName_WithNullableIntType_ReturnsNullableIntSuffix()
@@ -108,7 +110,7 @@ public class EntityPropertyTests
     }
 }
 
-public class GenerationResultTests
+public sealed class GenerationResultTests
 {
     [Fact]
     public void AddError_WhenCalled_SetsStatusToFailedAndRecordsMessage()

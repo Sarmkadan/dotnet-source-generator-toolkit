@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.CLI;
 /// Represents command-line options parsed from user input.
 /// Encapsulates all configuration needed to execute the toolkit.
 /// </summary>
-public class CliOptions
+public sealed class CliOptions
 {
     /// <summary>
     /// Path to the project to analyze. Defaults to current working directory.

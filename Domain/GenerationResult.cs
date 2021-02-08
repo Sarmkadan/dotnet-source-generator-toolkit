@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents the result of a source code generation operation, including
 /// generated content, status, and any errors or warnings that occurred.
 /// </summary>
-public class GenerationResult
+public sealed class GenerationResult
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 

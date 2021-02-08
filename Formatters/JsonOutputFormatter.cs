@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// Formats generation results as JSON with pretty-printing for readability.
 /// Includes metadata about generation execution and results.
 /// </summary>
-public class JsonOutputFormatter : IOutputFormatter
+public sealed class JsonOutputFormatter : IOutputFormatter
 {
     public string FileExtension => ".json";
     public string FormatName => "JSON";

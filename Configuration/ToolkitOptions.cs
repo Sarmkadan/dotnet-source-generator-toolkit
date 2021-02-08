@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Configuration;
 /// Configuration options for the toolkit loaded from config file or environment.
 /// Provides defaults and allows fine-tuning of generator behavior.
 /// </summary>
-public class ToolkitOptions
+public sealed class ToolkitOptions
 {
     /// <summary>
     /// Enable caching of analysis results across runs.

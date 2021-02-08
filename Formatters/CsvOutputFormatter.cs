@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// Formats generation results as CSV for import into spreadsheets and data analysis tools.
 /// Handles proper escaping of values containing special characters.
 /// </summary>
-public class CsvOutputFormatter : IOutputFormatter
+public sealed class CsvOutputFormatter : IOutputFormatter
 {
     public string FileExtension => ".csv";
     public string FormatName => "CSV";
