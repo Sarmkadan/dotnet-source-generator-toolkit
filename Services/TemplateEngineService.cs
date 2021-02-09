@@ -136,13 +136,24 @@ public sealed class TemplateEngineService : ITemplateEngineService
         _filters["capitalize"] = obj =>
         {
             var str = obj?.ToString();
-            return string.IsNullOrEmpty(str) ? str : char.ToUpper(str[0]) + str[1..];
+            if (string.IsNullOrEmpty(str)) return string.Empty;
+            return str.Length == 1 ? char.ToUpper(str[0]).ToString() : char.ToUpper(str[0]) + str[1..];
+        };
+        _filters["camelCase"] = obj =>
+        {
+            var str = obj?.ToString();
+            if (string.IsNullOrEmpty(str)) return string.Empty;
+            return str.Length == 1 ? char.ToLower(str[0]).ToString() : char.ToLower(str[0]) + str[1..];
         };
         _filters["pluralize"] = obj =>
         {
             var str = obj?.ToString();
-            if (string.IsNullOrEmpty(str)) return str;
-            return str.EndsWith("y") ? str[..^1] + "ies" : str + "s";
+            if (string.IsNullOrEmpty(str)) return string.Empty;
+            if (str.EndsWith("ss") || str.EndsWith("sh") || str.EndsWith("ch") || str.EndsWith("x") || str.EndsWith("z"))
+                return str + "es";
+            if (str.EndsWith("y") && str.Length > 1 && !"aeiou".Contains(str[^2]))
+                return str[..^1] + "ies";
+            return str + "s";
         };
         _filters["trim"] = obj => obj?.ToString()?.Trim() ?? string.Empty;
 
