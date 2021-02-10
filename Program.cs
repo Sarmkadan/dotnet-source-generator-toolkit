@@ -97,6 +97,9 @@ class Program
         services.AddScoped<IAttributeAnalyzer, AttributeAnalyzer>();
         services.AddScoped<IEntityAnalyzer, EntityAnalyzer>();
 
+        // Register Caching
+        services.AddSingleton<ICache, MemoryCache>();
+
         return services;
     }
 }
