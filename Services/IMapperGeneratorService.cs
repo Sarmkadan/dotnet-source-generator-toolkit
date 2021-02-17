@@ -6,32 +6,23 @@
 // =============================================================================
 
 using DotNetSourceGeneratorToolkit.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
 /// <summary>
-/// Contract for generating mapping code between entities and DTOs.
-/// Creates bidirectional mappers with null handling.
+/// Generates mapper implementations for entity transformations.
 /// </summary>
 public interface IMapperGeneratorService
 {
     /// <summary>
-    /// Generate mapper for a single entity.
+    /// Generates all mappers for a set of entities.
     /// </summary>
-    Task<GenerationResult> GenerateMapperAsync(Entity entity);
+    Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities);
 
     /// <summary>
-    /// Generate mappers for multiple entities.
+    /// Generates a mapper from one entity to another.
     /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(IEnumerable<Entity> entities);
-
-    /// <summary>
-    /// Generate DTO class for entity.
-    /// </summary>
-    Task<string> GenerateDtoAsync(Entity entity);
-
-    /// <summary>
-    /// Generate mapping methods only.
-    /// </summary>
-    Task<string> GenerateMappingMethodsAsync(Entity entity);
+    Task<GenerationResult> GenerateMapperAsync(Entity sourceEntity, Entity targetEntity);
 }
