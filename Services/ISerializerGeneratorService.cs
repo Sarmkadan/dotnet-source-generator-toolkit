@@ -6,45 +6,23 @@
 // =============================================================================
 
 using DotNetSourceGeneratorToolkit.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
 /// <summary>
-/// Contract for generating serialization/deserialization code.
-/// Creates JSON, XML, and binary serializers with custom handling.
+/// Generates serialization/deserialization code.
 /// </summary>
 public interface ISerializerGeneratorService
 {
     /// <summary>
-    /// Generate serializer for a single entity.
+    /// Generates serializers for all entities.
     /// </summary>
-    Task<GenerationResult> GenerateSerializerAsync(Entity entity, SerializationFormat format);
+    Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities);
 
     /// <summary>
-    /// Generate serializers for multiple entities in specified format.
+    /// Generates a serializer for a specific entity.
     /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(
-        IEnumerable<Entity> entities,
-        SerializationFormat format);
-
-    /// <summary>
-    /// Generate serialization methods only.
-    /// </summary>
-    Task<string> GenerateSerializationMethodsAsync(Entity entity, SerializationFormat format);
-
-    /// <summary>
-    /// Generate deserialization methods only.
-    /// </summary>
-    Task<string> GenerateDeserializationMethodsAsync(Entity entity, SerializationFormat format);
-}
-
-/// <summary>
-/// Supported serialization formats.
-/// </summary>
-public enum SerializationFormat
-{
-    Json,
-    Xml,
-    Binary,
-    Csv,
+    Task<GenerationResult> GenerateSerializerAsync(Entity entity, SerializerFormat format);
 }
