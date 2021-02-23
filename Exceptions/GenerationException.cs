@@ -77,7 +77,7 @@ public sealed class ValidatorGenerationException : GenerationException
 /// <summary>
 /// Thrown when configuration is invalid.
 /// </summary>
-public sealed class ConfigurationException : GenerationException
+public class ConfigurationException : GenerationException
 {
     public ConfigurationException(string message) : base(message) { }
 
