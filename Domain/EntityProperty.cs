@@ -58,7 +58,14 @@ public sealed class EntityProperty
     /// </summary>
     public string GetClrTypeName()
     {
-        var baseName = Type switch
+        if (string.IsNullOrEmpty(Type))
+            return IsNullable ? "object?" : "object";
+
+        // Strip a trailing ? so callers that set Type = "AddressRecord?" are handled safely.
+        var rawType = Type.TrimEnd('?');
+        var effectivelyNullable = IsNullable || Type.EndsWith('?');
+
+        var baseName = rawType switch
         {
             "int" or "integer" => "int",
             "long" => "long",
@@ -68,13 +75,13 @@ public sealed class EntityProperty
             "bool" or "boolean" => "bool",
             "datetime" or "DateTime" => "DateTime",
             "guid" or "Guid" => "Guid",
-            _ => Type
+            _ => rawType
         };
 
         if (IsCollection)
             return $"List<{baseName}>";
 
-        return IsNullable ? $"{baseName}?" : baseName;
+        return effectivelyNullable ? $"{baseName}?" : baseName;
     }
 
     /// <summary>

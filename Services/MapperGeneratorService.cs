@@ -94,6 +94,8 @@ public sealed class MapperGeneratorService : IMapperGeneratorService
 // CTO & Software Architect
 // =============================================================================
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -113,7 +115,7 @@ namespace {entity.Namespace}.Mappers
     public sealed class {mapperClassName}
     {{
         /// <summary>Maps an entity to its DTO representation.</summary>
-        public static {dtoClassName} MapToDto({entity.Name} entity)
+        public static {dtoClassName}? MapToDto({entity.Name}? entity)
         {{
             if (entity is null)
                 return null;
@@ -123,7 +125,7 @@ namespace {entity.Namespace}.Mappers
         }}
 
         /// <summary>Maps a DTO back to entity.</summary>
-        public static {entity.Name} MapFromDto({dtoClassName} dto)
+        public static {entity.Name}? MapFromDto({dtoClassName}? dto)
         {{
             if (dto is null)
                 return null;
@@ -133,12 +135,19 @@ namespace {entity.Namespace}.Mappers
         }}
 
         /// <summary>Maps a collection of entities to DTOs.</summary>
-        public static IEnumerable<{dtoClassName}> MapToDtos(IEnumerable<{entity.Name}> entities)
+        public static IEnumerable<{dtoClassName}> MapToDtos(IEnumerable<{entity.Name}>? entities)
         {{
             if (entities is null)
                 return new List<{dtoClassName}>();
 
-            return entities.ConvertAll(e => MapToDto(e));
+            var results = new List<{dtoClassName}>();
+            foreach (var e in entities)
+            {{
+                var dto = MapToDto(e);
+                if (dto is not null)
+                    results.Add(dto);
+            }}
+            return results;
         }}
     }}
 }}";
