@@ -101,6 +101,11 @@ public sealed class TemplateEngineService : ITemplateEngineService
         if (ifCount != endIfCount)
             errors.Add($"Unmatched if tags: {ifCount} opening, {endIfCount} closing");
 
+        // {{#else}} must appear inside an if block, so its count cannot exceed the number of {{#if}}
+        var elseCount = CountOccurrences(template, "{{#else}}");
+        if (elseCount > ifCount)
+            errors.Add($"More {{#else}} tags ({elseCount}) than {{#if}} blocks ({ifCount})");
+
         // Check for balanced loop tags
         var forCount = CountOccurrences(template, "{{#for");
         var endForCount = CountOccurrences(template, "{{/for}}");
@@ -162,18 +167,20 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
     private string ProcessConditionals(string template, Dictionary<string, object> context)
     {
-        var pattern = @"{{#if\s+(\w+)}}(.*?){{/if}}";
+        // Match {{#if var}}...{{#else}}...{{/if}} or {{#if var}}...{{/if}}
+        var pattern = @"{{#if\s+(\w+)}}(.*?)(?:{{#else}}(.*?))?{{/if}}";
         var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
 
         return regex.Replace(template, match =>
         {
             var variable = match.Groups[1].Value;
-            var content = match.Groups[2].Value;
+            var trueContent = match.Groups[2].Value;
+            var falseContent = match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
 
             if (context.TryGetValue(variable, out var value) && IsTruthy(value))
-                return content;
+                return trueContent;
 
-            return string.Empty;
+            return falseContent;
         });
     }
 
