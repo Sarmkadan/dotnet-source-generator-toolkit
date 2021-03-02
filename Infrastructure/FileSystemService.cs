@@ -38,12 +38,12 @@ public sealed class FileSystemService : IFileSystemService
         catch (FileNotFoundException ex)
         {
             _logger.LogError(ex, "File not found: {FilePath}", filePath);
-            throw new GenerationException($"File not found: {filePath}", ex);
+            throw new FileSystemException($"File not found: {filePath}", ex);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error reading file: {FilePath}", filePath);
-            throw new GenerationException($"Error reading file {filePath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error reading file {filePath}: {ex.Message}", ex);
         }
     }
 
@@ -68,7 +68,7 @@ public sealed class FileSystemService : IFileSystemService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error writing file: {FilePath}", filePath);
-            throw new GenerationException($"Error writing file {filePath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error writing file {filePath}: {ex.Message}", ex);
         }
     }
 
@@ -86,7 +86,7 @@ public sealed class FileSystemService : IFileSystemService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error appending to file: {FilePath}", filePath);
-            throw new GenerationException($"Error appending to file {filePath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error appending to file {filePath}: {ex.Message}", ex);
         }
     }
 
@@ -116,7 +116,7 @@ public sealed class FileSystemService : IFileSystemService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
-            throw new GenerationException($"Error deleting file {filePath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error deleting file {filePath}: {ex.Message}", ex);
         }
     }
 
@@ -138,7 +138,7 @@ public sealed class FileSystemService : IFileSystemService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating directory: {DirectoryPath}", dirPath);
-            throw new GenerationException($"Error creating directory {dirPath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error creating directory {dirPath}: {ex.Message}", ex);
         }
     }
 
@@ -159,7 +159,7 @@ public sealed class FileSystemService : IFileSystemService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting files from directory: {DirectoryPath}", dirPath);
-            throw new GenerationException($"Error reading directory {dirPath}: {ex.Message}", ex);
+            throw new FileSystemException($"Error reading directory {dirPath}: {ex.Message}", ex);
         }
     }
 

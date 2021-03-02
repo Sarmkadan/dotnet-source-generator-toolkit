@@ -44,12 +44,12 @@ public sealed class HttpClientService : IHttpClientService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP error during GET {Url}", url);
-            throw;
+            throw new IntegrationException($"HTTP error during GET {url}", ex);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error during GET {Url}", url);
-            throw;
+            throw new IntegrationException($"Unexpected error during GET {url}", ex);
         }
     }
 
@@ -68,7 +68,12 @@ public sealed class HttpClientService : IHttpClientService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP error during POST {Url}", url);
-            throw;
+            throw new IntegrationException($"HTTP error during POST {url}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during POST {Url}", url);
+            throw new IntegrationException($"Unexpected error during POST {url}", ex);
         }
     }
 
@@ -84,7 +89,12 @@ public sealed class HttpClientService : IHttpClientService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP error during PUT {Url}", url);
-            throw;
+            throw new IntegrationException($"HTTP error during PUT {url}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during PUT {Url}", url);
+            throw new IntegrationException($"Unexpected error during PUT {url}", ex);
         }
     }
 
@@ -100,7 +110,12 @@ public sealed class HttpClientService : IHttpClientService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP error during DELETE {Url}", url);
-            throw;
+            throw new IntegrationException($"HTTP error during DELETE {url}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during DELETE {Url}", url);
+            throw new IntegrationException($"Unexpected error during DELETE {url}", ex);
         }
     }
 
@@ -123,7 +138,7 @@ public sealed class HttpClientService : IHttpClientService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during {Method} {Url}", method.Method, url);
-            throw;
+            throw new IntegrationException($"Error during {method.Method} {url}", ex);
         }
     }
 }
