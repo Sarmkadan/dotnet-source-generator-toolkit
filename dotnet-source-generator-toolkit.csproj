@@ -23,6 +23,11 @@
 
   <ItemGroup>
     <Compile Remove="benchmarks\**\*.cs" />
+    <Compile Remove="tests\**\*.cs" />
+    <Compile Remove="examples\**\*.cs" />
+    <None Remove="benchmarks\**\*" />
+    <None Remove="tests\**\*" />
+    <None Remove="examples\**\*" />
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 

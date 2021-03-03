@@ -7,6 +7,7 @@
 
 using DotNetSourceGeneratorToolkit.Utilities;
 using FluentAssertions;
+using Xunit;
 
 namespace DotNetSourceGeneratorToolkit.Tests;
 

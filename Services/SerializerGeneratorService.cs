@@ -62,8 +62,8 @@ public sealed class SerializerGeneratorService : ISerializerGeneratorService
             EntityName = entity.Name,
             GeneratorType = GeneratorType.Serializer,
             Status = GenerationStatus.InProgress,
-            Metadata = new Dictionary<string, string> { { "Format", formatName } },
         };
+        result.Metadata["Format"] = formatName;
 
         try
         {

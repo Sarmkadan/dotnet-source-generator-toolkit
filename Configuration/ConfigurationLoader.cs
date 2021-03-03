@@ -108,19 +108,19 @@ public sealed class ConfigurationLoader
     {
         return new ToolkitOptions
         {
-            EnableCaching = loaded.EnableCaching ?? defaults.EnableCaching,
+            EnableCaching = loaded.EnableCaching,
             CacheExpirationMinutes = loaded.CacheExpirationMinutes > 0 ? loaded.CacheExpirationMinutes : defaults.CacheExpirationMinutes,
-            EnableCodeFormatting = loaded.EnableCodeFormatting ?? defaults.EnableCodeFormatting,
+            EnableCodeFormatting = loaded.EnableCodeFormatting,
             CodeFormattingLineLength = loaded.CodeFormattingLineLength > 0 ? loaded.CodeFormattingLineLength : defaults.CodeFormattingLineLength,
-            VerboseLogging = loaded.VerboseLogging ?? defaults.VerboseLogging,
+            VerboseLogging = loaded.VerboseLogging,
             MaxDegreeOfParallelism = loaded.MaxDegreeOfParallelism > 0 ? loaded.MaxDegreeOfParallelism : defaults.MaxDegreeOfParallelism,
             OperationTimeoutSeconds = loaded.OperationTimeoutSeconds > 0 ? loaded.OperationTimeoutSeconds : defaults.OperationTimeoutSeconds,
-            GenerateDtos = loaded.GenerateDtos ?? defaults.GenerateDtos,
+            GenerateDtos = loaded.GenerateDtos,
             DefaultNamespace = loaded.DefaultNamespace ?? defaults.DefaultNamespace,
             OutputDirectory = !string.IsNullOrEmpty(loaded.OutputDirectory) ? loaded.OutputDirectory : defaults.OutputDirectory,
-            BackupExistingFiles = loaded.BackupExistingFiles ?? defaults.BackupExistingFiles,
-            GenerateInterfaces = loaded.GenerateInterfaces ?? defaults.GenerateInterfaces,
-            GenerateXmlComments = loaded.GenerateXmlComments ?? defaults.GenerateXmlComments,
+            BackupExistingFiles = loaded.BackupExistingFiles,
+            GenerateInterfaces = loaded.GenerateInterfaces,
+            GenerateXmlComments = loaded.GenerateXmlComments,
         };
     }
 }

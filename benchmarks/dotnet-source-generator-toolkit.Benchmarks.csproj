@@ -15,12 +15,11 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DotNetSourceGeneratorToolkit">
-      <HintPath>../bin/Release/net8.0/DotNetSourceGeneratorToolkit.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="../dotnet-source-generator-toolkit.csproj" />
   </ItemGroup>
 
 </Project>

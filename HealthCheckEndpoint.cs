@@ -1,5 +1,4 @@
 #nullable enable
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace DotNetSourceGeneratorToolkit
