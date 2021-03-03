@@ -7,6 +7,7 @@
 
 using System.Text;
 using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Exceptions;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using Microsoft.Extensions.Logging;
 
@@ -39,8 +40,8 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
     public TemplateEngineService(IFileSystemService fileSystemService, ILogger<TemplateEngineService> logger)
     {
-        _fileSystemService = fileSystemService;
-        _logger = logger;
+        _fileSystemService = fileSystemService ?? throw new ArgumentNullException(nameof(fileSystemService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         RegisterDefaultFilters();
     }
 
@@ -54,27 +55,35 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
         _logger.LogInformation("Rendering template with {Count} context variables", context.Count);
 
-        var result = template;
-
-        // Process variable substitutions
-        foreach (var kvp in context)
+        try
         {
-            var placeholder = $"{{{{{kvp.Key}}}}}";
-            var value = kvp.Value?.ToString() ?? string.Empty;
-            result = result.Replace(placeholder, value, StringComparison.OrdinalIgnoreCase);
+            var result = template;
+
+            // Process variable substitutions
+            foreach (var kvp in context)
+            {
+                var placeholder = "{{" + kvp.Key + "}}";
+                var value = kvp.Value?.ToString() ?? string.Empty;
+                result = result.Replace(placeholder, value, StringComparison.OrdinalIgnoreCase);
+            }
+
+            // Process conditional blocks
+            result = ProcessConditionals(result, context);
+
+            // Process loops
+            result = ProcessLoops(result, context);
+
+            // Process filters
+            result = ProcessFilters(result, context);
+
+            _logger.LogInformation("Template rendered successfully ({Length} characters)", new { Length = result.Length });
+            return await Task.FromResult(result);
         }
-
-        // Process conditional blocks
-        result = ProcessConditionals(result, context);
-
-        // Process loops
-        result = ProcessLoops(result, context);
-
-        // Process filters
-        result = ProcessFilters(result, context);
-
-        _logger.LogInformation("Template rendered successfully ({0} characters)", result.Length);
-        return await Task.FromResult(result);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error rendering template");
+            throw new GenerationException("Error rendering template", ex);
+        }
     }
 
     public async Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context)
@@ -84,8 +93,21 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
         _logger.LogInformation("Loading template from file: {TemplatePath}", templatePath);
 
-        var template = await _fileSystemService.ReadFileAsync(templatePath);
-        return await RenderAsync(template, context);
+        try
+        {
+            var template = await _fileSystemService.ReadFileAsync(templatePath);
+            return await RenderAsync(template, context);
+        }
+        catch (FileSystemException ex)
+        {
+            _logger.LogError(ex, "File system error loading template from file: {TemplatePath}", templatePath);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading template from file: {TemplatePath}", templatePath);
+            throw new GenerationException($"Error loading template from file {templatePath}", ex);
+        }
     }
 
     public bool ValidateTemplate(string template)
@@ -93,33 +115,41 @@ public sealed class TemplateEngineService : ITemplateEngineService
         if (string.IsNullOrEmpty(template))
             return false;
 
-        var errors = new List<string>();
-
-        // Check for balanced conditional tags
-        var ifCount = CountOccurrences(template, "{{#if");
-        var endIfCount = CountOccurrences(template, "{{/if}}");
-        if (ifCount != endIfCount)
-            errors.Add($"Unmatched if tags: {ifCount} opening, {endIfCount} closing");
-
-        // {{#else}} must appear inside an if block, so its count cannot exceed the number of {{#if}}
-        var elseCount = CountOccurrences(template, "{{#else}}");
-        if (elseCount > ifCount)
-            errors.Add($"More {{#else}} tags ({elseCount}) than {{#if}} blocks ({ifCount})");
-
-        // Check for balanced loop tags
-        var forCount = CountOccurrences(template, "{{#for");
-        var endForCount = CountOccurrences(template, "{{/for}}");
-        if (forCount != endForCount)
-            errors.Add($"Unmatched for tags: {forCount} opening, {endForCount} closing");
-
-        if (errors.Count > 0)
+        try
         {
-            _logger.LogWarning("Template validation found {Count} errors", errors.Count);
-            return false;
-        }
+            var errors = new List<string>();
 
-        _logger.LogInformation("Template validation passed");
-        return true;
+            // Check for balanced conditional tags
+            var ifCount = CountOccurrences(template, "{{#if");
+            var endIfCount = CountOccurrences(template, "{{/if}}");
+            if (ifCount != endIfCount)
+                errors.Add($"Unmatched if tags: {ifCount} opening, {endIfCount} closing");
+
+            // {{#else}} must appear inside an if block, so its count cannot exceed the number of {{#if}}
+            var elseCount = CountOccurrences(template, "{{#else}}");
+            if (elseCount > ifCount)
+                errors.Add($"More {{#else}} tags ({elseCount}) than {{#if}} blocks ({ifCount})");
+
+            // Check for balanced loop tags
+            var forCount = CountOccurrences(template, "{{#for");
+            var endForCount = CountOccurrences(template, "{{/for}}");
+            if (forCount != endForCount)
+                errors.Add($"Unmatched for tags: {forCount} opening, {endForCount} closing");
+
+            if (errors.Count > 0)
+            {
+                _logger.LogWarning("Template validation found {Count} errors", errors.Count);
+                return false;
+            }
+
+            _logger.LogInformation("Template validation passed");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating template");
+            throw new GenerationException("Error validating template syntax", ex);
+        }
     }
 
     public void RegisterFilter(string filterName, Func<object, string> filterFunc)
@@ -130,118 +160,166 @@ public sealed class TemplateEngineService : ITemplateEngineService
         if (filterFunc is null)
             throw new ArgumentNullException(nameof(filterFunc));
 
-        _filters[filterName] = filterFunc;
-        _logger.LogInformation("Registered custom filter: {FilterName}", filterName);
+        try
+        {
+            _filters[filterName] = filterFunc;
+            _logger.LogInformation("Registered custom filter: {FilterName}", filterName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error registering custom filter: {FilterName}", filterName);
+            throw new GenerationException($"Error registering filter '{filterName}'", ex);
+        }
     }
 
     private void RegisterDefaultFilters()
     {
-        _filters["upper"] = obj => obj?.ToString()?.ToUpper() ?? string.Empty;
-        _filters["lower"] = obj => obj?.ToString()?.ToLower() ?? string.Empty;
-        _filters["capitalize"] = obj =>
+        try
         {
-            var str = obj?.ToString();
-            if (string.IsNullOrEmpty(str)) return string.Empty;
-            return str.Length == 1 ? char.ToUpper(str[0]).ToString() : char.ToUpper(str[0]) + str[1..];
-        };
-        _filters["camelCase"] = obj =>
-        {
-            var str = obj?.ToString();
-            if (string.IsNullOrEmpty(str)) return string.Empty;
-            return str.Length == 1 ? char.ToLower(str[0]).ToString() : char.ToLower(str[0]) + str[1..];
-        };
-        _filters["pluralize"] = obj =>
-        {
-            var str = obj?.ToString();
-            if (string.IsNullOrEmpty(str)) return string.Empty;
-            if (str.EndsWith("ss") || str.EndsWith("sh") || str.EndsWith("ch") || str.EndsWith("x") || str.EndsWith("z"))
-                return str + "es";
-            if (str.EndsWith("y") && str.Length > 1 && !"aeiou".Contains(str[^2]))
-                return str[..^1] + "ies";
-            return str + "s";
-        };
-        _filters["trim"] = obj => obj?.ToString()?.Trim() ?? string.Empty;
+            _filters["upper"] = obj => obj?.ToString()?.ToUpper() ?? string.Empty;
+            _filters["lower"] = obj => obj?.ToString()?.ToLower() ?? string.Empty;
+            _filters["capitalize"] = obj =>
+            {
+                var str = obj?.ToString();
+                if (string.IsNullOrEmpty(str)) return string.Empty;
+                return str.Length == 1 ? char.ToUpper(str[0]).ToString() : char.ToUpper(str[0]) + str[1..];
+            };
+            _filters["camelCase"] = obj =>
+            {
+                var str = obj?.ToString();
+                if (string.IsNullOrEmpty(str)) return string.Empty;
+                return str.Length == 1 ? char.ToLower(str[0]).ToString() : char.ToLower(str[0]) + str[1..];
+            };
+            _filters["pluralize"] = obj =>
+            {
+                var str = obj?.ToString();
+                if (string.IsNullOrEmpty(str)) return string.Empty;
+                if (str.EndsWith("ss") || str.EndsWith("sh") || str.EndsWith("ch") || str.EndsWith("x") || str.EndsWith("z"))
+                    return str + "es";
+                if (str.EndsWith("y") && str.Length > 1 && !"aeiou".Contains(str[^2]))
+                    return str[..^1] + "ies";
+                return str + "s";
+            };
+            _filters["trim"] = obj => obj?.ToString()?.Trim() ?? string.Empty;
 
-        _logger.LogInformation("Registered {Count} default filters", _filters.Count);
+            _logger.LogInformation("Registered {Count} default filters", _filters.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error registering default filters");
+            throw new GenerationException("Error registering default filters", ex);
+        }
     }
 
     private string ProcessConditionals(string template, Dictionary<string, object> context)
     {
-        // Match {{#if var}}...{{#else}}...{{/if}} or {{#if var}}...{{/if}}
-        var pattern = @"{{#if\s+(\w+)}}(.*?)(?:{{#else}}(.*?))?{{/if}}";
-        var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
-
-        return regex.Replace(template, match =>
+        try
         {
-            var variable = match.Groups[1].Value;
-            var trueContent = match.Groups[2].Value;
-            var falseContent = match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
+            // Match {{#if var}}...{{#else}}...{{/if}} or {{#if var}}...{{/if}}
+            var pattern = @"{{#if\s+(\w+)}}(.*?)(?:{{#else}}(.*?))?{{/if}}";
+            var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
 
-            if (context.TryGetValue(variable, out var value) && IsTruthy(value))
-                return trueContent;
+            return regex.Replace(template, match =>
+            {
+                var variable = match.Groups[1].Value;
+                var trueContent = match.Groups[2].Value;
+                var falseContent = match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
 
-            return falseContent;
-        });
+                if (context.TryGetValue(variable, out var value) && IsTruthy(value))
+                    return trueContent;
+
+                return falseContent;
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error processing conditional blocks in template");
+            return template;
+        }
     }
 
     private string ProcessLoops(string template, Dictionary<string, object> context)
     {
-        var pattern = @"{{#for\s+(\w+)\s+in\s+(\w+)}}(.*?){{/for}}";
-        var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
-
-        return regex.Replace(template, match =>
+        try
         {
-            var itemVar = match.Groups[1].Value;
-            var collectionVar = match.Groups[2].Value;
-            var content = match.Groups[3].Value;
+            var pattern = @"{{#for\s+(\w+)\s+in\s+(\w+)}}(.*?){{/for}}";
+            var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
 
-            if (!context.TryGetValue(collectionVar, out var collection))
-                return string.Empty;
-
-            if (collection is not IEnumerable<object> enumerable)
-                return string.Empty;
-
-            var result = new StringBuilder();
-            foreach (var item in enumerable)
+            return regex.Replace(template, match =>
             {
-                var itemContext = new Dictionary<string, object>(context) { [itemVar] = item };
-                result.Append(ProcessVariables(content, itemContext));
-            }
+                var itemVar = match.Groups[1].Value;
+                var collectionVar = match.Groups[2].Value;
+                var content = match.Groups[3].Value;
 
-            return result.ToString();
-        });
+                if (!context.TryGetValue(collectionVar, out var collection))
+                    return string.Empty;
+
+                if (collection is not IEnumerable<object> enumerable)
+                    return string.Empty;
+
+                var result = new StringBuilder();
+                foreach (var item in enumerable)
+                {
+                    var itemContext = new Dictionary<string, object>(context) { [itemVar] = item };
+                    result.Append(ProcessVariables(content, itemContext));
+                }
+
+                return result.ToString();
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error processing loop blocks in template");
+            return template;
+        }
     }
 
     private string ProcessFilters(string template, Dictionary<string, object> context)
     {
-        var pattern = @"{{\s*(\w+)\s*\|\s*(\w+)\s*}}";
-        var regex = new System.Text.RegularExpressions.Regex(pattern);
-
-        return regex.Replace(template, match =>
+        try
         {
-            var variable = match.Groups[1].Value;
-            var filterName = match.Groups[2].Value;
+            var pattern = @"{{\s*(\w+)\s*|\s*(\w+)\s*}}";
+            var regex = new System.Text.RegularExpressions.Regex(pattern);
 
-            if (!context.TryGetValue(variable, out var value))
-                return string.Empty;
+            return regex.Replace(template, match =>
+            {
+                var variable = match.Groups[1].Value;
+                var filterName = match.Groups[2].Value;
 
-            if (_filters.TryGetValue(filterName, out var filter))
-                return filter(value);
+                if (!context.TryGetValue(variable, out var value))
+                    return string.Empty;
 
-            return value?.ToString() ?? string.Empty;
-        });
+                if (_filters.TryGetValue(filterName, out var filter))
+                    return filter(value);
+
+                return value?.ToString() ?? string.Empty;
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error processing filters in template");
+            return template;
+        }
     }
 
     private string ProcessVariables(string template, Dictionary<string, object> context)
     {
-        foreach (var kvp in context)
+        try
         {
-            var placeholder = $"{{{{{kvp.Key}}}}}";
-            var value = kvp.Value?.ToString() ?? string.Empty;
-            template = template.Replace(placeholder, value, StringComparison.OrdinalIgnoreCase);
-        }
+            foreach (var kvp in context)
+            {
+                var placeholder = "{{" + kvp.Key + "}}";
+                var value = kvp.Value?.ToString() ?? string.Empty;
+                template = template.Replace(placeholder, value, StringComparison.OrdinalIgnoreCase);
+            }
 
-        return template;
+            return template;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error processing variables in template");
+            return template;
+        }
     }
 
     private bool IsTruthy(object value)

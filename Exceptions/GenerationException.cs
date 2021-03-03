@@ -10,7 +10,7 @@ namespace DotNetSourceGeneratorToolkit.Exceptions;
 /// <summary>
 /// Base exception for source code generation errors.
 /// </summary>
-public class GenerationException : Exception
+public class GenerationException : DotNetSourceGeneratorToolkitException
 {
     public string? GeneratorType { get; set; }
 
