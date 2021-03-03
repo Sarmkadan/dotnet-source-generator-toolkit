@@ -78,3 +78,5 @@ coverage/
 
 # Package lock files (can be committed or not depending on preference)
 packages.lock.json
+BenchmarkDotNet.Artifacts/
+.aider*
