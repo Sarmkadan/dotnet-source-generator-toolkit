@@ -3,7 +3,7 @@
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
-// =============================================================================
+// =====================================================================
 
 using DotNetSourceGeneratorToolkit.Batch;
 using DotNetSourceGeneratorToolkit.Caching;
@@ -15,11 +15,14 @@ using DotNetSourceGeneratorToolkit.Middleware;
 using DotNetSourceGeneratorToolkit.Repositories;
 using DotNetSourceGeneratorToolkit.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit;
 
 class Program
 {
+    private static ILogger<Program>? _logger;
+
     static async Task Main(string[] args)
     {
         var services = ConfigureServices();
@@ -27,50 +30,51 @@ class Program
 
         try
         {
+            _logger = provider.GetRequiredService<ILogger<Program>>();
             var generatorService = provider.GetRequiredService<ISourceGeneratorService>();
             var projectPath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
 
-            Console.WriteLine("╔════════════════════════════════════════════════╗");
-            Console.WriteLine("║  .NET Source Generator Toolkit                 ║");
-            Console.WriteLine("║  Roslyn-powered code generation from attributes║");
-            Console.WriteLine("╚════════════════════════════════════════════════╝");
-            Console.WriteLine();
+            _logger.LogInformation("╔════════════════════════════════════════════════╗");
+            _logger.LogInformation("║ .NET Source Generator Toolkit ║");
+            _logger.LogInformation("║ Roslyn-powered code generation from attributes║");
+            _logger.LogInformation("╚════════════════════════════════════════════════╝");
+            _logger.LogInformation("Starting source generation toolkit...");
+            _logger.LogInformation("Analyzing project: {ProjectPath}", projectPath);
 
-            Console.WriteLine($"Analyzing project: {projectPath}");
             var projectInfo = await generatorService.AnalyzeProjectAsync(projectPath);
 
             if (projectInfo.Entities.Count == 0)
             {
-                Console.WriteLine("No entities found for generation.");
+                _logger.LogWarning("No entities found for generation.");
                 return;
             }
 
-            Console.WriteLine($"Found {projectInfo.Entities.Count} entities to process.");
-            Console.WriteLine();
+            _logger.LogInformation("Found {EntityCount} entities to process.", projectInfo.Entities.Count);
 
             // Generate repositories
             var repoGenerator = provider.GetRequiredService<IRepositoryGeneratorService>();
             foreach (var entity in projectInfo.Entities)
             {
                 var repository = await repoGenerator.GenerateRepositoryAsync(entity);
-                Console.WriteLine($"✓ Generated repository for: {repository.EntityName}");
+                _logger.LogInformation("✓ Generated repository for: {EntityName}", repository.EntityName);
             }
 
             // Generate mappers
             var mapperGenerator = provider.GetRequiredService<IMapperGeneratorService>();
             var mappers = await mapperGenerator.GenerateAllMappersAsync(projectInfo.Entities);
-            Console.WriteLine($"✓ Generated {mappers.Count()} mapper(s)");
+            _logger.LogInformation("✓ Generated {MapperCount} mapper(s)", mappers.Count());
 
             // Generate validators
             var validatorGenerator = provider.GetRequiredService<IValidatorGeneratorService>();
             var validators = await validatorGenerator.GenerateAllValidatorsAsync(projectInfo.Entities);
-            Console.WriteLine($"✓ Generated {validators.Count()} validator(s)");
+            _logger.LogInformation("✓ Generated {ValidatorCount} validator(s)", validators.Count());
 
-            Console.WriteLine();
-            Console.WriteLine("Generation completed successfully!");
+            _logger.LogInformation("Generation completed successfully!");
         }
         catch (Exception ex)
         {
+            var logger = provider.GetService<ILogger<Program>>();
+            logger?.LogError(ex, "Application error occurred");
             Console.Error.WriteLine($"Error: {ex.Message}");
             Environment.Exit(1);
         }
