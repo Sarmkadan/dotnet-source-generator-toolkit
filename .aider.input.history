@@ -4212,3 +4212,213 @@
 +- chore: add examples and supporting files
 +- chore: add Docker support
 +- chore: add NuGet package metadata
+
+# 2026-07-09 04:35:05.908297
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
+
+# 2026-07-09 04:35:05.908362
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
+
+# 2026-07-09 04:36:18.786794
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
+
+# 2026-07-09 04:36:18.786852
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
+
+# 2026-07-09 04:37:28.515259
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
+
+# 2026-07-09 04:37:28.515320
++Improve configuration in sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Create an Options class (DotnetSourceGeneratorToolkitOptions) with IOptions pattern if missing
++2. Add appsettings.json example (appsettings.example.json) showing all configurable values
++3. Add validation to options (DataAnnotations or FluentValidation)
++4. Add a Configuration section to README showing all available settings
++5. Ensure sensitive defaults are not hardcoded
++
++Commit as: "feat: add configuration options with validation"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
++- chore: add Docker support
