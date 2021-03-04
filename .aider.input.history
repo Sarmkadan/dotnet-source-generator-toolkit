@@ -4422,3 +4422,705 @@
 +- chore: don't treat warnings as errors
 +- chore: add examples and supporting files
 +- chore: add Docker support
+
+# 2026-07-09 10:54:15.691050
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:54:15.695540
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:55:28.420275
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:55:28.421082
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:56:38.807313
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:56:38.807400
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:57:49.871890
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:57:49.871953
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:59:00.991009
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 10:59:00.991253
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:00:12.505208
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:00:12.505304
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:05:25.825506
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:05:25.826115
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:05:30.594680
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:05:30.594754
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:20:30.657281
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
+
+# 2026-07-09 11:20:30.658069
++Refactor and clean up sarmkadan/dotnet-source-generator-toolkit.
++Work in: /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit
++
++1. Review code for obvious improvements:
++   - Extract long methods (>30 lines) into smaller focused methods
++   - Replace magic numbers/strings with constants
++   - Apply async/await consistently (no .Result or .Wait())
++   - Use pattern matching where appropriate
++   - Use string interpolation instead of concatenation
++2. Apply nullable reference types if not enabled (#nullable enable)
++3. Add sealed keyword to classes not designed for inheritance
++4. Keep changes minimal and safe - no architectural changes
++
++Commit as: "refactor: code cleanup and modernization"
++
++Git config:
++  git config user.name "Vladyslav Zaiets"
++  git config user.email "rutova2@gmail.com"
++
++CRITICAL RULES:
++- Do NOT add Co-Authored-By headers
++- Do NOT mention AI, Claude, GPT, Copilot, generated, automated anywhere in code or commits
++- Do NOT mention Red Rocket or Amdaris anywhere
++- Write natural commit messages
++- Push to main when done
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- feat: add structured logging
++- chore: apply workspace updates
++- fix: improve error handling with custom exceptions
++- fix: resolve compile errors in benchmarks, generator toolkit, tests and examples
++- fix: unseal GenerationException base class
++- fix: exclude benchmarks project from main project compile scope
++- fix: improve error handling with custom exceptions
++- chore: don't treat warnings as errors
++- chore: add examples and supporting files
