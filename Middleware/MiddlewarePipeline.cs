@@ -6,6 +6,7 @@
 // =============================================================================
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit.Middleware;
 
@@ -17,12 +18,14 @@ public sealed class MiddlewarePipeline : IMiddlewarePipeline
 {
     private readonly List<MiddlewareFactory> _middlewares = new();
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<MiddlewarePipeline> _logger;
 
     public int MiddlewareCount => _middlewares.Count;
 
-    public MiddlewarePipeline(IServiceProvider serviceProvider)
+    public MiddlewarePipeline(IServiceProvider serviceProvider, ILogger<MiddlewarePipeline> logger)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public IMiddlewarePipeline Use<TMiddleware>() where TMiddleware : IMiddleware
@@ -55,25 +58,40 @@ public sealed class MiddlewarePipeline : IMiddlewarePipeline
         if (context is null)
             throw new ArgumentNullException(nameof(context));
 
-        // Build the chain of responsibility
-        MiddlewareDelegate next = _ => Task.CompletedTask; // Terminal middleware
+        _logger.LogInformation("Starting middleware pipeline execution for request {RequestId}", context.RequestId);
+        var startTime = DateTime.UtcNow;
 
-        for (int i = _middlewares.Count - 1; i >= 0; i--)
+        try
         {
-            var currentNext = next;
-            var middlewareFactory = _middlewares[i];
-            var middleware = middlewareFactory(context);
+            // Build the chain of responsibility
+            MiddlewareDelegate next = _ => Task.CompletedTask; // Terminal middleware
 
-            next = ctx =>
+            for (int i = _middlewares.Count - 1; i >= 0; i--)
             {
-                if (ctx.IsShortCircuited)
-                    return Task.CompletedTask;
+                var currentNext = next;
+                var middlewareFactory = _middlewares[i];
+                var middleware = middlewareFactory(context);
 
-                return middleware.InvokeAsync(ctx, currentNext);
-            };
+                next = ctx =>
+                {
+                    if (ctx.IsShortCircuited)
+                        return Task.CompletedTask;
+
+                    return middleware.InvokeAsync(ctx, currentNext);
+                };
+            }
+
+            await next(context);
+
+            var duration = DateTime.UtcNow - startTime;
+            _logger.LogInformation("Middleware pipeline completed in {DurationMs}ms for request {RequestId}", duration.TotalMilliseconds, context.RequestId);
         }
-
-        await next(context);
+        catch (Exception ex)
+        {
+            var duration = DateTime.UtcNow - startTime;
+            _logger.LogError(ex, "Middleware pipeline failed after {DurationMs}ms for request {RequestId}", duration.TotalMilliseconds, context.RequestId);
+            throw;
+        }
     }
 
     // Factory delegate for creating middleware instances
