@@ -5170,3 +5170,77 @@
 +- fix: exclude benchmarks project from main project compile scope
 +- fix: improve error handling with custom exceptions
 +- chore: don't treat warnings as errors
+
+# 2026-07-10 05:32:12.958649
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Infrastructure/AttributeAnalyzerExtensions.cs`.
++
++It must contain `public static class AttributeAnalyzerExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `AttributeAnalyzer` (same namespace as the original file `Infrastructure/AttributeAnalyzer.cs`).
++
++The REAL public members of `AttributeAnalyzer` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public AttributeAnalyzer
++public IEnumerable<AttributeInfo> AnalyzeAttributes
++public bool HasAttribute
++public Dictionary<string, string>? GetAttributeParameters
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 227s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Infrastructure/AttributeAnalyzerExtensions.cs(20,29): error CS0119: 'IAttributeAnalyzer.AnalyzeAttributes(string)' is a method, which is not valid in the given context [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Infrastructure/AttributeAnalyzerExtensions.cs(43,29): error CS0119: 'IAttributeAnalyzer.AnalyzeAttributes(string)' is a method, which is not valid in the given context [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add IncrementalGenerationContextExtensions with useful extension methods for incremental generation context
++- chore: apply workspace updates
++- feat: add BenchmarksExtensions with useful extension methods for benchmark analysis and reporting
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: add XML documentation comments to HealthCheckEndpoint.cs
++- chore: apply workspace updates
++- chore: apply workspace updates
++- feat: add structured logging
+
+# 2026-07-10 05:32:12.958720
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Infrastructure/AttributeAnalyzerExtensions.cs`.
++
++It must contain `public static class AttributeAnalyzerExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `AttributeAnalyzer` (same namespace as the original file `Infrastructure/AttributeAnalyzer.cs`).
++
++The REAL public members of `AttributeAnalyzer` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public AttributeAnalyzer
++public IEnumerable<AttributeInfo> AnalyzeAttributes
++public bool HasAttribute
++public Dictionary<string, string>? GetAttributeParameters
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 227s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Infrastructure/AttributeAnalyzerExtensions.cs(20,29): error CS0119: 'IAttributeAnalyzer.AnalyzeAttributes(string)' is a method, which is not valid in the given context [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Infrastructure/AttributeAnalyzerExtensions.cs(43,29): error CS0119: 'IAttributeAnalyzer.AnalyzeAttributes(string)' is a method, which is not valid in the given context [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- feat: add IncrementalGenerationContextExtensions with useful extension methods for incremental generation context
++- chore: apply workspace updates
++- feat: add BenchmarksExtensions with useful extension methods for benchmark analysis and reporting
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: add XML documentation comments to HealthCheckEndpoint.cs
++- chore: apply workspace updates
++- chore: apply workspace updates
++- feat: add structured logging
