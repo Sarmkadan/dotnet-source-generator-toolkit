@@ -9,10 +9,14 @@ using DotNetSourceGeneratorToolkit.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNetSourceGeneratorToolkit.Tests;
-
+/// <summary>
+/// Tests for the Entity class.
+/// </summary>
 public sealed class EntityTests
 {
+    /// <summary>
+    /// Verifies that adding a duplicate property name throws an InvalidOperationException.
+    /// </summary>
     [Fact]
     public void AddProperty_WhenDuplicatePropertyName_ThrowsInvalidOperationException()
     {
@@ -30,6 +34,9 @@ public sealed class EntityTests
            .WithMessage("*Price*");
     }
 
+    /// <summary>
+    /// Verifies that getting the primary key property returns the correct property when it exists.
+    /// </summary>
     [Fact]
     public void GetPrimaryKeyProperty_WhenPrimaryKeyExists_ReturnsThatProperty()
     {
@@ -47,6 +54,9 @@ public sealed class EntityTests
         pk.IsPrimaryKey.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Verifies that validating an entity with an empty name returns a NameRequiredError.
+    /// </summary>
     [Fact]
     public void Validate_WhenEntityNameIsEmpty_ReturnsNameRequiredError()
     {
@@ -62,8 +72,14 @@ public sealed class EntityTests
     }
 }
 
+/// <summary>
+/// Tests for the EntityProperty class.
+/// </summary>
 public sealed class EntityPropertyTests
 {
+    /// <summary>
+    /// Verifies that getting the CLR type name for a nullable int type returns the correct type name.
+    /// </summary>
     [Fact]
     public void GetClrTypeName_WithNullableIntType_ReturnsNullableIntSuffix()
     {
@@ -77,6 +93,9 @@ public sealed class EntityPropertyTests
         typeName.Should().Be("int?");
     }
 
+    /// <summary>
+    /// Verifies that getting the CLR type name for a collection string type returns the correct type name.
+    /// </summary>
     [Fact]
     public void GetClrTypeName_WithCollectionStringType_ReturnsListGeneric()
     {
@@ -90,6 +109,9 @@ public sealed class EntityPropertyTests
         typeName.Should().Be("List<string>");
     }
 
+    /// <summary>
+    /// Verifies that generating validation attributes for a property with required and max length attributes returns both attributes.
+    /// </summary>
     [Fact]
     public void GenerateValidationAttributes_WithRequiredAndMaxLength_ReturnsBothAttributes()
     {
@@ -111,8 +133,14 @@ public sealed class EntityPropertyTests
     }
 }
 
+/// <summary>
+/// Tests for the GenerationResult class.
+/// </summary>
 public sealed class GenerationResultTests
 {
+    /// <summary>
+    /// Verifies that adding an error to a generation result sets the status to failed and records the message.
+    /// </summary>
     [Fact]
     public void AddError_WhenCalled_SetsStatusToFailedAndRecordsMessage()
     {
@@ -128,6 +156,9 @@ public sealed class GenerationResultTests
               .Which.Should().Be("Code generation failed due to missing namespace");
     }
 
+    /// <summary>
+    /// Verifies that a generation result is successful when completed with no errors.
+    /// </summary>
     [Fact]
     public void IsSuccessful_WhenCompletedWithNoErrors_ReturnsTrue()
     {
