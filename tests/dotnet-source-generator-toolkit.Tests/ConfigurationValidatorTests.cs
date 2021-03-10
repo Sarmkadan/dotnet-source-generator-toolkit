@@ -10,12 +10,19 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace DotNetSourceGeneratorToolkit.Tests;
-
+/// <summary>
+/// Tests for the ConfigurationValidator class.
+/// </summary>
 public sealed class ConfigurationValidatorTests
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigurationValidatorTests"/> class.
+    /// </summary>
     private readonly ConfigurationValidator _validator = new();
 
+    /// <summary>
+    /// Verifies that validating null options returns an invalid result with an error.
+    /// </summary>
     [Fact]
     public void Validate_WithNullOptions_ReturnsInvalidResultWithError()
     {
@@ -27,6 +34,9 @@ public sealed class ConfigurationValidatorTests
         result.Errors.Should().ContainSingle(e => e.Contains("cannot be null", StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Verifies that validating valid options returns a valid result with no errors.
+    /// </summary>
     [Fact]
     public void Validate_WithValidOptions_ReturnsValidResultWithNoErrors()
     {
@@ -48,6 +58,9 @@ public sealed class ConfigurationValidatorTests
         result.Errors.Should().BeEmpty();
     }
 
+    /// <summary>
+    /// Verifies that validating options with a timeout below the minimum adds a timeout error.
+    /// </summary>
     [Fact]
     public void Validate_WhenTimeoutBelowMinimum_AddsTimeoutError()
     {
@@ -63,6 +76,9 @@ public sealed class ConfigurationValidatorTests
         result.Errors.Should().Contain(e => e.Contains("timeout", StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Verifies that getting the default options returns options with expected values.
+    /// </summary>
     [Fact]
     public void GetDefaults_ReturnsOptionsWithExpectedValues()
     {
@@ -76,6 +92,9 @@ public sealed class ConfigurationValidatorTests
         defaults.GenerateInterfaces.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Verifies that a mocked validator configured to return a failure verifies the call and returns the configured result.
+    /// </summary>
     [Fact]
     public void MockedValidator_WhenConfiguredToReturnFailure_VerifiesCallAndReturnsConfiguredResult()
     {
