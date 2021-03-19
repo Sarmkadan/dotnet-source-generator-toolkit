@@ -9,9 +9,12 @@ using DotNetSourceGeneratorToolkit.Domain;
 
 namespace DotNetSourceGeneratorToolkit.Examples;
 
-/// E-commerce domain example with repositories, mappers, validators, and serializers
+/// Demonstrates e-commerce domain example with repositories, mappers, validators, and serializers.
 public sealed class EcommerceExample
 {
+    /// <summary>
+    /// Represents a product entity with properties for identification, SKU, name, description, price, stock quantity, category ID, creation date, modification date, and activity status.
+    /// </summary>
     [Repository]
     [Mapper]
     [Validator]
@@ -30,6 +33,9 @@ public sealed class EcommerceExample
         public bool IsActive { get; set; } = true;
     }
 
+    /// <summary>
+    /// Represents an order entity with properties for identification, customer ID, order date, total amount, status, shipping address, and items.
+    /// </summary>
     [Repository]
     [Mapper]
     [Validator]
@@ -44,6 +50,9 @@ public sealed class EcommerceExample
         public List<OrderItem> Items { get; set; } = [];
     }
 
+    /// <summary>
+    /// Represents an order item entity with properties for identification, order ID, product ID, quantity, unit price, and line total.
+    /// </summary>
     [Mapper]
     [Validator]
     public sealed class OrderItem
@@ -56,6 +65,9 @@ public sealed class EcommerceExample
         public decimal LineTotal { get; set; }
     }
 
+    /// <summary>
+    /// Represents a product data transfer object (DTO) with properties for identification, SKU, name, price, and stock quantity.
+    /// </summary>
     [Mapper]
     public sealed class ProductDto
     {
@@ -66,6 +78,9 @@ public sealed class EcommerceExample
         public int StockQuantity { get; set; }
     }
 
+    /// <summary>
+    /// Represents an order data transfer object (DTO) with properties for identification, customer ID, order date, total amount, status, and items.
+    /// </summary>
     [Mapper]
     public sealed class OrderDto
     {
@@ -77,6 +92,9 @@ public sealed class EcommerceExample
         public List<OrderItemDto> Items { get; set; } = [];
     }
 
+    /// <summary>
+    /// Represents an order item data transfer object (DTO) with properties for identification, product ID, quantity, unit price, and line total.
+    /// </summary>
     [Mapper]
     public sealed class OrderItemDto
     {
@@ -86,7 +104,9 @@ public sealed class EcommerceExample
         public decimal LineTotal { get; set; }
     }
 
-    // Usage example
+    /// <summary>
+    /// Provides a service for managing orders.
+    /// </summary>
     public sealed class OrderService
     {
         private readonly IOrderRepository _orderRepository;
@@ -95,6 +115,14 @@ public sealed class EcommerceExample
         private readonly IProductMapper _productMapper;
         private readonly IOrderValidator _orderValidator;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderService"/> class.
+        /// </summary>
+        /// <param name="orderRepository">The order repository instance.</param>
+        /// <param name="productRepository">The product repository instance.</param>
+        /// <param name="orderMapper">The order mapper instance.</param>
+        /// <param name="productMapper">The product mapper instance.</param>
+        /// <param name="orderValidator">The order validator instance.</param>
         public OrderService(
             IOrderRepository orderRepository,
             IProductRepository productRepository,
@@ -109,6 +137,11 @@ public sealed class EcommerceExample
             _orderValidator = orderValidator;
         }
 
+        /// <summary>
+        /// Retrieves an order by its ID.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to retrieve.</param>
+        /// <returns>The order DTO if the order is found, otherwise null.</returns>
         public async Task<OrderDto?> GetOrderAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
@@ -122,6 +155,11 @@ public sealed class EcommerceExample
             return _orderMapper.MapToDto(order);
         }
 
+        /// <summary>
+        /// Retrieves a list of orders for a customer.
+        /// </summary>
+        /// <param name="customerId">The ID of the customer.</param>
+        /// <returns>A list of order DTOs.</returns>
         public async Task<List<OrderDto>> GetCustomerOrdersAsync(int customerId)
         {
             var orders = await _orderRepository.WhereAsync(o => o.CustomerId == customerId);
@@ -129,6 +167,11 @@ public sealed class EcommerceExample
             return dtos.ToList();
         }
 
+        /// <summary>
+        /// Creates a new order based on the provided order DTO.
+        /// </summary>
+        /// <param name="orderDto">The order DTO to create a new order from.</param>
+        /// <returns>The created order DTO.</returns>
         public async Task<OrderDto> CreateOrderAsync(OrderDto orderDto)
         {
             var order = _orderMapper.MapFromDto(orderDto);
@@ -149,6 +192,11 @@ public sealed class EcommerceExample
             return _orderMapper.MapToDto(createdOrder);
         }
 
+        /// <summary>
+        /// Exports an order as JSON.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to export.</param>
+        /// <returns>The JSON representation of the order.</returns>
         public async Task<string> ExportOrderAsJsonAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
