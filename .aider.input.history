@@ -5750,3 +5750,179 @@
 +- chore: apply workspace updates
 +- chore: apply workspace updates
 +- chore: apply workspace updates
+
+# 2026-07-10 10:48:00.760155
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Exceptions/GenerationExceptionExtensions.cs`.
++
++It must contain `public static class GenerationExceptionExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationException` (same namespace as the original file `Exceptions/GenerationException.cs`).
++
++The REAL public members of `GenerationException` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string? GeneratorType
++public string? EntityName
++public GenerationException(string message) : base(message)
++public GenerationException
++public GenerationException
++public EntityAnalysisException(string message) : base(message)
++public EntityAnalysisException
++public RepositoryGenerationException(string message) : base(message)
++public RepositoryGenerationException
++public MapperGenerationException(string message) : base(message)
++public MapperGenerationException
++public ValidatorGenerationException(string message) : base(message)
++public ValidatorGenerationException
++public GenerationConfigurationException(string message) : base(message)
++public GenerationConfigurationException
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 10:48:00.777693
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Exceptions/GenerationExceptionExtensions.cs`.
++
++It must contain `public static class GenerationExceptionExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationException` (same namespace as the original file `Exceptions/GenerationException.cs`).
++
++The REAL public members of `GenerationException` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string? GeneratorType
++public string? EntityName
++public GenerationException(string message) : base(message)
++public GenerationException
++public GenerationException
++public EntityAnalysisException(string message) : base(message)
++public EntityAnalysisException
++public RepositoryGenerationException(string message) : base(message)
++public RepositoryGenerationException
++public MapperGenerationException(string message) : base(message)
++public MapperGenerationException
++public ValidatorGenerationException(string message) : base(message)
++public ValidatorGenerationException
++public GenerationConfigurationException(string message) : base(message)
++public GenerationConfigurationException
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 10:49:15.055710
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Exceptions/GenerationExceptionExtensions.cs`.
++
++It must contain `public static class GenerationExceptionExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationException` (same namespace as the original file `Exceptions/GenerationException.cs`).
++
++The REAL public members of `GenerationException` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string? GeneratorType
++public string? EntityName
++public GenerationException(string message) : base(message)
++public GenerationException
++public GenerationException
++public EntityAnalysisException(string message) : base(message)
++public EntityAnalysisException
++public RepositoryGenerationException(string message) : base(message)
++public RepositoryGenerationException
++public MapperGenerationException(string message) : base(message)
++public MapperGenerationException
++public ValidatorGenerationException(string message) : base(message)
++public ValidatorGenerationException
++public GenerationConfigurationException(string message) : base(message)
++public GenerationConfigurationException
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 10:49:15.055828
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Exceptions/GenerationExceptionExtensions.cs`.
++
++It must contain `public static class GenerationExceptionExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationException` (same namespace as the original file `Exceptions/GenerationException.cs`).
++
++The REAL public members of `GenerationException` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string? GeneratorType
++public string? EntityName
++public GenerationException(string message) : base(message)
++public GenerationException
++public GenerationException
++public EntityAnalysisException(string message) : base(message)
++public EntityAnalysisException
++public RepositoryGenerationException(string message) : base(message)
++public RepositoryGenerationException
++public MapperGenerationException(string message) : base(message)
++public MapperGenerationException
++public ValidatorGenerationException(string message) : base(message)
++public ValidatorGenerationException
++public GenerationConfigurationException(string message) : base(message)
++public GenerationConfigurationException
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
