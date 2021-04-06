@@ -6614,3 +6614,207 @@
 +- feat: add ConfigurationValidatorTestsExtensions with useful extension methods
 +- chore: apply workspace updates
 +- chore: apply workspace updates
+
+# 2026-07-10 14:26:17.495604
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationTemplateExtensions.cs`.
++
++It must contain `public static class GenerationTemplateExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationTemplate` (same namespace as the original file `Domain/GenerationTemplate.cs`).
++
++The REAL public members of `GenerationTemplate` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Description
++public GeneratorType GeneratorType
++public string TemplateContent
++public string OutputFileNamePattern
++public string OutputDirectory
++public List<string> SupportedLanguages
++public Dictionary<string, string> ConfigurationOptions
++public bool IsActive
++public bool IsCustom
++public int Version
++public DateTime CreatedAt
++public DateTime UpdatedAt
++public string? Author
++public string GenerateOutputFileName
++public IEnumerable<string> Validate
++public bool SupportsGeneratorType
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 346s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 14:26:17.495673
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationTemplateExtensions.cs`.
++
++It must contain `public static class GenerationTemplateExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationTemplate` (same namespace as the original file `Domain/GenerationTemplate.cs`).
++
++The REAL public members of `GenerationTemplate` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Description
++public GeneratorType GeneratorType
++public string TemplateContent
++public string OutputFileNamePattern
++public string OutputDirectory
++public List<string> SupportedLanguages
++public Dictionary<string, string> ConfigurationOptions
++public bool IsActive
++public bool IsCustom
++public int Version
++public DateTime CreatedAt
++public DateTime UpdatedAt
++public string? Author
++public string GenerateOutputFileName
++public IEnumerable<string> Validate
++public bool SupportsGeneratorType
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 346s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 14:27:31.686567
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationTemplateExtensions.cs`.
++
++It must contain `public static class GenerationTemplateExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationTemplate` (same namespace as the original file `Domain/GenerationTemplate.cs`).
++
++The REAL public members of `GenerationTemplate` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Description
++public GeneratorType GeneratorType
++public string TemplateContent
++public string OutputFileNamePattern
++public string OutputDirectory
++public List<string> SupportedLanguages
++public Dictionary<string, string> ConfigurationOptions
++public bool IsActive
++public bool IsCustom
++public int Version
++public DateTime CreatedAt
++public DateTime UpdatedAt
++public string? Author
++public string GenerateOutputFileName
++public IEnumerable<string> Validate
++public bool SupportsGeneratorType
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 346s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 14:27:31.686632
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationTemplateExtensions.cs`.
++
++It must contain `public static class GenerationTemplateExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationTemplate` (same namespace as the original file `Domain/GenerationTemplate.cs`).
++
++The REAL public members of `GenerationTemplate` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Description
++public GeneratorType GeneratorType
++public string TemplateContent
++public string OutputFileNamePattern
++public string OutputDirectory
++public List<string> SupportedLanguages
++public Dictionary<string, string> ConfigurationOptions
++public bool IsActive
++public bool IsCustom
++public int Version
++public DateTime CreatedAt
++public DateTime UpdatedAt
++public string? Author
++public string GenerateOutputFileName
++public IEnumerable<string> Validate
++public bool SupportsGeneratorType
++```
++
++Every method fully implemented: NO NotImplementedException, NO TODO, no empty bodies.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 346s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/GenerationTemplateExtensions.cs(16,96): error CS7036: There is no argument given that corresponds to the required parameter 'entityName' of 'GenerationTemplate.GenerateOutputFileName(string)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
