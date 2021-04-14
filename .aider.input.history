@@ -6818,3 +6818,351 @@
 +- chore: apply workspace updates
 +- chore: apply workspace updates
 +- chore: apply workspace updates
+
+# 2026-07-10 16:35:46.812703
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:35:46.812787
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:37:01.106101
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:37:01.106184
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:38:11.807457
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:38:11.807605
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/EntityPropertyExtensions.cs`.
++
++It must contain `public static class EntityPropertyExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `EntityProperty` (same namespace as the original file `Domain/EntityProperty.cs`).
++
++The REAL public members of `EntityProperty` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string Name
++public string Type
++public string? ColumnName
++public int? MaxLength
++public int? MinLength
++public string? RegexPattern
++public decimal? MinValue
++public decimal? MaxValue
++public bool IsRequired
++public bool IsNullable
++public bool IsPrimaryKey
++public bool IsAutoIncrement
++public bool IsNavigationProperty
++public bool IsCollection
++public string? DefaultValue
++public string? Description
++public List<string> Attributes
++public AccessModifier GetterAccess
++public AccessModifier SetterAccess
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++IMPORTANT: a previous attempt at this exact task FAILED with these compiler errors and was reverted. Do it differently and make sure these do not happen again:
++[after 213s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Domain/EntityPropertyExtensions.cs(54,16): error CS0019: Operator '??' cannot be applied to operands of type 'decimal?' and '<switch expression>' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
