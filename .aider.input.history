@@ -7166,3 +7166,219 @@
 +- chore: apply workspace updates
 +- chore: apply workspace updates
 +- chore: apply workspace updates
+
+# 2026-07-10 16:40:40.010203
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationResultExtensions.cs`.
++
++It must contain `public static class GenerationResultExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationResult` (same namespace as the original file `Domain/GenerationResult.cs`).
++
++The REAL public members of `GenerationResult` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string EntityName
++public GeneratorType GeneratorType
++public string GeneratedCode
++public string OutputFilePath
++public GenerationStatus Status
++public List<string> Warnings
++public List<string> Errors
++public int CodeLineCount
++public long GenerationDurationMs
++public DateTime CreatedAt
++public DateTime CompletedAt
++public string? CreatedBy
++public Dictionary<string, string> Metadata
++public void MarkAsCompleted
++public void AddWarning
++public void AddError
++public bool IsSuccessful
++public IEnumerable<string> Validate
++public string GetSummary
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:40:40.010276
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationResultExtensions.cs`.
++
++It must contain `public static class GenerationResultExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationResult` (same namespace as the original file `Domain/GenerationResult.cs`).
++
++The REAL public members of `GenerationResult` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string EntityName
++public GeneratorType GeneratorType
++public string GeneratedCode
++public string OutputFilePath
++public GenerationStatus Status
++public List<string> Warnings
++public List<string> Errors
++public int CodeLineCount
++public long GenerationDurationMs
++public DateTime CreatedAt
++public DateTime CompletedAt
++public string? CreatedBy
++public Dictionary<string, string> Metadata
++public void MarkAsCompleted
++public void AddWarning
++public void AddError
++public bool IsSuccessful
++public IEnumerable<string> Validate
++public string GetSummary
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:41:50.838081
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationResultExtensions.cs`.
++
++It must contain `public static class GenerationResultExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationResult` (same namespace as the original file `Domain/GenerationResult.cs`).
++
++The REAL public members of `GenerationResult` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string EntityName
++public GeneratorType GeneratorType
++public string GeneratedCode
++public string OutputFilePath
++public GenerationStatus Status
++public List<string> Warnings
++public List<string> Errors
++public int CodeLineCount
++public long GenerationDurationMs
++public DateTime CreatedAt
++public DateTime CompletedAt
++public string? CreatedBy
++public Dictionary<string, string> Metadata
++public void MarkAsCompleted
++public void AddWarning
++public void AddError
++public bool IsSuccessful
++public IEnumerable<string> Validate
++public string GetSummary
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
+
+# 2026-07-10 16:41:50.838442
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Domain/GenerationResultExtensions.cs`.
++
++It must contain `public static class GenerationResultExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `GenerationResult` (same namespace as the original file `Domain/GenerationResult.cs`).
++
++The REAL public members of `GenerationResult` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public string Id
++public string EntityName
++public GeneratorType GeneratorType
++public string GeneratedCode
++public string OutputFilePath
++public GenerationStatus Status
++public List<string> Warnings
++public List<string> Errors
++public int CodeLineCount
++public long GenerationDurationMs
++public DateTime CreatedAt
++public DateTime CompletedAt
++public string? CreatedBy
++public Dictionary<string, string> Metadata
++public void MarkAsCompleted
++public void AddWarning
++public void AddError
++public bool IsSuccessful
++public IEnumerable<string> Validate
++public string GetSummary
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- (no commit message provided)
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
++- chore: apply workspace updates
