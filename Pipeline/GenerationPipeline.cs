@@ -45,6 +45,36 @@ public sealed class GenerationPipeline
     }
 
     /// <summary>
+    /// Gets a value indicating whether the last execution was successful.
+    /// </summary>
+    public bool IsSuccessful { get; private set; }
+
+    /// <summary>
+    /// Gets the number of entities found during the last execution.
+    /// </summary>
+    public int EntitiesFound { get; private set; }
+
+    /// <summary>
+    /// Gets the number of files generated during the last execution.
+    /// </summary>
+    public int GeneratedFiles { get; private set; }
+
+    /// <summary>
+    /// Gets the number of files successfully written during the last execution.
+    /// </summary>
+    public int FilesWritten { get; private set; }
+
+    /// <summary>
+    /// Gets the error message if the execution failed.
+    /// </summary>
+    public string? ErrorMessage { get; private set; }
+
+    /// <summary>
+    /// Gets the timestamp when the pipeline was last executed.
+    /// </summary>
+    public DateTime ExecutedAt { get; private set; }
+
+    /// <summary>
     /// Execute the complete generation pipeline for a project.
     /// </summary>
     public async Task<PipelineResult> ExecuteAsync(
@@ -74,22 +104,27 @@ public sealed class GenerationPipeline
             result.GeneratedFiles = generationResults.Count();
 
             // Phase 3: Write results (unless dry-run)
+            int written = 0;
             if (!dryRun && !string.IsNullOrEmpty(outputPath))
             {
-                var written = await WriteGeneratedFilesAsync(generationResults, outputPath);
-                result.FilesWritten = written;
+                written = await WriteGeneratedFilesAsync(generationResults, outputPath);
             }
 
-            result.IsSuccessful = true;
+            IsSuccessful = true;
+            EntitiesFound = projectInfo.Entities.Count;
+            GeneratedFiles = generationResults.Count();
+            FilesWritten = written;
+            ExecutedAt = DateTime.UtcNow;
             _logger.LogInformation(
                 "Pipeline completed successfully: {Entities} entities, {Files} files generated",
-                result.EntitiesFound,
-                result.GeneratedFiles);
+                EntitiesFound,
+                GeneratedFiles);
         }
         catch (Exception ex)
         {
-            result.IsSuccessful = false;
-            result.ErrorMessage = ex.Message;
+            IsSuccessful = false;
+            ErrorMessage = ex.Message;
+            ExecutedAt = DateTime.UtcNow;
             _logger.LogError(ex, "Pipeline execution failed");
         }
 
