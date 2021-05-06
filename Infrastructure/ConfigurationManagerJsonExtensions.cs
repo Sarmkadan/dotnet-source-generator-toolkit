@@ -30,12 +30,10 @@ public static class ConfigurationManagerJsonExtensions
     /// <param name="value">The ConfigurationManager instance to serialize.</param>
     /// <param name="indented">Whether to format the JSON with indentation for readability.</param>
     /// <returns>A JSON string representation of the ConfigurationManager.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static string ToJson(this ConfigurationManager value, bool indented = false)
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        ArgumentNullException.ThrowIfNull(value);
 
         try
         {
@@ -59,11 +57,15 @@ public static class ConfigurationManagerJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>A ConfigurationManager instance populated with the deserialized configuration.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is empty or whitespace.</exception>
     public static ConfigurationManager? FromJson(string json)
     {
+        ArgumentNullException.ThrowIfNull(json);
+
         if (string.IsNullOrWhiteSpace(json))
         {
-            return null;
+            throw new ArgumentException("JSON string cannot be empty or whitespace.", nameof(json));
         }
 
         try
@@ -102,12 +104,15 @@ public static class ConfigurationManagerJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">The resulting ConfigurationManager instance, or null if deserialization fails.</param>
     /// <returns>True if deserialization succeeds; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     public static bool TryFromJson(string json, out ConfigurationManager? value)
     {
+        ArgumentNullException.ThrowIfNull(json);
+
         try
         {
             value = FromJson(json);
-            return true;
+            return value is not null;
         }
         catch (JsonException)
         {
