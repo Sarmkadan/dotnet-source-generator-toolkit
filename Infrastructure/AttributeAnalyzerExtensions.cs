@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,11 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure
         /// <param name="parameterKey">The parameter key to check.</param>
         /// <param name="expectedValue">The expected parameter value.</param>
         /// <returns><c>true</c> if the attribute exists with the specified parameter value; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="analyzer"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="sourceCode"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="attributeName"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="parameterKey"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="expectedValue"/> is <c>null</c>.</exception>
         public static bool HasAttributeWithParameter(
             this AttributeAnalyzer analyzer,
             string sourceCode,
@@ -25,13 +31,19 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure
             string parameterKey,
             string expectedValue)
         {
+            ArgumentNullException.ThrowIfNull(analyzer);
+            ArgumentNullException.ThrowIfNull(sourceCode);
+            ArgumentNullException.ThrowIfNull(attributeName);
+            ArgumentNullException.ThrowIfNull(parameterKey);
+            ArgumentNullException.ThrowIfNull(expectedValue);
+
             if (!analyzer.HasAttribute(sourceCode, attributeName))
             {
                 return false;
             }
 
             var parameters = analyzer.GetAttributeParameters(sourceCode, attributeName);
-            return parameters?.ContainsKey(parameterKey) == true && parameters[parameterKey] == expectedValue;
+            return parameters?.TryGetValue(parameterKey, out var actualValue) == true && actualValue == expectedValue;
         }
 
         /// <summary>
@@ -41,11 +53,18 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure
         /// <param name="sourceCode">The source code to analyze.</param>
         /// <param name="predicate">The condition to satisfy.</param>
         /// <returns><c>true</c> if any attribute satisfies the condition; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="analyzer"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="sourceCode"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="predicate"/> is <c>null</c>.</exception>
         public static bool AnyAttributeSatisfies(
             this AttributeAnalyzer analyzer,
             string sourceCode,
-            System.Func<AttributeInfo, bool> predicate)
+            Func<AttributeInfo, bool> predicate)
         {
+            ArgumentNullException.ThrowIfNull(analyzer);
+            ArgumentNullException.ThrowIfNull(sourceCode);
+            ArgumentNullException.ThrowIfNull(predicate);
+
             return analyzer.AnalyzeAttributes(sourceCode).Any(predicate);
         }
 
@@ -55,10 +74,15 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure
         /// <param name="analyzer">The attribute analyzer.</param>
         /// <param name="sourceCode">The source code to analyze.</param>
         /// <returns>The number of attributes.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="analyzer"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="sourceCode"/> is <c>null</c>.</exception>
         public static int CountAttributes(
             this AttributeAnalyzer analyzer,
             string sourceCode)
         {
+            ArgumentNullException.ThrowIfNull(analyzer);
+            ArgumentNullException.ThrowIfNull(sourceCode);
+
             return analyzer.AnalyzeAttributes(sourceCode).Count();
         }
     }
