@@ -9310,3 +9310,49 @@
 +- (no commit message provided)
 +- chore: update .aider.chat.history.md
 +- (no commit message provided)
+
+# 2026-07-11 07:32:24.345750
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, add XML documentation comments (///) to the file `Exceptions/GenerationExceptionExtensions.cs`.
++
++Document the type `GenerationExceptionExtensions` and every public member with /// <summary>, <param>, <returns> where applicable. Descriptions must be specific to what the code actually does - read the method bodies first. Do NOT change any code, signature, whitespace of code lines, or behavior - ONLY add /// comment lines to `Exceptions/GenerationExceptionExtensions.cs`.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- fix: resolve build errors in .aider.chat.history
++- feat(integration): add extension methods for WebhookService
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerExtensions
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerJsonExtensions
++- fix(infrastructure): resolve build errors in FileSystemServiceExtensions
++- refactor(infrastructure): tighten guard clauses and docs in AttributeAnalyzerExtensions
++- chore: update .aider.chat.history.md
++- feat: add useful extension methods for CliArgumentParser
++- chore: update .aider.chat.history.md
++- (no commit message provided)
+
+# 2026-07-11 07:32:24.345812
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, add XML documentation comments (///) to the file `Exceptions/GenerationExceptionExtensions.cs`.
++
++Document the type `GenerationExceptionExtensions` and every public member with /// <summary>, <param>, <returns> where applicable. Descriptions must be specific to what the code actually does - read the method bodies first. Do NOT change any code, signature, whitespace of code lines, or behavior - ONLY add /// comment lines to `Exceptions/GenerationExceptionExtensions.cs`.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- fix: resolve build errors in .aider.chat.history
++- feat(integration): add extension methods for WebhookService
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerExtensions
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerJsonExtensions
++- fix(infrastructure): resolve build errors in FileSystemServiceExtensions
++- refactor(infrastructure): tighten guard clauses and docs in AttributeAnalyzerExtensions
++- chore: update .aider.chat.history.md
++- feat: add useful extension methods for CliArgumentParser
++- chore: update .aider.chat.history.md
++- (no commit message provided)
