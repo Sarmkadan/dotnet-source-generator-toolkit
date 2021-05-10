@@ -9214,3 +9214,99 @@
 +- chore: update .aider.chat.history.md
 +- (no commit message provided)
 +- chore: update .aider.chat.history.md
+
+# 2026-07-11 07:30:44.284083
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Integration/WebhookServiceExtensions.cs`.
++
++It must contain `public static class WebhookServiceExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `WebhookService` (same namespace as the original file `Integration/WebhookService.cs`).
++
++The REAL public members of `WebhookService` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public WebhookService
++public async Task<string> RegisterWebhookAsync
++public async Task UnregisterWebhookAsync
++public async Task<int> NotifyAsync
++public async Task<IEnumerable<WebhookRegistration>> GetWebhooksAsync
++public WebhookEventType EventType
++public DateTime Timestamp
++public object? Data
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 136s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Integration/WebhookServiceExtensions.cs(20,44): error CS1061: 'WebhookService' does not contain a definition for 'EventType' and no accessible extension method 'EventType' accepting a first argument of type 'WebhookService' could be found (are you missing a using directive or an assembly reference?) [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Integration/WebhookServiceExtensions.cs(26,82): error CS1061: 'IEnumerable<WebhookRegistration>' does not contain a definition for 'FirstOrDefaultAsync' and no accessible extension method 'FirstOrDefaultAsync' accepting a first argument of type 'IEnum
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerExtensions
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerJsonExtensions
++- fix(infrastructure): resolve build errors in FileSystemServiceExtensions
++- refactor(infrastructure): tighten guard clauses and docs in AttributeAnalyzerExtensions
++- chore: update .aider.chat.history.md
++- feat: add useful extension methods for CliArgumentParser
++- chore: update .aider.chat.history.md
++- (no commit message provided)
++- chore: update .aider.chat.history.md
++- (no commit message provided)
+
+# 2026-07-11 07:30:44.307688
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, create ONE new C# file: `Integration/WebhookServiceExtensions.cs`.
++
++It must contain `public static class WebhookServiceExtensions` with 2-4 genuinely useful, fully implemented extension methods for the existing type `WebhookService` (same namespace as the original file `Integration/WebhookService.cs`).
++
++The REAL public members of `WebhookService` are (use ONLY these plus the .NET BCL, do not invent members):
++```
++public WebhookService
++public async Task<string> RegisterWebhookAsync
++public async Task UnregisterWebhookAsync
++public async Task<int> NotifyAsync
++public async Task<IEnumerable<WebhookRegistration>> GetWebhooksAsync
++public WebhookEventType EventType
++public DateTime Timestamp
++public object? Data
++```
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Every method solves its problem COMPLETELY. If you cannot implement something for real, OMIT that method entirely - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application". A smaller honest class beats a padded fake one.
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit on one line, pattern matching over if-chains, target-typed new.
++- Return IReadOnlyList<T>/IEnumerable<T> from queries, not List<T>. Use CultureInfo.InvariantCulture for machine-facing parsing/formatting of numbers/dates.
++- XML doc comments on every public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 136s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Integration/WebhookServiceExtensions.cs(20,44): error CS1061: 'WebhookService' does not contain a definition for 'EventType' and no accessible extension method 'EventType' accepting a first argument of type 'WebhookService' could be found (are you missing a using directive or an assembly reference?) [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Integration/WebhookServiceExtensions.cs(26,82): error CS1061: 'IEnumerable<WebhookRegistration>' does not contain a definition for 'FirstOrDefaultAsync' and no accessible extension method 'FirstOrDefaultAsync' accepting a first argument of type 'IEnum
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerExtensions
++- refactor(infrastructure): tighten guard clauses and docs in ConfigurationManagerJsonExtensions
++- fix(infrastructure): resolve build errors in FileSystemServiceExtensions
++- refactor(infrastructure): tighten guard clauses and docs in AttributeAnalyzerExtensions
++- chore: update .aider.chat.history.md
++- feat: add useful extension methods for CliArgumentParser
++- chore: update .aider.chat.history.md
++- (no commit message provided)
++- chore: update .aider.chat.history.md
++- (no commit message provided)
