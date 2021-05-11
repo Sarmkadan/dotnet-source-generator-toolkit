@@ -13,20 +13,23 @@ namespace DotNetSourceGeneratorToolkit.Exceptions;
 /// Provides extension methods for <see cref="ValidationException"/> to simplify common operations
 /// like error aggregation, filtering, and conversion to other formats.
 /// </summary>
+/// <remarks>
+/// All methods throw <see cref="ArgumentNullException"/> when null arguments are provided,
+/// ensuring predictable behavior and preventing null reference exceptions.
+/// </remarks>
 public static class ValidationExceptionExtensions
 {
     /// <summary>
     /// Combines multiple <see cref="ValidationException"/> instances into a single exception.
     /// Useful when aggregating validation failures from multiple sources.
     /// </summary>
-    /// <param name="exceptions">Collection of validation exceptions to combine</param>
-    /// <returns>A new ValidationException containing all errors from all exceptions</returns>
+    /// <param name="exceptions">Collection of validation exceptions to combine. Cannot be null.</param>
+    /// <returns>A new ValidationException containing all errors from all exceptions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exceptions"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when no validation errors are found in the provided exceptions.</exception>
     public static ValidationException Combine(this IEnumerable<ValidationException> exceptions)
     {
-        if (exceptions == null)
-        {
-            throw new ArgumentNullException(nameof(exceptions));
-        }
+        ArgumentNullException.ThrowIfNull(exceptions);
 
         var allErrors = new List<string>();
 
@@ -47,17 +50,16 @@ public static class ValidationExceptionExtensions
     /// Adds additional error messages to an existing ValidationException.
     /// Useful for accumulating errors during validation pipeline execution.
     /// </summary>
-    /// <param name="exception">The validation exception to extend</param>
-    /// <param name="errors">Additional error messages to add</param>
-    /// <returns>The same ValidationException instance for method chaining</returns>
+    /// <param name="exception">The validation exception to extend. Cannot be null.</param>
+    /// <param name="errors">Additional error messages to add. Cannot be null.</param>
+    /// <returns>The same ValidationException instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> or <paramref name="errors"/> is null.</exception>
     public static ValidationException AddErrors(this ValidationException exception, params string[] errors)
     {
-        if (exception == null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(errors);
 
-        if (errors != null && errors.Length > 0)
+        if (errors.Length > 0)
         {
             exception.Errors.AddRange(errors.Where(e => !string.IsNullOrWhiteSpace(e)));
         }
@@ -69,20 +71,14 @@ public static class ValidationExceptionExtensions
     /// Filters validation errors by a predicate.
     /// Useful for selective error handling or conditional validation.
     /// </summary>
-    /// <param name="exception">The validation exception to filter</param>
-    /// <param name="predicate">Predicate to filter errors</param>
-    /// <returns>A new ValidationException containing only the filtered errors</returns>
+    /// <param name="exception">The validation exception to filter. Cannot be null.</param>
+    /// <param name="predicate">Predicate to filter errors. Cannot be null.</param>
+    /// <returns>A new ValidationException containing only the filtered errors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> or <paramref name="predicate"/> is null.</exception>
     public static ValidationException FilterErrors(this ValidationException exception, Func<string, bool> predicate)
     {
-        if (exception == null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
-
-        if (predicate == null)
-        {
-            throw new ArgumentNullException(nameof(predicate));
-        }
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(predicate);
 
         var filteredErrors = exception.Errors.Where(predicate).ToList();
 
@@ -93,14 +89,12 @@ public static class ValidationExceptionExtensions
     /// Converts a ValidationException to a dictionary of error messages grouped by error type or pattern.
     /// Useful for structured error reporting and API responses.
     /// </summary>
-    /// <param name="exception">The validation exception to convert</param>
-    /// <returns>Dictionary mapping error categories to lists of error messages</returns>
+    /// <param name="exception">The validation exception to convert. Cannot be null.</param>
+    /// <returns>Dictionary mapping error categories to lists of error messages.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> is null.</exception>
     public static Dictionary<string, List<string>> ToErrorDictionary(this ValidationException exception)
     {
-        if (exception == null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
+        ArgumentNullException.ThrowIfNull(exception);
 
         var dictionary = new Dictionary<string, List<string>>();
 
@@ -122,15 +116,14 @@ public static class ValidationExceptionExtensions
     /// Gets whether the validation exception contains any errors matching a specific pattern.
     /// Useful for quick existence checks without enumerating all errors.
     /// </summary>
-    /// <param name="exception">The validation exception to check</param>
-    /// <param name="predicate">Predicate to test each error</param>
-    /// <returns>True if any error matches the predicate, false otherwise</returns>
+    /// <param name="exception">The validation exception to check. Cannot be null.</param>
+    /// <param name="predicate">Predicate to test each error. Cannot be null.</param>
+    /// <returns>True if any error matches the predicate, false otherwise.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> or <paramref name="predicate"/> is null.</exception>
     public static bool HasError(this ValidationException exception, Func<string, bool> predicate)
     {
-        if (exception == null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(predicate);
 
         return exception.Errors.Any(predicate);
     }
@@ -139,15 +132,14 @@ public static class ValidationExceptionExtensions
     /// Gets the first error message that matches a specific pattern.
     /// Useful for extracting specific error details when the pattern is known.
     /// </summary>
-    /// <param name="exception">The validation exception to search</param>
-    /// <param name="predicate">Predicate to test each error</param>
-    /// <returns>The first matching error message, or null if no match found</returns>
+    /// <param name="exception">The validation exception to search. Cannot be null.</param>
+    /// <param name="predicate">Predicate to test each error. Cannot be null.</param>
+    /// <returns>The first matching error message, or null if no match found.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> or <paramref name="predicate"/> is null.</exception>
     public static string? GetFirstError(this ValidationException exception, Func<string, bool> predicate)
     {
-        if (exception == null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(predicate);
 
         return exception.Errors.FirstOrDefault(predicate);
     }
