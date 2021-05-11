@@ -29,18 +29,13 @@ public static class LoggingEventHandlerJsonExtensions
     /// <param name="value">The logging event handler to serialize.</param>
     /// <param name="indented">Whether to format the JSON with indentation for readability.</param>
     /// <returns>A JSON string representation of the logging event handler.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static string ToJson(this LoggingEventHandler value, bool indented = false)
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        ArgumentNullException.ThrowIfNull(value);
 
         var options = indented
-            ? new JsonSerializerOptions(_jsonSerializerOptions)
-            {
-                WriteIndented = true
-            }
+            ? new JsonSerializerOptions(_jsonSerializerOptions) { WriteIndented = true }
             : _jsonSerializerOptions;
 
         return JsonSerializer.Serialize(value, options);
@@ -51,12 +46,10 @@ public static class LoggingEventHandlerJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized logging event handler, or null if the JSON is invalid.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null or whitespace.</exception>
     public static LoggingEventHandler? FromJson(string json)
     {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            throw new ArgumentNullException(nameof(json));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         try
         {
@@ -74,14 +67,10 @@ public static class LoggingEventHandlerJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">The deserialized logging event handler, or null if deserialization failed.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null or whitespace.</exception>
     public static bool TryFromJson(string json, out LoggingEventHandler? value)
     {
-        value = null;
-
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return false;
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         try
         {
@@ -90,6 +79,7 @@ public static class LoggingEventHandlerJsonExtensions
         }
         catch (JsonException)
         {
+            value = null;
             return false;
         }
     }
