@@ -18,12 +18,10 @@ public static class GenerationStartedEventExtensions
     /// </summary>
     /// <param name="event">The source event to copy.</param>
     /// <returns>A new instance with identical property values.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="event"/> is null.</exception>
     public static GenerationStartedEvent DeepCopy(this GenerationStartedEvent @event)
     {
-        if (@event == null)
-        {
-            throw new ArgumentNullException(nameof(@event));
-        }
+        ArgumentNullException.ThrowIfNull(@event);
 
         var copy = new GenerationStartedEvent();
         copy.RequestId = @event.RequestId;
@@ -39,14 +37,13 @@ public static class GenerationStartedEventExtensions
     /// <param name="event">The event to check.</param>
     /// <param name="generatorTypes">The generator types to search for.</param>
     /// <returns>True if any of the specified generator types are present; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="event"/> or <paramref name="generatorTypes"/> is null.</exception>
     public static bool HasGeneratorType(this GenerationStartedEvent @event, params string[] generatorTypes)
     {
-        if (@event == null)
-        {
-            throw new ArgumentNullException(nameof(@event));
-        }
+        ArgumentNullException.ThrowIfNull(@event);
+        ArgumentNullException.ThrowIfNull(generatorTypes);
 
-        if (generatorTypes == null || generatorTypes.Length == 0)
+        if (generatorTypes.Length == 0)
         {
             return false;
         }
@@ -60,12 +57,10 @@ public static class GenerationStartedEventExtensions
     /// <param name="event">The event to format.</param>
     /// <param name="includeTimestamp">Whether to include the timestamp in the output.</param>
     /// <returns>A formatted summary string.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="event"/> is null.</exception>
     public static string ToSummaryString(this GenerationStartedEvent @event, bool includeTimestamp = true)
     {
-        if (@event == null)
-        {
-            throw new ArgumentNullException(nameof(@event));
-        }
+        ArgumentNullException.ThrowIfNull(@event);
 
         var summary = new System.Text.StringBuilder();
         summary.Append("Generation Started [");
@@ -110,23 +105,18 @@ public static class GenerationStartedEventExtensions
     /// <param name="event">The event to modify.</param>
     /// <param name="generatorType">The generator type to add.</param>
     /// <returns>The modified event (for method chaining).</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="event"/> is null.</exception>
     public static GenerationStartedEvent AddGeneratorType(this GenerationStartedEvent @event, string generatorType)
     {
-        if (@event == null)
+        ArgumentNullException.ThrowIfNull(@event);
+        ArgumentException.ThrowIfNullOrWhiteSpace(generatorType);
+
+        if (@event.GeneratorTypes.Contains(generatorType, StringComparer.OrdinalIgnoreCase))
         {
-            throw new ArgumentNullException(nameof(@event));
+            return @event;
         }
 
-        if (!string.IsNullOrWhiteSpace(generatorType))
-        {
-            if (@event.GeneratorTypes.Contains(generatorType, StringComparer.OrdinalIgnoreCase))
-            {
-                return @event;
-            }
-
-            @event.GeneratorTypes.Add(generatorType.Trim());
-        }
-
+        @event.GeneratorTypes.Add(generatorType.Trim());
         return @event;
     }
 }
