@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace DotNetSourceGeneratorToolkit.Benchmarks;
 
 /// <summary>
-/// Provides System.Text.Json serialization extensions for BenchmarkEntities
+/// Provides System.Text.Json serialization extensions for BenchmarkEntities nested types
 /// </summary>
 public static class BenchmarkEntitiesJsonExtensions
 {
@@ -23,17 +23,16 @@ public static class BenchmarkEntitiesJsonExtensions
     };
 
     /// <summary>
-    /// Serializes BenchmarkEntities to JSON string
+    /// Serializes a BenchmarkEntities nested entity instance to a JSON string
     /// </summary>
-    /// <param name="value">The BenchmarkEntities instance to serialize</param>
-    /// <param name="indented">Whether to format the JSON with indentation</param>
-    /// <returns>JSON string representation</returns>
-    public static string ToJson(this BenchmarkEntities value, bool indented = false)
+    /// <typeparam name="T">The BenchmarkEntities nested entity type (e.g., SimpleEntity, ComplexEntity).</typeparam>
+    /// <param name="value">The entity instance to serialize. If <see langword="null"/>, throws <see cref="ArgumentNullException"/>.</param>
+    /// <param name="indented">Whether to format the JSON with indentation for human-readable output.</param>
+    /// <returns>A JSON string representation of the entity.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    public static string ToJson<T>(this T value, bool indented = false) where T : class
     {
-        if (value is null)
-        {
-            return "{}";
-        }
+        ArgumentNullException.ThrowIfNull(value);
 
         var options = indented
             ? new JsonSerializerOptions(_jsonSerializerOptions)
@@ -46,20 +45,19 @@ public static class BenchmarkEntitiesJsonExtensions
     }
 
     /// <summary>
-    /// Deserializes BenchmarkEntities from JSON string
+    /// Deserializes a BenchmarkEntities nested entity from JSON string
     /// </summary>
-    /// <param name="json">JSON string to deserialize</param>
-    /// <returns>Deserialized BenchmarkEntities instance or null if invalid JSON</returns>
-    public static BenchmarkEntities? FromJson(string json)
+    /// <typeparam name="T">The BenchmarkEntities nested entity type to deserialize.</typeparam>
+    /// <param name="json">JSON string to deserialize. If <see langword="null"/>, throws <see cref="ArgumentNullException"/>.</param>
+    /// <returns>Deserialized entity instance or <see langword="null"/> if invalid JSON or input is whitespace.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="json"/> is <see langword="null"/>.</exception>
+    public static T? FromJson<T>(string json) where T : class
     {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return null;
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         try
         {
-            return JsonSerializer.Deserialize<BenchmarkEntities>(json, _jsonSerializerOptions);
+            return JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
         }
         catch (JsonException)
         {
@@ -68,27 +66,25 @@ public static class BenchmarkEntitiesJsonExtensions
     }
 
     /// <summary>
-    /// Attempts to deserialize BenchmarkEntities from JSON string
+    /// Attempts to deserialize a BenchmarkEntities nested entity from JSON string
     /// </summary>
-    /// <param name="json">JSON string to deserialize</param>
-    /// <param name="value">Output parameter for deserialized value</param>
-    /// <returns>True if deserialization succeeded, false otherwise</returns>
-    public static bool TryFromJson(string json, out BenchmarkEntities? value)
+    /// <typeparam name="T">The BenchmarkEntities nested entity type to deserialize.</typeparam>
+    /// <param name="json">JSON string to deserialize. If <see langword="null"/> or whitespace, returns <see langword="false"/>.</param>
+    /// <param name="value">Output parameter for deserialized value.</param>
+    /// <returns>True if deserialization succeeded, false otherwise.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="json"/> is <see langword="null"/>.</exception>
+    public static bool TryFromJson<T>(string json, out T? value) where T : class
     {
-        value = null;
-
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return false;
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         try
         {
-            value = JsonSerializer.Deserialize<BenchmarkEntities>(json, _jsonSerializerOptions);
+            value = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
             return true;
         }
         catch (JsonException)
         {
+            value = null;
             return false;
         }
     }
