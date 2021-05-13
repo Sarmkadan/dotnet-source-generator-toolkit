@@ -20,12 +20,10 @@ public static class GenerationPipelineExtensions
     /// </summary>
     /// <param name="result">The pipeline result</param>
     /// <returns>A formatted string containing execution statistics and summary</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static string CreateSummaryReport(this PipelineResult result)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         var report = new System.Text.StringBuilder();
         report.AppendLine("=== Generation Pipeline Execution Report ===");
@@ -41,22 +39,22 @@ public static class GenerationPipelineExtensions
         }
 
         report.AppendLine("STATISTICS:");
-        report.AppendLine($"  Entities Found: {result.EntitiesFound}");
-        report.AppendLine($"  Generated Files: {result.GeneratedFiles}");
-        report.AppendLine($"  Files Written: {result.FilesWritten}");
+        report.AppendLine($" Entities Found: {result.EntitiesFound}");
+        report.AppendLine($" Generated Files: {result.GeneratedFiles}");
+        report.AppendLine($" Files Written: {result.FilesWritten}");
 
         if (result.EntitiesFound > 0)
         {
             var successRate = result.GeneratedFiles > 0
                 ? Math.Round((double)result.GeneratedFiles / result.EntitiesFound * 100, 2)
                 : 0;
-            report.AppendLine($"  Generation Rate: {successRate}% ({result.GeneratedFiles}/{result.EntitiesFound})");
+            report.AppendLine($" Generation Rate: {successRate}% ({result.GeneratedFiles}/{result.EntitiesFound})");
         }
 
         if (result.GeneratedFiles > 0)
         {
             var writeRate = Math.Round((double)result.FilesWritten / result.GeneratedFiles * 100, 2);
-            report.AppendLine($"  Write Success Rate: {writeRate}% ({result.FilesWritten}/{result.GeneratedFiles})");
+            report.AppendLine($" Write Success Rate: {writeRate}% ({result.FilesWritten}/{result.GeneratedFiles})");
         }
 
         report.AppendLine();
@@ -71,12 +69,10 @@ public static class GenerationPipelineExtensions
     /// <param name="result">The pipeline result</param>
     /// <param name="threshold">Minimum entities required to consider efficiency calculation</param>
     /// <returns>True if execution was efficient; otherwise false</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static bool WasExecutionEfficient(this PipelineResult result, int threshold = 5)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         if (result.EntitiesFound < threshold)
         {
@@ -93,12 +89,10 @@ public static class GenerationPipelineExtensions
     /// </summary>
     /// <param name="result">The pipeline result</param>
     /// <returns>A status message indicating the execution outcome</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static string GetStatusMessage(this PipelineResult result)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         if (!result.IsSuccessful)
         {
@@ -128,21 +122,18 @@ public static class GenerationPipelineExtensions
     /// </summary>
     /// <param name="result">The pipeline result</param>
     /// <returns>Performance metrics including timing and efficiency calculations</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static PipelinePerformanceMetrics GetPerformanceMetrics(this PipelineResult result)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         var duration = DateTime.UtcNow - result.ExecutedAt;
+        var totalSeconds = duration.TotalSeconds > 0 ? duration.TotalSeconds : 1;
 
         return new PipelinePerformanceMetrics
         {
             ExecutionDuration = duration,
-            EntitiesPerSecond = duration.TotalSeconds > 0
-                ? result.EntitiesFound / duration.TotalSeconds
-                : result.EntitiesFound,
+            EntitiesPerSecond = result.EntitiesFound / totalSeconds,
             FilesPerEntity = result.EntitiesFound > 0
                 ? (double)result.GeneratedFiles / result.EntitiesFound
                 : 0,
@@ -159,12 +150,10 @@ public static class GenerationPipelineExtensions
     /// </summary>
     /// <param name="result">The pipeline result</param>
     /// <returns>True if files were written; otherwise false</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static bool HasOutputFiles(this PipelineResult result)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         return result.FilesWritten > 0;
     }
@@ -174,12 +163,10 @@ public static class GenerationPipelineExtensions
     /// </summary>
     /// <param name="result">The pipeline result</param>
     /// <returns>A value between 0 and 1 representing the success ratio</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is null.</exception>
     public static double GetFileWriteSuccessRatio(this PipelineResult result)
     {
-        if (result is null)
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
+        ArgumentNullException.ThrowIfNull(result);
 
         if (result.GeneratedFiles == 0)
         {
