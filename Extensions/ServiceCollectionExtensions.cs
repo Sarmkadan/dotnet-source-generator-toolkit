@@ -32,15 +32,14 @@ public static class ServiceCollectionExtensions
     /// <see cref="ToolkitOptions.DefaultNamespace"/> are applied to the generator services.
     /// </param>
     /// <returns>The same <paramref name="services"/> instance to allow call chaining.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/></exception>
     public static IServiceCollection AddSourceGeneratorToolkit(
         this IServiceCollection services,
         ToolkitOptions? options = null)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
 
-        if (options is not null)
-            services.TryAddSingleton(options);
+        services.TryAddSingleton(options);
 
         // Shared infrastructure — singletons to avoid redundant allocations across scopes
         services.TryAddSingleton<ICache, MemoryCache>();
@@ -83,10 +82,10 @@ public static class ServiceCollectionExtensions
     /// </remarks>
     /// <param name="services">The service collection to configure.</param>
     /// <returns>The same <paramref name="services"/> instance to allow call chaining.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/></exception>
     public static IServiceCollection AddIncrementalGeneration(this IServiceCollection services)
     {
-        if (services is null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddSingleton<ICache, MemoryCache>();
         services.TryAddSingleton<IFileSystemService, FileSystemService>();
