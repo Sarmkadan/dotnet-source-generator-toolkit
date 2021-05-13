@@ -13,6 +13,9 @@ namespace DotNetSourceGeneratorToolkit.Pipeline;
 /// Provides extension methods for <see cref="IncrementalGenerationContext"/> to simplify common
 /// incremental generation scenarios and improve developer productivity.
 /// </summary>
+/// <remarks>
+/// All extension methods validate their input parameters using <see cref="ArgumentNullException.ThrowIfNull"/>.
+/// </remarks>
 public static class IncrementalGenerationContextExtensions
 {
     /// <summary>
@@ -75,7 +78,7 @@ public static class IncrementalGenerationContextExtensions
     /// </summary>
     /// <param name="context">The generation context.</param>
     /// <param name="includeContextId">Whether to include the context ID in the summary.</param>
-    /// <returns>A formatted string containing regeneration statistics.</returns>
+    /// <returns>A formatted string containing regeneration statistics with consistent formatting.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is null.</exception>
     public static string GetRegenerationSummary(
         this IncrementalGenerationContext context,
@@ -103,10 +106,12 @@ public static class IncrementalGenerationContextExtensions
     /// Determines whether the specified entity has changed based on file hash comparison.
     /// </summary>
     /// <param name="context">The generation context.</param>
-    /// <param name="entityName">The entity name to check.</param>
+    /// <param name="entityName">The entity name to check for changes.</param>
     /// <param name="filePath">The file path associated with the entity.</param>
     /// <returns><c>true</c> if the entity has changed; otherwise <c>false</c>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> or <paramref name="entityName"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="context"/>, <paramref name="entityName"/>, or <paramref name="filePath"/> is null.
+/// </exception>
     public static bool HasEntityChanged(
         this IncrementalGenerationContext context,
         string entityName,
@@ -143,7 +148,7 @@ public static class IncrementalGenerationContextExtensions
     /// Gets the set of all entity names that require regeneration.
     /// </summary>
     /// <param name="context">The generation context.</param>
-    /// <returns>A new hash set containing all entity names that require regeneration.</returns>
+    /// <returns>A new hash set containing all entity names that require regeneration, using ordinal case-insensitive comparison.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is null.</exception>
     public static HashSet<string> GetEntitiesRequiringRegeneration(this IncrementalGenerationContext context)
     {
@@ -157,7 +162,7 @@ public static class IncrementalGenerationContextExtensions
             result.Add(entityName);
         }
 
-        // Add entities that require regeneration due to full rebuild
+        // In full rebuild mode, all entities require regeneration
         if (context.IsFullRebuildRequired)
         {
             // In full rebuild mode, all unchanged entities become changed
