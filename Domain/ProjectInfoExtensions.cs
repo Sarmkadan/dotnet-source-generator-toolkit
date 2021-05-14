@@ -18,12 +18,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total number of properties across all entities in the project.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Total property count</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Total property count.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static int TotalProperties(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.Entities.Sum(e => e.Properties.Count);
     }
@@ -31,12 +31,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total number of successful generation results.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Count of successful generation results</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Count of successful generation results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static int SuccessfulGenerations(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.GenerationResults.Count(r => r.IsSuccessful());
     }
@@ -44,12 +44,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total number of failed generation results.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Count of failed generation results</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Count of failed generation results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static int FailedGenerations(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.GenerationResults.Count(r => !r.IsSuccessful());
     }
@@ -57,12 +57,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total number of code lines generated across all successful generation results.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Total code lines count</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Total code lines count.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static int TotalCodeLinesGenerated(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.GenerationResults
             .Where(r => r.IsSuccessful())
@@ -72,12 +72,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total generation time in milliseconds across all generation results.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Total generation time in milliseconds</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Total generation time in milliseconds.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static long TotalGenerationTimeMs(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.GenerationResults.Sum(r => r.GenerationDurationMs);
     }
@@ -85,12 +85,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the success rate percentage of generation operations (0-100).
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Success rate percentage</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Success rate percentage.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static double GenerationSuccessRate(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         var total = projectInfo.GenerationResults.Count;
         if (total == 0)
@@ -103,12 +103,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets a summary report of the project's generation statistics.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Formatted statistics report</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Formatted statistics report.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static string GetGenerationReport(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         var stats = projectInfo.GetStatistics();
         var sb = new StringBuilder();
@@ -147,12 +147,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the most recently analyzed entity by creation date.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>The most recent entity or null if no entities exist</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>The most recent entity or null if no entities exist.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static Entity? GetMostRecentEntity(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.Entities
             .OrderByDescending(e => e.CreatedAt)
@@ -162,12 +162,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets all entities that have navigation properties (relationships).
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Collection of entities with navigation properties</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Collection of entities with navigation properties.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static IEnumerable<Entity> GetEntitiesWithNavigationProperties(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.Entities.Where(e => e.GetNavigationProperties().Any());
     }
@@ -175,12 +175,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets all entities that have primary key properties.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Collection of entities with primary keys</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Collection of entities with primary keys.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static IEnumerable<Entity> GetEntitiesWithPrimaryKeys(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.Entities.Where(e => e.GetPrimaryKeyProperty() is not null);
     }
@@ -188,12 +188,12 @@ public static class ProjectInfoExtensions
     /// <summary>
     /// Gets the total number of unique property types across all entities.
     /// </summary>
-    /// <param name="projectInfo">The project information</param>
-    /// <returns>Count of unique property types</returns>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>Count of unique property types.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
     public static int CountUniquePropertyTypes(this ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
-            throw new ArgumentNullException(nameof(projectInfo));
+        ArgumentNullException.ThrowIfNull(projectInfo);
 
         return projectInfo.Entities
             .SelectMany(e => e.Properties)
