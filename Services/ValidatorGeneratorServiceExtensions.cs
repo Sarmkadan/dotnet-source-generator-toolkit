@@ -22,16 +22,14 @@ public static class ValidatorGeneratorServiceExtensions
     /// <param name="service">The validator generator service</param>
     /// <param name="entities">List of entities to generate validators for</param>
     /// <returns>Collection of successful generation results</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> or <paramref name="entities"/> is null</exception>
     public static async Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(
         this ValidatorGeneratorService service,
         List<Entity> entities,
         Func<Entity, bool>? filter = null)
     {
-        if (service is null)
-            throw new ArgumentNullException(nameof(service));
-
-        if (entities is null)
-            throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entities);
 
         var filteredEntities = filter is null
             ? entities
@@ -39,7 +37,7 @@ public static class ValidatorGeneratorServiceExtensions
 
         var results = await service.GenerateAllValidatorsAsync(filteredEntities);
 
-        return results.Where(r => r.Status == GenerationStatus.Completed);
+        return results.Where(r => r.Status == GenerationStatus.Completed).ToList();
     }
 
     /// <summary>
@@ -49,18 +47,16 @@ public static class ValidatorGeneratorServiceExtensions
     /// <param name="entity">The entity to generate validator for</param>
     /// <param name="predicate">Optional predicate to validate entity before generation</param>
     /// <returns>Generation result</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> or <paramref name="entity"/> is null</exception>
     public static async Task<GenerationResult> GenerateValidatorAsync(
         this ValidatorGeneratorService service,
         Entity entity,
         Func<Entity, bool>? predicate = null)
     {
-        if (service is null)
-            throw new ArgumentNullException(nameof(service));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entity);
 
-        if (entity is null)
-            throw new ArgumentNullException(nameof(entity));
-
-        if (predicate is not null && !predicate(entity))
+        if (predicate?.Invoke(entity) == false)
         {
             return new GenerationResult
             {
@@ -81,28 +77,30 @@ public static class ValidatorGeneratorServiceExtensions
     /// <param name="service">The validator generator service</param>
     /// <param name="entities">List of entities to generate validators for</param>
     /// <returns>Statistics about the generation process</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> is null</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="entities"/> is null or empty</exception>
     public static async Task<ValidatorGenerationStats> GenerateValidatorsWithStatsAsync(
         this ValidatorGeneratorService service,
         List<Entity> entities)
     {
-        if (service is null)
-            throw new ArgumentNullException(nameof(service));
-
-        if (entities is null || entities.Count == 0)
-            throw new ArgumentException("Entities collection cannot be null or empty", nameof(entities));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entities);
+        if (entities.Count == 0)
+            throw new ArgumentException("Entities collection cannot be empty", nameof(entities));
 
         var results = await service.GenerateAllValidatorsAsync(entities);
 
+        var completedResults = results.Where(r => r.Status == GenerationStatus.Completed).ToList();
         var stats = new ValidatorGenerationStats
         {
             TotalEntities = entities.Count,
-            Successful = results.Count(r => r.Status == GenerationStatus.Completed),
+            Successful = completedResults.Count,
             Failed = results.Count(r => r.Status == GenerationStatus.Failed),
             Skipped = results.Count(r => r.Status == GenerationStatus.Skipped),
             InProgress = results.Count(r => r.Status == GenerationStatus.InProgress),
             TotalLinesGenerated = results.Sum(r => r.CodeLineCount),
-            AverageExecutionTimeMs = results.Where(r => r.GenerationDurationMs > 0).Any()
-                ? results.Where(r => r.GenerationDurationMs > 0).Average(r => r.GenerationDurationMs)
+            AverageExecutionTimeMs = completedResults.Count > 0
+                ? completedResults.Average(r => r.GenerationDurationMs)
                 : 0
         };
 
@@ -115,15 +113,13 @@ public static class ValidatorGeneratorServiceExtensions
     /// <param name="service">The validator generator service</param>
     /// <param name="entity">The entity to validate</param>
     /// <returns>True if validation passes, false otherwise</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> or <paramref name="entity"/> is null</exception>
     public static async Task<bool> ValidateEntityAsync(
         this ValidatorGeneratorService service,
         Entity entity)
     {
-        if (service is null)
-            throw new ArgumentNullException(nameof(service));
-
-        if (entity is null)
-            throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entity);
 
         var validatorTypeName = $"{entity.Name}ValidatorManual";
         var assemblyQualifiedName = $"{entity.Namespace}.Validators.{validatorTypeName}, dotnet-source-generator-toolkit";
@@ -141,11 +137,18 @@ public static class ValidatorGeneratorServiceExtensions
             return false;
         }
 
-        var validatorInstance = Activator.CreateInstance(validatorType);
-        var parameters = new object[] { entity, null! };
-        var result = (bool)validateMethod.Invoke(validatorInstance, parameters)!;
+        try
+        {
+            var validatorInstance = Activator.CreateInstance(validatorType);
+            var parameters = new object[] { entity, new object() };
+            var result = (bool)validateMethod.Invoke(validatorInstance, parameters)!;
 
-        return result;
+            return result;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -154,15 +157,13 @@ public static class ValidatorGeneratorServiceExtensions
     /// <param name="service">The validator generator service</param>
     /// <param name="entities">Entities to validate</param>
     /// <returns>Collection of validation results for each entity</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> or <paramref name="entities"/> is null</exception>
     public static async Task<IEnumerable<EntityValidationResult>> ValidateEntitiesAsync(
         this ValidatorGeneratorService service,
         IEnumerable<Entity> entities)
     {
-        if (service is null)
-            throw new ArgumentNullException(nameof(service));
-
-        if (entities is null)
-            throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(entities);
 
         var validationTasks = entities.Select(async entity =>
         {
