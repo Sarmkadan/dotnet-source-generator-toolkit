@@ -9402,3 +9402,313 @@
 +- refactor(extensions): tighten guard clauses and docs in ServiceCollectionExtensions
 +- refactor(integration): tighten guard clauses and docs in HttpClientServiceExtensions
 +- refactor(dotnet-source-generator-toolkit.tests): tighten guard clauses and docs in ConfigurationValidatorTestsExtensions
+
+# 2026-07-11 17:32:17.902820
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:32:17.902876
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:33:35.834094
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:33:35.834668
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:33:58.923035
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:33:58.923115
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:35:12.407139
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:35:12.407701
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:36:23.634254
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
+
+# 2026-07-11 17:36:23.634359
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `ConfigurationManagerExtensions` (defined in `Infrastructure/ConfigurationManagerExtensions.cs`).
++
++Add a "## ConfigurationManagerExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string GetValueOrDefault
++public static string GetRequiredValue
++public static T GetValue<T>
++public static T GetValueOrDefault<T>
++public static IReadOnlyDictionary<string, string> GetAllConfig
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- refactor(utilities): tighten guard clauses and docs in EnumExtensions
++- refactor(utilities): tighten guard clauses and docs in TypeExtensions
++- refactor(utilities): tighten guard clauses and docs in DateTimeExtensions
++- refactor(utilities): tighten guard clauses and docs in StringExtensions
++- docs: document .aider.chat.history public API
++- (no commit message provided)
++- refactor(utilities): tighten guard clauses and docs in CollectionExtensions
++- refactor(repositories): tighten guard clauses and docs in GenerationResultRepositoryExtensions
++- refactor(metrics): tighten guard clauses and docs in MetricsCollectorExtensions
++- refactor(services): tighten guard clauses and docs in ValidatorGeneratorServiceExtensions
