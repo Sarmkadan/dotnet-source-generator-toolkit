@@ -601,6 +601,46 @@ public class ToolkitOptions
 }
 ```
 
+## ConfigurationManagerExtensions
+
+The `ConfigurationManagerExtensions` class provides convenient extension methods for working with the `ConfigurationManager` class. These methods simplify common configuration access patterns including optional values, required values, and type conversion with fallback behavior.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Infrastructure;
+
+// Example configuration
+var configuration = new ConfigurationManager();
+configuration.Set("ApiKey", "abc123");
+configuration.Set("TimeoutSeconds", "30");
+configuration.Set("MaxConnections", "5");
+configuration.Set("FeatureEnabled", "true");
+
+// Get value with default if key doesn't exist
+string apiKey = configuration.GetValueOrDefault("ApiKey", "default-key");
+// Returns: "abc123"
+
+// Get required value (throws if key doesn't exist)
+string requiredValue = configuration.GetRequiredValue("TimeoutSeconds");
+// Returns: "30"
+
+// Get typed value with conversion
+int timeout = configuration.GetValue<int>("TimeoutSeconds");
+// Returns: 30
+
+// Get typed value with default if key doesn't exist or conversion fails
+int maxConnections = configuration.GetValueOrDefault("MaxConnections", 10);
+// Returns: 5
+
+bool featureEnabled = configuration.GetValueOrDefault("FeatureEnabled", false);
+// Returns: true
+
+// Get all configuration as dictionary
+var allConfig = configuration.GetAllConfig();
+// Returns: Dictionary with all key-value pairs
+```
+
 ## Configuration
 
 ### Configuration File Format
