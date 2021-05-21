@@ -641,6 +641,46 @@ var allConfig = configuration.GetAllConfig();
 // Returns: Dictionary with all key-value pairs
 ```
 
+## ValidationExceptionExtensions
+
+The `ValidationExceptionExtensions` class provides extension methods for working with `ValidationException` instances, enabling convenient error aggregation, filtering, conversion, and inspection operations. These methods simplify common validation workflows by providing fluent APIs for error manipulation and analysis.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Exceptions;
+
+// Create validation exceptions
+var exception1 = new ValidationException("Validation failed", new List<string> { "Name is required", "Email is invalid" });
+var exception2 = new ValidationException("Business rules violated", new List<string> { "Price must be positive", "Stock cannot be negative" });
+
+// Combine multiple validation exceptions into one
+var combined = ValidationExceptionExtensions.Combine(new[] { exception1, exception2 });
+// combined.Errors contains all 4 error messages
+
+// Add additional errors to an existing exception
+combined.AddErrors("Inventory level too low", "Supplier not specified");
+// Returns the same exception for method chaining
+
+// Filter errors by predicate
+var requiredErrors = combined.FilterErrors(e => e.Contains("required", StringComparison.OrdinalIgnoreCase));
+// requiredErrors.Errors contains only errors with "required"
+
+// Convert to structured error dictionary
+var errorDict = combined.ToErrorDictionary();
+// errorDict["NullOrRequired"] contains name/required errors
+// errorDict["RangeValidation"] contains price/stock errors
+// errorDict["General"] contains other errors
+
+// Check if specific error exists
+bool hasNullErrors = combined.HasError(e => e.Contains("null", StringComparison.OrdinalIgnoreCase));
+// Returns: true
+
+// Get first matching error
+string? firstFormatError = combined.GetFirstError(e => e.Contains("format", StringComparison.OrdinalIgnoreCase));
+// Returns: "Email is invalid"
+```
+
 ## Configuration
 
 ### Configuration File Format
