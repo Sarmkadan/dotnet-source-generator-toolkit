@@ -601,7 +601,44 @@ public class ToolkitOptions
 }
 ```
 
+## GenerationPipelineExtensions
+
+The `GenerationPipelineExtensions` class provides extension methods for the `PipelineResult` class, offering tools to analyze, summarize, and monitor the performance of pipeline execution. These utilities enable easy generation of human-readable reports, assessment of execution efficiency, and extraction of performance metrics for your pipeline operations.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Pipeline;
+
+// Assuming you have a PipelineResult from your generation run
+PipelineResult result = await pipeline.ExecuteAsync(projectInfo);
+
+// 1. Get a formatted summary report of the execution
+string report = result.CreateSummaryReport();
+Console.WriteLine(report);
+
+// 2. Check if the pipeline execution was efficient based on entity count
+bool efficient = result.WasExecutionEfficient(threshold: 10);
+Console.WriteLine($"Was efficient: {efficient}");
+
+// 3. Get a concise human-readable status message
+string status = result.GetStatusMessage();
+Console.WriteLine(status);
+
+// 4. Get detailed performance metrics
+PipelinePerformanceMetrics metrics = result.GetPerformanceMetrics();
+Console.WriteLine($"Duration: {metrics.ExecutionDuration.TotalMilliseconds}ms");
+Console.WriteLine($"Entities/sec: {metrics.EntitiesPerSecond}");
+Console.WriteLine($"Success rate: {metrics.WriteSuccessRate}%");
+
+// 5. Check if files were successfully output
+bool hasFiles = result.HasOutputFiles();
+double successRatio = result.GetFileWriteSuccessRatio();
+```
+
 ## ConfigurationManagerExtensions
+
 
 The `ConfigurationManagerExtensions` class provides convenient extension methods for working with the `ConfigurationManager` class. These methods simplify common configuration access patterns including optional values, required values, and type conversion with fallback behavior.
 
