@@ -718,6 +718,48 @@ string? firstFormatError = combined.GetFirstError(e => e.Contains("format", Stri
 // Returns: "Email is invalid"
 ```
 
+## IncrementalGenerationContextExtensions
+
+The `IncrementalGenerationContextExtensions` class provides extension methods for the `IncrementalGenerationContext` class, offering convenient utilities for managing incremental generation scenarios. These methods simplify tracking entity changes, checking regeneration requirements, and managing the incremental generation state across multiple entities.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Pipeline;
+
+// Assuming you have an IncrementalGenerationContext from your pipeline
+var context = new IncrementalGenerationContext(
+    projectPath: "/path/to/project",
+    contextId: "gen-2025-07-12-1430"
+);
+
+// 1. Check if any entities require regeneration
+var entityNames = new List<string> { "Product", "Customer", "Order" };
+bool anyChanged = context.AnyRequiresRegeneration(entityNames);
+Console.WriteLine($"Any entities require regeneration: {anyChanged}");
+
+// 2. Mark a collection of entities as changed for regeneration
+context.MarkAllChanged(entityNames);
+
+// 3. Mark a collection of entities as unchanged to skip generation
+context.MarkAllUnchanged(entityNames);
+
+// 4. Get a summary of regeneration status
+string summary = context.GetRegenerationSummary();
+Console.WriteLine(summary);
+
+// 5. Check if a specific entity has changed based on file comparison
+bool productChanged = context.HasEntityChanged(
+    entityName: "Product",
+    filePath: "/path/to/Project/Product.cs"
+);
+Console.WriteLine($"Product changed: {productChanged}");
+
+// 6. Get all entities that require regeneration
+var entitiesToRegenerate = context.GetEntitiesRequiringRegeneration();
+Console.WriteLine($"Entities to regenerate: {string.Join(", ", entitiesToRegenerate)}");
+```
+
 ## Configuration
 
 ### Configuration File Format
