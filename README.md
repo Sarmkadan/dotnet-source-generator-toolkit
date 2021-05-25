@@ -718,6 +718,42 @@ string? firstFormatError = combined.GetFirstError(e => e.Contains("format", Stri
 // Returns: "Email is invalid"
 ```
 
+## ValidatorGeneratorServiceExtensions
+
+The `ValidatorGeneratorServiceExtensions` class provides extension methods for the `ValidatorGeneratorService`, adding capabilities for batch processing, entity-level validation, and generation statistics tracking. These utilities simplify the management of validator generation workflows by providing fluent APIs for generating, validating, and monitoring entity validation status.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+
+// Assuming you have your service instance
+var service = new ValidatorGeneratorService();
+var entities = new List<Entity> { /* ... */ };
+
+// 1. Generate validators with statistics
+ValidatorGenerationStats stats = await service.GenerateValidatorsWithStatsAsync(entities);
+Console.WriteLine($"Successful: {stats.Successful}, Failed: {stats.Failed}");
+Console.WriteLine($"Total lines generated: {stats.TotalLinesGenerated}");
+
+// 2. Validate a single entity
+Entity myEntity = entities[0];
+bool isValid = await service.ValidateEntityAsync(myEntity);
+Console.WriteLine($"Entity {myEntity.Name} is valid: {isValid}");
+
+// 3. Validate multiple entities
+IEnumerable<EntityValidationResult> results = await service.ValidateEntitiesAsync(entities);
+foreach (var result in results)
+{
+    Console.WriteLine($"Entity: {result.EntityName}, IsValid: {result.IsValid}");
+    if (!result.IsValid)
+    {
+        Console.WriteLine($"Errors: {string.Join(", ", result.Errors)}");
+    }
+}
+```
+
 ## ProjectInfoExtensions
 
 The `ProjectInfoExtensions` class provides extension methods for the `ProjectInfo` class, offering tools to analyze project statistics, monitor generation results, and extract insights about entities, properties, and generation performance. These utilities enable comprehensive project analysis and reporting for your code generation workflows.
