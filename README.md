@@ -718,6 +718,51 @@ string? firstFormatError = combined.GetFirstError(e => e.Contains("format", Stri
 // Returns: "Email is invalid"
 ```
 
+## ProjectInfoExtensions
+
+The `ProjectInfoExtensions` class provides extension methods for the `ProjectInfo` class, offering tools to analyze project statistics, monitor generation results, and extract insights about entities, properties, and generation performance. These utilities enable comprehensive project analysis and reporting for your code generation workflows.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Assuming you have a ProjectInfo instance from your generation run
+ProjectInfo projectInfo = await sourceGeneratorService.AnalyzeProjectAsync("/path/to/your/project");
+
+// 1. Get basic statistics about the project
+int totalProperties = projectInfo.TotalProperties();
+int uniquePropertyTypes = projectInfo.CountUniquePropertyTypes();
+Console.WriteLine($"Total properties: {totalProperties}");
+Console.WriteLine($"Unique property types: {uniquePropertyTypes}");
+
+// 2. Analyze generation results
+int successfulGenerations = projectInfo.SuccessfulGenerations();
+int failedGenerations = projectInfo.FailedGenerations();
+double successRate = projectInfo.GenerationSuccessRate();
+Console.WriteLine($"Generation success rate: {successRate:F2}%");
+Console.WriteLine($"Total code lines generated: {projectInfo.TotalCodeLinesGenerated()}");
+Console.WriteLine($"Total generation time: {projectInfo.TotalGenerationTimeMs()}ms");
+
+// 3. Get detailed entity analysis
+Entity? mostRecentEntity = projectInfo.GetMostRecentEntity();
+if (mostRecentEntity != null)
+{
+    Console.WriteLine($"Most recent entity: {mostRecentEntity.Name} (created: {mostRecentEntity.CreatedAt})");
+}
+
+// 4. Find entities with specific characteristics
+var entitiesWithNavProps = projectInfo.GetEntitiesWithNavigationProperties();
+Console.WriteLine($"Entities with navigation properties: {entitiesWithNavProps.Count()}");
+
+var entitiesWithPrimaryKeys = projectInfo.GetEntitiesWithPrimaryKeys();
+Console.WriteLine($"Entities with primary keys: {entitiesWithPrimaryKeys.Count()}");
+
+// 5. Generate a comprehensive report
+string report = projectInfo.GetGenerationReport();
+Console.WriteLine(report);
+```
+
 ## IncrementalGenerationContextExtensions
 
 The `IncrementalGenerationContextExtensions` class provides extension methods for the `IncrementalGenerationContext` class, offering convenient utilities for managing incremental generation scenarios. These methods simplify tracking entity changes, checking regeneration requirements, and managing the incremental generation state across multiple entities.
