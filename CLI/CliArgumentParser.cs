@@ -82,7 +82,7 @@ public sealed class CliArgumentParser : ICliArgumentParser
             }
             else if (arg == "--parallelism" && i + 1 < args.Length)
             {
-                if (int.TryParse(args[++i], out var degree))
+                if (int.TryParse(args[++i], System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var degree))
                 {
                     options.DegreeOfParallelism = Math.Max(1, degree);
                 }

@@ -39,7 +39,7 @@ public sealed class CodeFormatterService : ICodeFormatterService
 
     public CodeFormatterService(ILogger<CodeFormatterService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public string FormatCode(string code)

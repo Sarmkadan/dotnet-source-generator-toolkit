@@ -76,7 +76,7 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
 
     public GenerationResultAggregatorService(ILogger<GenerationResultAggregatorService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public GenerationReport Analyze(IEnumerable<GenerationResult> results)
