@@ -841,6 +841,61 @@ var entitiesToRegenerate = context.GetEntitiesRequiringRegeneration();
 Console.WriteLine($"Entities to regenerate: {string.Join(", ", entitiesToRegenerate)}");
 ```
 
+## MetricsCollectorExtensions
+
+The `MetricsCollectorExtensions` class provides extension methods for the `MetricsCollector` class, enabling convenient performance monitoring and reporting. These utilities simplify common metric collection tasks such as counting, gauging, histogram recording, and operation duration measurement.
+
+### Usage Examples
+
+```csharp
+using DotNetSourceGeneratorToolkit.Metrics;
+
+// Assuming you have your MetricsCollector instance
+var collector = new MetricsCollector();
+
+// 1. Increment a counter
+collector.IncrementCounter("OrderCreated", amount: 1);
+
+// 2. Record a gauge value
+collector.RecordGauge("ActiveConnections", 5);
+
+// 3. Measure time synchronously (Action)
+var elapsed = collector.MeasureTime("ProcessOrder", () => 
+{
+    // ... logic ...
+});
+
+// 4. Measure time synchronously (Func<T>)
+var (result, elapsedGeneric) = collector.MeasureTime("ProcessOrder", () => 
+{
+    return "OrderProcessed";
+});
+
+// 5. Measure time asynchronously (Func<Task>)
+await collector.MeasureTimeAsync("ProcessOrderAsync", async () =>
+{
+    // ... async logic ...
+    await Task.Delay(100);
+});
+
+// 6. Measure time asynchronously (Func<Task<T>>)
+var (asyncResult, asyncElapsed) = await collector.MeasureTimeAsync("ProcessOrderAsync", async () =>
+{
+    await Task.Delay(100);
+    return "OrderProcessedAsync";
+});
+
+// 7. Record a histogram
+collector.RecordHistogram("RequestDuration", 150, context: "ApiCall");
+
+// 8. Record counter and histogram in one operation
+collector.RecordOperation("DatabaseQuery", "QueryDuration", 1, 45);
+
+// 9. Get snapshot and reset
+var snapshot = collector.GetSnapshotAndReset();
+```
+
+
 ## Configuration
 
 ### Configuration File Format
