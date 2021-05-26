@@ -20,7 +20,7 @@ public sealed class MapperGeneratorService : IMapperGeneratorService
 
     public MapperGeneratorService(ILogger<MapperGeneratorService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities)

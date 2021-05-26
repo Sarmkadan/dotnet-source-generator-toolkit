@@ -66,7 +66,7 @@ public sealed class BatchProcessor<T> : IBatchProcessor<T>
                 catch (Exception ex)
                 {
                     sw.Stop();
-                    errorCount++;
+                    Interlocked.Increment(ref errorCount);
 
                     _logger.LogWarning(ex, "Batch item processing failed");
 

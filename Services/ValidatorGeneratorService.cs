@@ -20,7 +20,7 @@ public sealed class ValidatorGeneratorService : IValidatorGeneratorService
 
     public ValidatorGeneratorService(ILogger<ValidatorGeneratorService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(List<Entity> entities)
@@ -151,11 +151,11 @@ namespace {entity.Namespace}.Validators
                 rules.Add($"                .Matches(@\"{prop.RegexPattern}\").WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} format is invalid.\")");
 
             if (prop.MinValue.HasValue && prop.MaxValue.HasValue)
-                rules.Add($"                .InclusiveBetween({prop.MinValue}, {prop.MaxValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be between {{prop.MinValue}} and {{prop.MaxValue}}.\")");
+                rules.Add($"                .InclusiveBetween({prop.MinValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {prop.MaxValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be between {{prop.MinValue}} and {{prop.MaxValue}}.\")");
             else if (prop.MinValue.HasValue)
-                rules.Add($"                .GreaterThanOrEqualTo({prop.MinValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be at least {{prop.MinValue}}.\")");
+                rules.Add($"                .GreaterThanOrEqualTo({prop.MinValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must be at least {{prop.MinValue}}.\")");
             else if (prop.MaxValue.HasValue)
-                rules.Add($"                .LessThanOrEqualTo({prop.MaxValue}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must not exceed {{prop.MaxValue}}.\")");
+                rules.Add($"                .LessThanOrEqualTo({prop.MaxValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}).WithMessage($\"{{nameof({{entity.Name}}.{{prop.Name}})}} must not exceed {{prop.MaxValue}}.\")");
 
             rules.Add("                ;");
             rules.Add("");
@@ -208,11 +208,11 @@ namespace {entity.Namespace}.Validators
             foreach (var prop in rangeProps)
             {
                 if (prop.MinValue.HasValue && prop.MaxValue.HasValue)
-                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue}m || entity.{prop.Name} > {prop.MaxValue}m) errors.Add(\"{prop.Name} must be between {prop.MinValue} and {prop.MaxValue}.\");");
+                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}m || entity.{prop.Name} > {prop.MaxValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}m) errors.Add(\"{prop.Name} must be between {prop.MinValue} and {prop.MaxValue}.\");");
                 else if (prop.MinValue.HasValue)
-                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue}m) errors.Add(\"{prop.Name} must be at least {prop.MinValue}.\");");
+                    logic.Add($"            if (entity.{prop.Name} < {prop.MinValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}m) errors.Add(\"{prop.Name} must be at least {prop.MinValue}.\");");
                 else if (prop.MaxValue.HasValue)
-                    logic.Add($"            if (entity.{prop.Name} > {prop.MaxValue}m) errors.Add(\"{prop.Name} must not exceed {prop.MaxValue}.\");");
+                    logic.Add($"            if (entity.{prop.Name} > {prop.MaxValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}m) errors.Add(\"{prop.Name} must not exceed {prop.MaxValue}.\");");
             }
         }
 

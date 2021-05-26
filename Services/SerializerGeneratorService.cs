@@ -20,7 +20,7 @@ public sealed class SerializerGeneratorService : ISerializerGeneratorService
 
     public SerializerGeneratorService(ILogger<SerializerGeneratorService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities)
