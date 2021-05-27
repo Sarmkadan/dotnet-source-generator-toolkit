@@ -220,6 +220,55 @@ await fileSystem.DeleteFileAsync(fileSystem.CombinePath(projectPath, "OldReposit
 - `FileSystemService`: Handles file I/O operations
 - `GenerationResultRepository`: Persists generation results
 
+## ConfigurationManager
+
+The `ConfigurationManager` class provides centralized configuration management for the .NET Source Generator Toolkit. It supports hierarchical configuration sources (in-memory settings, environment variables, and default values) with thread-safe operations and comprehensive error handling. The manager automatically resolves relative paths against the project root and provides type-safe access to common configuration keys.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create configuration manager with logging support
+var configuration = new ConfigurationManager(loggerFactory.CreateLogger<ConfigurationManager>());
+
+// Set configuration values
+configuration.SetValue("OutputDirectory", "./GeneratedCode");
+configuration.SetValue("TemplateDirectory", "./Templates");
+configuration.SetValue("MaxDegreeOfParallelism", "4");
+configuration.SetValue("EnableValidation", "true");
+
+// Check if a key exists
+bool hasOutputDir = configuration.HasKey("OutputDirectory");
+// Returns: true
+
+// Get configuration values with fallbacks
+string outputDir = configuration.GetOutputDirectory();
+// Returns: "./GeneratedCode" (or default if not set)
+
+string templateDir = configuration.GetTemplateDirectory();
+// Returns: "./Templates" (or default if not set)
+
+string projectRoot = configuration.GetProjectRoot();
+// Returns: Current working directory (or configured value)
+
+// Get raw configuration value with default fallback
+string parallelism = configuration.GetValue("MaxDegreeOfParallelism", "2");
+// Returns: "4" (or "2" if not set)
+
+// Get all configuration as read-only dictionary
+IReadOnlyDictionary<string, string> allConfig = configuration.GetAllConfig();
+// Returns: Dictionary containing all key-value pairs
+```
+
 **Formatting** (`Formatters/`)
 - `JsonOutputFormatter`: JSON output with metadata
 - `CsvOutputFormatter`: Spreadsheet-compatible format
