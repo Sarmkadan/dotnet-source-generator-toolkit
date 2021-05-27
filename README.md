@@ -143,6 +143,53 @@ Supporting Infrastructure:
 ├── Metrics (MetricsCollector)
 ├── Configuration (ConfigurationManager, ToolkitOptions)
 └── File I/O (FileSystemService)
+
+## FileSystemService
+
+The `FileSystemService` provides asynchronous file system operations including reading, writing, appending, and directory management. It handles file existence checks, path manipulation, and comprehensive error handling with detailed logging. The service automatically creates parent directories when writing files and provides methods for both synchronous and asynchronous file operations.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+var fileSystem = new FileSystemService(loggerFactory.CreateLogger<FileSystemService>());
+
+// Combine paths safely
+string projectPath = fileSystem.CombinePath("src", "MyProject");
+string filePath = fileSystem.CombinePath(projectPath, "GeneratedCode", "ProductRepository.cs");
+
+// Check if file exists
+bool exists = fileSystem.FileExists(filePath);
+
+// Create directory if needed (automatically handled in WriteFileAsync, but can be called explicitly)
+await fileSystem.CreateDirectoryAsync(fileSystem.GetDirectoryName(filePath)!);
+
+// Write generated code to file
+await fileSystem.WriteFileAsync(filePath, 
+    "// Auto-generated repository\n" +
+    "public class ProductRepository { /* implementation */ }");
+
+// Read the generated file
+string content = await fileSystem.ReadFileAsync(filePath);
+
+// Append additional content
+await fileSystem.AppendFileAsync(filePath, "\n// Additional generated members");
+
+// Get all generated files in a directory
+var generatedFiles = await fileSystem.GetFilesAsync(projectPath, "*.cs");
+
+// Delete old generated files if needed
+await fileSystem.DeleteFileAsync(fileSystem.CombinePath(projectPath, "OldRepository.cs"));
+```
 ```
 
 ### Design Patterns Used
