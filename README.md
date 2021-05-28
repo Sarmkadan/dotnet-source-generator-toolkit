@@ -1358,6 +1358,114 @@ Run your own benchmarks with:
 dotnet run -- --path ./MyProject --verbose --log-level Debug 2>&1 | grep "ms"
 ```
 
+## Benchmarks
+
+The `Benchmarks` class provides comprehensive performance benchmarks for the .NET Source Generator Toolkit using [BenchmarkDotNet](https://benchmarkdotnet.org/). It measures throughput and memory allocation for critical operations including entity analysis, code generation, project analysis, and batch processing.
+
+The benchmarks help identify performance bottlenecks and optimize code generation operations. They automatically create test project structures, set up dependency injection containers, and measure execution time and memory allocations for each benchmark scenario.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Benchmarks;
+using BenchmarkDotNet.Running;
+
+// Run all benchmarks
+BenchmarkRunner.Main(new string[0]);
+
+// Run specific benchmark category
+BenchmarkRunner.Main(new[] { "--filter", "*Analysis*" });
+
+// Run benchmarks with custom configuration
+BenchmarkRunner.Main(new[] { "--runtimes", "net10.0", "--job", "short" });
+```
+
+### Available Benchmarks
+
+The `Benchmarks` class includes the following benchmark categories:
+
+| Category | Benchmarks | Description |
+|----------|-----------|-------------|
+| **Analysis** | `EntityAnalysis_SingleFile` | Measures entity parsing performance for a single C# file |
+| | `EntityAnalysis_MultipleFiles` | Measures entity parsing performance across multiple C# files |
+| **Generation** | `RepositoryGeneration_SingleEntity` | Measures repository code generation performance |
+| | `MapperGeneration_SingleEntity` | Measures mapper code generation performance |
+| | `ValidatorGeneration_SingleEntity` | Measures validator code generation performance |
+| | `SerializerGeneration_SingleEntity` | Measures serializer code generation performance |
+| **Project** | `ProjectAnalysis_FullProject` | Measures full project analysis performance |
+| | `ProjectGeneration_FullProject` | Measures complete code generation for a project |
+| **Batch** | `BatchGeneration_ParallelProcessing` | Measures throughput for parallel code generation |
+| **Memory** | `Memory_EntityAnalysis` | Measures memory allocations during entity parsing |
+| | `Memory_RepositoryGeneration` | Measures memory allocations during repository generation |
+
+### Running Benchmarks
+
+To run all benchmarks:
+
+```bash
+cd benchmarks
+# Build in Release mode for accurate benchmarks
+dotnet run -c Release
+```
+
+To run specific benchmarks:
+
+```bash
+# Run only analysis benchmarks
+dotnet run -c Release -- --filter *Analysis*
+
+# Run only generation benchmarks
+dotnet run -c Release -- --filter *Generation*
+
+# Run memory benchmarks
+dotnet run -c Release -- --filter *Memory*
+```
+
+### Benchmark Configuration
+
+The benchmarks automatically:
+- Create temporary test project directories
+- Set up dependency injection containers with all required services
+- Generate test entity files with various attributes
+- Measure execution time using `[Benchmark]` attributes
+- Track memory allocations using `[MemoryDiagnoser]`
+
+
+### Sample Output
+
+```
+BenchmarkDotNet=v0.13.12, OS=ubuntu 22.04
+Intel Core i7-12700, 1 CPU, 20 logical and 12 physical cores
+.NET SDK=8.0.100
+
+| Method | Mean | Error | StdDev | Median | Allocated |
+|-----------------------|----------|---------|---------|----------|----------|
+| EntityAnalysis_SingleFile | 1.234 ms| 0.0234 | 0.0219 | 1.221 ms| 5.2 KB |
+| EntityAnalysis_MultipleFiles| 4.567 ms| 0.0892 | 0.0834 | 4.512 ms| 18.7 KB |
+| RepositoryGeneration | 2.345 ms| 0.0456 | 0.0428 | 2.312 ms| 12.4 KB |
+| MapperGeneration | 1.890 ms| 0.0321 | 0.0298 | 1.876 ms| 9.8 KB |
+```
+
+### Adding New Benchmarks
+
+To add benchmarks for new functionality:
+
+1. Create a new benchmark method in the `Benchmarks` class
+2. Use `[Benchmark]` attribute to mark it as a benchmark
+3. Use `[MemoryDiagnoser]` for memory benchmarks
+4. Add appropriate categories with `[BenchmarkCategory("Category")]`
+
+Example:
+
+```csharp
+[Benchmark]
+[BenchmarkCategory("Analysis")]
+public async Task MyNewBenchmark()
+{
+    // Your benchmark code here
+}
+```
+
 ## Performance Benchmarks
 
 The project includes comprehensive benchmarks using [BenchmarkDotNet](https://benchmarkdotnet.org/) to measure performance and memory allocation for critical operations.
