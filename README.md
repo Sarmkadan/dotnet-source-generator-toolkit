@@ -621,6 +621,63 @@ eventAggregator.Subscribe<GenerationCompletedEvent>(ev =>
 // Toolkit publishes these events automatically during execution
 ```
 
+## GenerationCompletedEvent
+
+The `GenerationCompletedEvent` is published when the code generation process successfully completes for a project. This event provides detailed information about the generation outcome including success status, files generated, any errors encountered, and performance metrics. It allows subscribers to perform post-generation actions such as cleanup, notifications, or integration with external systems.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Events;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+var eventAggregator = new EventAggregator();
+
+// Subscribe to GenerationCompletedEvent
+var subscription = eventAggregator.Subscribe<GenerationCompletedEvent>(ev =>
+{
+    Console.WriteLine($"✅ Generation completed at {ev.OccurredAt:yyyy-MM-dd HH:mm:ss}");
+    Console.WriteLine($"📋 Request: {ev.RequestId}");
+    Console.WriteLine($"🎯 Success: {ev.IsSuccessful}");
+    
+    if (ev.IsSuccessful)
+    {
+        Console.WriteLine($"📁 Files generated: {ev.FilesGenerated}");
+        Console.WriteLine($"⏱️ Execution time: {ev.ExecutionTimeMs}ms");
+    }
+    else
+    {
+        Console.WriteLine($"❌ Errors encountered:");
+        foreach (var error in ev.Errors)
+        {
+            Console.WriteLine($"  - {error}");
+        }
+    }
+});
+
+// Simulate completed generation
+var completedEvent = new GenerationCompletedEvent
+{
+    EventId = Guid.NewGuid().ToString(),
+    OccurredAt = DateTime.UtcNow,
+    RequestId = "req-12345",
+    IsSuccessful = true,
+    FilesGenerated = 8,
+    Errors = new List<string>(),
+    ExecutionTimeMs = 142
+};
+
+// Publish the event
+eventAggregator.Publish(completedEvent);
+```
+
 ### Example 10: Metrics Collection and Reporting
 
 ```csharp
