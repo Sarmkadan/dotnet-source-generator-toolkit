@@ -992,6 +992,52 @@ var snapshot = collector.GetSnapshotAndReset();
 ```
 
 
+## GenerationException
+
+The `GenerationException` class serves as the base exception type for all source code generation errors in the .NET Source Generator Toolkit. It provides contextual information about which generator failed and which entity was being processed, enabling precise error handling and debugging. Derived exception types include specific scenarios like entity analysis failures, repository generation errors, mapper generation issues, validator generation problems, and configuration validation errors.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Exceptions;
+
+try
+{
+    // Attempt to generate repository for a malformed entity
+    var repository = await repositoryGenerator.GenerateRepositoryAsync(invalidEntity);
+}
+catch (RepositoryGenerationException ex) when (ex.EntityName == "Product")
+{
+    // Handle repository generation failure for Product entity
+    Console.WriteLine($"Failed to generate repository for {ex.EntityName}: {ex.Message}");
+    Console.WriteLine($"Generator type: {ex.GeneratorType}");
+    
+    // Re-throw with additional context
+    throw new GenerationException(
+        $"Repository generation failed for entity '{ex.EntityName}'. See inner exception for details.",
+        ex.GeneratorType,
+        ex.EntityName
+    );
+}
+catch (GenerationException ex)
+{
+    // Handle any generation exception generically
+    Console.WriteLine($"Generation failed: {ex.Message}");
+    if (ex.GeneratorType != null)
+    {
+        Console.WriteLine($"Failed during: {ex.GeneratorType}");
+    }
+    if (ex.EntityName != null)
+    {
+        Console.WriteLine($"Entity: {ex.EntityName}");
+    }
+    
+    // Log additional context
+    logger.LogError(ex, "Code generation failed");
+    throw;
+}
+```
+
 ## Configuration
 
 ### Configuration File Format
