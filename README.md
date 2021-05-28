@@ -192,6 +192,54 @@ await fileSystem.DeleteFileAsync(fileSystem.CombinePath(projectPath, "OldReposit
 ```
 ```
 
+## GenerationStartedEvent
+
+The `GenerationStartedEvent` is published when the code generation process begins for a project. This event allows subscribers to initialize resources, set up logging, or perform pre-generation validation before any code is generated. It provides essential context about the generation session including the project path, entity count, and generator types that will be used.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Events;
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+var eventAggregator = new EventAggregator();
+
+// Subscribe to GenerationStartedEvent
+var subscription = eventAggregator.Subscribe<GenerationStartedEvent>(ev =>
+{
+    Console.WriteLine($"🚀 Generation started at {ev.OccurredAt:yyyy-MM-dd HH:mm:ss}");
+    Console.WriteLine($"📁 Project: {ev.ProjectPath}");
+    Console.WriteLine($"📊 Entities to process: {ev.EntityCount}");
+    Console.WriteLine($"🔧 Generator types: {string.Join(", ", ev.GeneratorTypes)}");
+    
+    // Initialize resources or validate preconditions
+    if (ev.EntityCount == 0)
+    {
+        Console.WriteLine("⚠️  No entities found - generation may not produce any output");
+    }
+});
+
+// Simulate starting generation
+var generationEvent = new GenerationStartedEvent
+{
+    RequestId = Guid.NewGuid().ToString(),
+    ProjectPath = "/path/to/MyProject",
+    EntityCount = 42,
+    GeneratorTypes = new List<string> { "Repository", "Mapper", "Validator", "Serializer" }
+};
+
+// Publish the event
+eventAggregator.Publish(generationEvent);
+```
+
 ### Design Patterns Used
 
 | Pattern | Components | Purpose |
