@@ -1466,6 +1466,75 @@ public async Task MyNewBenchmark()
 }
 ```
 
+## BenchmarkEntities
+
+The `BenchmarkEntities` class provides sample entities designed specifically for benchmarking different code generation scenarios. These entities test various aspects of the generation pipeline including entity parsing, repository generation, mapper creation, validator generation, and serialization code output. Each entity type focuses on a specific performance characteristic to help identify bottlenecks in the generation process.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Benchmarks;
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create benchmark entities for performance testing
+var simpleEntity = new BenchmarkEntities.SimpleEntity
+{
+    Id = 1,
+    Name = "Test Product",
+    CreatedAt = DateTime.UtcNow
+};
+
+var complexEntity = new BenchmarkEntities.ComplexEntity
+{
+    Id = 2,
+    Name = "Premium Widget",
+    Description = "High-quality widget with advanced features",
+    Price = 99.99m,
+    StockQuantity = 150,
+    CreatedAt = DateTime.UtcNow,
+    UpdatedAt = DateTime.UtcNow.AddDays(-1),
+    IsActive = true,
+    Category = "Electronics",
+    Rating = 4.7,
+    Views = 1250
+};
+
+var genericEntity = new BenchmarkEntities.GenericEntity
+{
+    Id = 3,
+    Tags = new List<string> { "electronics", "premium", "2024" },
+    Metadata = new Dictionary<string, object>
+    {
+        { "manufacturer", "TechCorp" },
+        { "warrantyYears", 3 },
+        { "isFeatured", true }
+    },
+    Aliases = new[] { "TechWidget", "PremiumTech", "WidgetPro" },
+    RelatedIds = new HashSet<int> { 101, 102, 103 }
+};
+
+// Use these entities with the generation services
+var repositoryGenerator = new RepositoryGeneratorService();
+var mapperGenerator = new MapperGeneratorService();
+var validatorGenerator = new ValidatorGeneratorService();
+
+// Generate repository for benchmarking
+var repositoryResult = await repositoryGenerator.GenerateRepositoryAsync(
+    new Entity("ComplexEntity", typeof(BenchmarkEntities.ComplexEntity))
+);
+
+// Generate mapper for benchmarking
+var mapperResult = await mapperGenerator.GenerateMappingAsync(
+    new Entity("ComplexEntity", typeof(BenchmarkEntities.ComplexEntity)),
+    new Entity("ComplexEntityDto", typeof(ComplexEntityDto))
+);
+
+// Generate validator for benchmarking
+var validatorResult = await validatorGenerator.GenerateValidatorAsync(
+    new Entity("GenericEntity", typeof(BenchmarkEntities.GenericEntity))
+);
+```
+
 ## Performance Benchmarks
 
 The project includes comprehensive benchmarks using [BenchmarkDotNet](https://benchmarkdotnet.org/) to measure performance and memory allocation for critical operations.
