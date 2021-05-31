@@ -240,6 +240,67 @@ var generationEvent = new GenerationStartedEvent
 eventAggregator.Publish(generationEvent);
 ```
 
+## ConfigurationValidatorTests
+
+The `ConfigurationValidatorTests` class provides unit tests for the `ConfigurationValidator` class, which validates configuration options for the .NET Source Generator Toolkit. These tests ensure that configuration validation works correctly by testing null options, valid options, minimum timeout values, and default configuration values. The test suite also includes mocking scenarios to verify validator behavior.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Configuration;
+using FluentAssertions;
+using Moq;
+using Xunit;
+
+// Create a configuration validator instance
+var validator = new ConfigurationValidator();
+
+// Test 1: Validate null options returns invalid result with error
+var nullResult = validator.Validate(null);
+nullResult.IsValid.Should().BeFalse();
+nullResult.Errors.Should().ContainSingle(e => e.Contains("cannot be null", StringComparison.OrdinalIgnoreCase));
+
+// Test 2: Validate valid options returns valid result with no errors
+var validOptions = new ToolkitOptions
+{
+    CacheExpirationMinutes = 30,
+    MaxDegreeOfParallelism = 2,
+    OperationTimeoutSeconds = 60,
+    CodeFormattingLineLength = 120,
+    OutputDirectory = "./output"
+};
+var validResult = validator.Validate(validOptions);
+validResult.IsValid.Should().BeTrue();
+validResult.Errors.Should().BeEmpty();
+
+// Test 3: Validate timeout below minimum adds timeout error
+var defaults = validator.GetDefaults();
+defaults.OperationTimeoutSeconds = 5; // Below minimum of 30
+var timeoutResult = validator.Validate(defaults);
+timeoutResult.IsValid.Should().BeFalse();
+timeoutResult.Errors.Should().Contain(e => e.Contains("timeout", StringComparison.OrdinalIgnoreCase));
+
+// Test 4: Get default options returns expected values
+var defaults = validator.GetDefaults();
+defaults.OutputDirectory.Should().Be("./Generated");
+defaults.EnableCaching.Should().BeTrue();
+defaults.CacheExpirationMinutes.Should().Be(60);
+
+// Test 5: Mocked validator configured to return failure
+var mockValidator = new Mock<IConfigurationValidator>();
+var failedResult = new ValidationResult { IsValid = false };
+failedResult.AddError("Simulated validation failure");
+
+mockValidator
+    .Setup(v => v.Validate(It.IsAny<ToolkitOptions>()))
+    .Returns(failedResult);
+
+var options = new ToolkitOptions { OutputDirectory = string.Empty };
+var mockResult = mockValidator.Object.Validate(options);
+mockResult.IsValid.Should().BeFalse();
+mockResult.Errors.Should().ContainSingle(e => e == "Simulated validation failure");
+```
+
 ## EntityTests
 
 The `EntityTests` class provides unit tests for the `Entity` domain model, ensuring that entity operations like property management, validation, and primary key identification work correctly. These tests validate the core domain logic that drives the entire code generation pipeline, including duplicate property detection, primary key retrieval, and entity validation rules.
