@@ -1245,6 +1245,93 @@ var snapshot = collector.GetSnapshotAndReset();
 ```
 
 
+## HttpClientService
+
+The `HttpClientService` provides a robust HTTP client implementation with built-in resilience features including automatic retry logic, timeout handling, and comprehensive error logging. It simplifies HTTP communication by handling common patterns like JSON serialization/deserialization, status code validation, and exception management with detailed diagnostic logging.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Integration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure logging (typically done via dependency injection)
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+
+// Register HttpClient with base address (typically configured via HttpClientFactory)
+services.AddHttpClient<IHttpClientService, HttpClientService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.example.com/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+var serviceProvider = services.BuildServiceProvider();
+var httpClientService = serviceProvider.GetRequiredService<IHttpClientService>();
+
+// GET request - retrieve data from API
+try
+{
+    var product = await httpClientService.GetAsync<Product>("products/123");
+    Console.WriteLine($"Retrieved product: {product?.Name}");
+}
+catch (IntegrationException ex)
+{
+    Console.WriteLine($"Failed to retrieve product: {ex.Message}");
+}
+
+// POST request - send data to API
+try
+{
+    var newProduct = new { Name = "New Product", Price = 29.99m };
+    var createdProduct = await httpClientService.PostAsync<object, Product>(
+        "products", 
+        newProduct
+    );
+    Console.WriteLine($"Created product with ID: {createdProduct?.Id}");
+}
+catch (IntegrationException ex)
+{
+    Console.WriteLine($"Failed to create product: {ex.Message}");
+}
+
+// PUT request - update existing resource
+try
+{
+    var updatedData = new { Name = "Updated Product", Price = 39.99m };
+    await httpClientService.PutAsync("products/123", updatedData);
+    Console.WriteLine("Product updated successfully");
+}
+catch (IntegrationException ex)
+{
+    Console.WriteLine($"Failed to update product: {ex.Message}");
+}
+
+// DELETE request - remove resource
+try
+{
+    await httpClientService.DeleteAsync("products/123");
+    Console.WriteLine("Product deleted successfully");
+}
+catch (IntegrationException ex)
+{
+    Console.WriteLine($"Failed to delete product: {ex.Message}");
+}
+
+// SendAsync - raw HTTP method support
+try
+{
+    var content = new StringContent("{\"query\": \"test\"}", Encoding.UTF8, "application/json");
+    var response = await httpClientService.SendAsync(HttpMethod.Post, "graphql", content);
+    Console.WriteLine($"GraphQL response: {response}");
+}
+catch (IntegrationException ex)
+{
+    Console.WriteLine($"GraphQL request failed: {ex.Message}");
+}
+```
+
 ## GenerationException
 
 The `GenerationException` class serves as the base exception type for all source code generation errors in the .NET Source Generator Toolkit. It provides contextual information about which generator failed and which entity was being processed, enabling precise error handling and debugging. Derived exception types include specific scenarios like entity analysis failures, repository generation errors, mapper generation issues, validator generation problems, and configuration validation errors.
