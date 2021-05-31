@@ -240,6 +240,93 @@ var generationEvent = new GenerationStartedEvent
 eventAggregator.Publish(generationEvent);
 ```
 
+## EntityTests
+
+The `EntityTests` class provides unit tests for the `Entity` domain model, ensuring that entity operations like property management, validation, and primary key identification work correctly. These tests validate the core domain logic that drives the entire code generation pipeline, including duplicate property detection, primary key retrieval, and entity validation rules.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using FluentAssertions;
+using Xunit;
+
+// Create a new entity for testing
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities"
+};
+
+// Add properties to the entity
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Tags",
+    Type = "string",
+    IsCollection = true
+});
+
+// Test duplicate property detection
+var duplicateProperty = new EntityProperty { Name = "Name", Type = "string" };
+Action addDuplicate = () => productEntity.AddProperty(duplicateProperty);
+addDuplicate.Should().Throw<InvalidOperationException>();
+
+// Test primary key retrieval
+var primaryKey = productEntity.GetPrimaryKeyProperty();
+primaryKey.Should().NotBeNull();
+primaryKey.Name.Should().Be("Id");
+
+// Test entity validation
+var validationErrors = productEntity.Validate().ToList();
+validationErrors.Should().BeEmpty();
+
+// Test entity with empty name (should fail validation)
+var invalidEntity = new Entity { Name = "", Namespace = "MyApp.Domain" };
+var invalidErrors = invalidEntity.Validate().ToList();
+invalidErrors.Should().Contain(error => error.Contains("name is required", StringComparison.OrdinalIgnoreCase));
+
+// Test property type name generation
+var nullableIntProperty = new EntityProperty { Type = "int", IsNullable = true };
+nullableIntProperty.GetClrTypeName().Should().Be("int?");
+
+var collectionStringProperty = new EntityProperty { Type = "string", IsCollection = true };
+collectionStringProperty.GetClrTypeName().Should().Be("List<string>");
+
+// Test validation attribute generation
+var requiredProperty = new EntityProperty
+{
+    Name = "Email",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 256
+};
+var attributes = requiredProperty.GenerateValidationAttributes().ToList();
+attributes.Should().Contain("[Required]");
+attributes.Should().Contain("[MaxLength(256)]");
+```
+
 ### Design Patterns Used
 
 | Pattern | Components | Purpose |
