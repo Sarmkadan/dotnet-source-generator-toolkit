@@ -1753,6 +1753,62 @@ public async Task MyNewBenchmark()
 }
 ```
 
+## StringExtensionsTests
+
+The `StringExtensionsTests` class provides unit tests for the `StringExtensions` and `StringValidator` utility classes. These tests ensure that string manipulation and validation methods work correctly by testing various input scenarios including PascalCase conversion, camelCase conversion, snake_case conversion, truncation, repetition, numeric validation, letter validation, word counting, identifier validation, namespace validation, and file name sanitization.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Tests;
+using FluentAssertions;
+using Xunit;
+
+// Create test instance
+var tests = new StringExtensionsTests();
+
+// Test 1: PascalCase conversion
+tests.ToPascalCase_WithUnderscoreDelimiters_ReturnsPascalCase();
+// Returns: "HelloWorldTest" from input "hello_world_test"
+
+// Test 2: camelCase conversion
+tests.ToCamelCase_WithMultipleWords_ReturnsFirstWordLowercased();
+// Returns: "myPropertyName" from input "my_property_name"
+
+// Test 3: snake_case conversion
+tests.ToSnakeCase_WithPascalCaseString_InsertsUnderscoresBetweenWords();
+// Returns: "my_entity_name" from input "MyEntityName"
+
+// Test 4: Truncate with ellipsis
+tests.Truncate_WhenStringExceedsMaxLength_AppendsEllipsis();
+// Returns: "This is a ..." from input "This is a very long string" with max length 10
+
+// Test 5: String repetition
+tests.Repeat_WithCountThree_ReturnsRepeatedString();
+// Returns: "aaa" from input "a" with count 3
+
+// Test 6: Numeric validation
+tests.IsNumeric_WithOnlyDigits_ReturnsTrue();
+// Returns: true for input "123"
+
+// Test 7: Letter-only validation
+tests.IsLettersOnly_WithOnlyLetters_ReturnsTrue();
+// Returns: true for input "abc"
+
+// Test 8: Word counting
+tests.CountWord_WithOccurrences_ReturnsCount();
+// Returns: 2 for input "hello world hello" with word "hello"
+
+// Test 9: Valid C# identifier validation
+var validatorTests = new StringValidatorTests();
+validatorTests.IsValidIdentifier_WithValidCSharpIdentifier_ReturnsTrue();
+// Returns: true for valid identifiers like "MyEntityClass", "_privateField", "value123"
+
+// Test 10: Namespace validation
+validatorTests.IsValidNamespace_WithDotSeparatedIdentifiers_ReturnsTrue();
+// Returns: true for valid namespaces like "My.Project.Domain"
+```
+
 ## Testing
 
 ### Run the Full Test Suite
