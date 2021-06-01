@@ -1304,6 +1304,64 @@ var snapshot = collector.GetSnapshotAndReset();
 ```
 
 
+## IWebhookService
+
+The `IWebhookService` manages webhook registrations and asynchronously notifies subscribers of events. It provides methods to register and unregister webhooks, send notifications for specific event types, and retrieve all registered webhooks. The service uses in-memory storage suitable for single-session use and includes retry tracking for failed notifications.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Integration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Set up dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddHttpClient<IHttpClientService, HttpClientService>();
+
+var serviceProvider = services.BuildServiceProvider();
+var webhookService = serviceProvider.GetRequiredService<IWebhookService>();
+
+// Register a webhook for specific events
+string webhookId = await webhookService.RegisterWebhookAsync(
+    name: "BuildNotifier",
+    url: "https://api.example.com/webhooks/build-complete",
+    events: new[] { WebhookEventType.GenerationCompleted }
+);
+Console.WriteLine($"Webhook registered with ID: {webhookId}");
+
+// Notify subscribers about a completed generation
+int successfulNotifications = await webhookService.NotifyAsync(
+    eventType: WebhookEventType.GenerationCompleted,
+    payload: new {
+        ProjectName = "MyProject",
+        FilesGenerated = 8,
+        ExecutionTimeMs = 142,
+        IsSuccessful = true
+    }
+);
+Console.WriteLine($"Successfully notified {successfulNotifications} subscribers");
+
+// Get all registered webhooks
+var webhooks = await webhookService.GetWebhooksAsync();
+foreach (var webhook in webhooks)
+{
+    Console.WriteLine($"Webhook: {webhook.Name} ({webhook.Id}) - {webhook.Url}");
+}
+
+// Unregister a webhook when no longer needed
+await webhookService.UnregisterWebhookAsync(webhookId);
+Console.WriteLine("Webhook unregistered");
+```
+
 ## HttpClientService
 
 The `HttpClientService` provides a robust HTTP client implementation with built-in resilience features including automatic retry logic, timeout handling, and comprehensive error logging. It simplifies HTTP communication by handling common patterns like JSON serialization/deserialization, status code validation, and exception management with detailed diagnostic logging.
