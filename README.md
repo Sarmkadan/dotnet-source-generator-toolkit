@@ -192,6 +192,65 @@ await fileSystem.DeleteFileAsync(fileSystem.CombinePath(projectPath, "OldReposit
 ```
 ```
 
+## WebhookService
+
+The `WebhookService` manages webhook registrations and asynchronously notifies subscribers of events. It provides methods to register and unregister webhooks, send notifications for specific event types, and retrieve all registered webhooks. The service uses an in-memory storage suitable for single-session use and includes retry tracking for failed notifications.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Integration;
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Set up dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddHttpClient<IHttpClientService, HttpClientService>();
+
+var serviceProvider = services.BuildServiceProvider();
+var webhookService = serviceProvider.GetRequiredService<IWebhookService>();
+
+// Register a webhook for specific events
+string webhookId = await webhookService.RegisterWebhookAsync(
+    name: "BuildNotifier",
+    url: "https://api.example.com/webhooks/build-complete",
+    events: new[] { WebhookEventType.GenerationCompleted }
+);
+Console.WriteLine($"Webhook registered with ID: {webhookId}");
+
+// Notify subscribers about a completed generation
+int successfulNotifications = await webhookService.NotifyAsync(
+    eventType: WebhookEventType.GenerationCompleted,
+    payload: new {
+        ProjectName = "MyProject",
+        FilesGenerated = 8,
+        ExecutionTimeMs = 142,
+        IsSuccessful = true
+    }
+);
+Console.WriteLine($"Successfully notified {successfulNotifications} subscribers");
+
+// Get all registered webhooks
+var webhooks = await webhookService.GetWebhooksAsync();
+foreach (var webhook in webhooks)
+{
+    Console.WriteLine($"Webhook: {webhook.Name} ({webhook.Id}) - {webhook.Url}");
+}
+
+// Unregister a webhook when no longer needed
+await webhookService.UnregisterWebhookAsync(webhookId);
+Console.WriteLine("Webhook unregistered");
+```
+
 ## GenerationStartedEvent
 
 The `GenerationStartedEvent` is published when the code generation process begins for a project. This event allows subscribers to initialize resources, set up logging, or perform pre-generation validation before any code is generated. It provides essential context about the generation session including the project path, entity count, and generator types that will be used.
