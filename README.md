@@ -1258,6 +1258,94 @@ string report = projectInfo.GetGenerationReport();
 Console.WriteLine(report);
 ```
 
+## GenerationTemplate
+
+The `GenerationTemplate` class defines code generation templates that specify how to generate artifacts like repositories, mappers, validators, or serializers. It encapsulates template metadata, content, output configuration, and validation logic, enabling reusable generation patterns across different entity types and generator types.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create a repository generation template
+var repositoryTemplate = new GenerationTemplate
+{
+    Name = "Repository Template",
+    Description = "Generates CRUD repository implementations with async methods",
+    GeneratorType = GeneratorType.Repository,
+    TemplateContent = """
+    // Auto-generated repository for {EntityName}
+    public class {EntityName}Repository
+    {
+        private readonly IDbContext _context;
+
+        public {EntityName}Repository(IDbContext context) => _context = context;
+
+        public async Task<{EntityName}> GetByIdAsync(int id) =>
+            await _context.{EntityName}s.FindAsync(id);
+
+        public async Task<IReadOnlyList<{EntityName}>> GetAllAsync() =>
+            await _context.{EntityName}s.ToListAsync();
+
+        public async Task<{EntityName}> AddAsync({EntityName} entity)
+        {
+            await _context.{EntityName}s.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task UpdateAsync({EntityName} entity)
+        {
+            _context.{EntityName}s.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _context.{EntityName}s.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+    """,
+    OutputFileNamePattern = "{EntityName}Repository.cs",
+    OutputDirectory = "./Generated/Repositories",
+    SupportedLanguages = ["CSharp"],
+    ConfigurationOptions = new Dictionary<string, string>
+    {
+        ["IncludeAsyncMethods"] = "true",
+        ["IncludeSyncMethods"] = "false",
+        ["GenerateInterface"] = "true"
+    },
+    IsActive = true,
+    IsCustom = false,
+    Version = 1,
+    Author = "Code Generator Toolkit"
+};
+
+// Validate the template configuration
+var validationErrors = repositoryTemplate.Validate().ToList();
+if (validationErrors.Any())
+{
+    Console.WriteLine("Template validation failed:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($"- {error}");
+    }
+}
+
+// Generate output file name for a specific entity
+string outputFileName = repositoryTemplate.GenerateOutputFileName("Product");
+Console.WriteLine($"Output file: {outputFileName}"); // ProductRepository.cs
+
+// Check if template supports a specific generator type
+bool supportsRepository = repositoryTemplate.SupportsGeneratorType(GeneratorType.Repository);
+Console.WriteLine($"Supports repository generation: {supportsRepository}");
+```
+
 ## IncrementalGenerationContext
 
 The `IncrementalGenerationContext` class manages the state of an incremental code generation process. It tracks source file fingerprints, identifies which entities need regeneration by comparing current file hashes against those from the previous run, and provides methods to mark entities as changed or unchanged.
