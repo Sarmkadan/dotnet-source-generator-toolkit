@@ -299,6 +299,57 @@ var generationEvent = new GenerationStartedEvent
 eventAggregator.Publish(generationEvent);
 ```
 
+## GenerationPipeline
+
+The `GenerationPipeline` orchestrates the complete code generation workflow, coordinating entity analysis, code generation, and file output operations. It manages the entire process from project analysis to file writing, providing detailed execution metrics and status tracking through its public properties.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Pipeline;
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure logging and dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddSingleton<IFileSystemService, FileSystemService>();
+
+// Register generator services (typically from DI container)
+services.AddSingleton<ISourceGeneratorService, SourceGeneratorService>();
+services.AddSingleton<IRepositoryGeneratorService, RepositoryGeneratorService>();
+services.AddSingleton<IMapperGeneratorService, MapperGeneratorService>();
+services.AddSingleton<IValidatorGeneratorService, ValidatorGeneratorService>();
+services.AddSingleton<ISerializerGeneratorService, SerializerGeneratorService>();
+
+var serviceProvider = services.BuildServiceProvider();
+var pipeline = serviceProvider.GetRequiredService<GenerationPipeline>();
+
+// Execute the pipeline
+var result = await pipeline.ExecuteAsync(
+    projectPath: "/path/to/YourProject",
+    outputPath: "./GeneratedCode",
+    generatorTypes: new[] { "Repository", "Mapper", "Validator", "Serializer" },
+    dryRun: false
+);
+
+// Check execution results
+Console.WriteLine($"✅ Pipeline executed at: {pipeline.ExecutedAt:yyyy-MM-dd HH:mm:ss}");
+Console.WriteLine($"📊 Entities found: {pipeline.EntitiesFound}");
+Console.WriteLine($"📝 Files generated: {pipeline.GeneratedFiles}");
+Console.WriteLine($"💾 Files written: {pipeline.FilesWritten}");
+Console.WriteLine($"🎯 Success: {pipeline.IsSuccessful}");
+
+if (!pipeline.IsSuccessful && pipeline.ErrorMessage != null)
+{
+    Console.WriteLine($"❌ Error: {pipeline.ErrorMessage}");
+}
+
+// Access the detailed result
+Console.WriteLine($"📋 Result - Entities: {result.EntitiesFound}, Generated: {result.GeneratedFiles}, Written: {result.FilesWritten}");
+```
+
 ## ConfigurationValidatorTests
 
 The `ConfigurationValidatorTests` class provides unit tests for the `ConfigurationValidator` class, which validates configuration options for the .NET Source Generator Toolkit. These tests ensure that configuration validation works correctly by testing null options, valid options, minimum timeout values, and default configuration values. The test suite also includes mocking scenarios to verify validator behavior.
