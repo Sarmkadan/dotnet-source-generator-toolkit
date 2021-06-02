@@ -1258,6 +1258,41 @@ string report = projectInfo.GetGenerationReport();
 Console.WriteLine(report);
 ```
 
+## IncrementalGenerationContext
+
+The `IncrementalGenerationContext` class manages the state of an incremental code generation process. It tracks source file fingerprints, identifies which entities need regeneration by comparing current file hashes against those from the previous run, and provides methods to mark entities as changed or unchanged.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Pipeline;
+
+// Initialize context for a project
+var context = new IncrementalGenerationContext
+{
+    ProjectPath = "/path/to/project",
+    LastGeneratedAt = DateTimeOffset.UtcNow.AddMinutes(-5)
+};
+
+// Populate hashes (normally done by the toolkit)
+context.PreviousFileHashes["Entity.cs"] = "old-hash";
+context.CurrentFileHashes["Entity.cs"] = "new-hash";
+
+// Mark entity as changed
+context.MarkChanged("MyEntity");
+
+// Check if regeneration is required
+if (context.RequiresRegeneration)
+{
+    Console.WriteLine($"Full rebuild: {context.IsFullRebuildRequired}");
+    Console.WriteLine($"Changed entities: {string.Join(", ", context.ChangedEntityNames)}");
+}
+
+// Compute file changes
+var changes = context.ComputeChanges();
+Console.WriteLine($"Files modified: {changes.Modified.Count}");
+```
+
 ## IncrementalGenerationContextExtensions
 
 The `IncrementalGenerationContextExtensions` class provides extension methods for the `IncrementalGenerationContext` class, offering convenient utilities for managing incremental generation scenarios. These methods simplify tracking entity changes, checking regeneration requirements, and managing the incremental generation state across multiple entities.
