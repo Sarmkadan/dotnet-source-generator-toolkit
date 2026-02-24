@@ -3,93 +3,58 @@
 # CTO & Software Architect
 # =============================================================================
 
-version: '3.9'
-
 services:
-  # Main code generator service
   generator:
     build:
       context: .
       dockerfile: Dockerfile
-    image: dotnet-source-generator-toolkit:latest
+    image: dotnet-source-generator-toolkit:2.0.0
     container_name: source-generator
+    ports:
+      - "8080:8080"
 
-    # Volume mappings
     volumes:
       - ./src:/workspace/src:ro
       - ./Generated:/workspace/Generated
       - ./config:/config:ro
-      - ./logs:/var/log/toolkit
+      - generator-logs:/var/log/toolkit
 
-    # Environment variables
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - DOTNET_EnableDiagnostics=0
       - TOOLKIT_CONFIG=/config/toolkit-config.json
 
-    # Resource limits
     deploy:
       resources:
         limits:
           cpus: '2'
           memory: 512M
         reservations:
-          cpus: '1'
+          cpus: '0.5'
           memory: 256M
 
-    # Logging configuration
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "3"
+        max-file: "5"
 
-    # Restart policy
-    restart: on-failure:3
+    restart: unless-stopped
 
-    # Network
     networks:
       - generator-network
 
-    # Health check
     healthcheck:
-      test: ["CMD", "dotnet", "--version"]
+      test: ["CMD", "dotnet", "--list-runtimes"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
       start_period: 10s
-
-    # Entry point with configuration
-    entrypoint:
-      - dotnet
-      - DotNetSourceGeneratorToolkit.dll
-      - --path
-      - /workspace/src
-      - --output
-      - /workspace/Generated
-      - --format
-      - Json
-      - --verbose
-
-  # Optional: Monitoring with Prometheus (uncomment if needed)
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus
-  #   volumes:
-  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus_data:/prometheus
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--storage.tsdb.path=/prometheus'
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - generator-network
 
 networks:
   generator-network:
     driver: bridge
 
-# volumes:
-#   prometheus_data:
-#     driver: local
+volumes:
+  generator-logs:
+    driver: local
