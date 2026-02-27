@@ -153,15 +153,47 @@ public sealed class IncrementalGeneratorService : IIncrementalGeneratorService
             foreach (var f in changes.Modified) changedFilePaths.Add(f);
             foreach (var f in changes.Removed) changedFilePaths.Add(f);
 
+            // Hotfix: Fix for partial class handling - track entity names that may span multiple files
+            var entityFileMap = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+
+            // Build mapping of entities to all their source files
+            foreach (var filePath in sourceFiles)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                if (!entityFileMap.ContainsKey(fileName))
+                    entityFileMap[fileName] = new List<string>();
+                entityFileMap[fileName].Add(filePath);
+            }
+
             foreach (var entity in projectInfo.Entities)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var entityChanged = changedFilePaths.Any(f =>
-                    string.Equals(
-                        Path.GetFileNameWithoutExtension(f),
-                        entity.Name,
-                        StringComparison.OrdinalIgnoreCase));
+                // Hotfix: Check if any file associated with this entity has changed
+                var entityChanged = false;
+                if (entityFileMap.TryGetValue(entity.Name, out var files))
+                {
+                    // If this is a partial class, check if ANY of its files changed
+                    foreach (var filePath in files)
+                    {
+                        if (changedFilePaths.Contains(filePath) ||
+                            changes.Added.Contains(filePath) ||
+                            changes.Modified.Any(f => Path.GetFileNameWithoutExtension(f).Equals(entity.Name, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            entityChanged = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // Single file entity check (original logic)
+                    entityChanged = changedFilePaths.Any(f =>
+                        string.Equals(
+                            Path.GetFileNameWithoutExtension(f),
+                            entity.Name,
+                            StringComparison.OrdinalIgnoreCase));
+                }
 
                 if (entityChanged)
                     context.MarkChanged(entity.Name);
