@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Exceptions;
 /// Thrown when entity or configuration validation fails.
 /// Aggregates multiple validation errors for detailed reporting.
 /// </summary>
-public class ValidationException : GenerationException
+public sealed class ValidationException : GenerationException
 {
     public List<string> Errors { get; }
 

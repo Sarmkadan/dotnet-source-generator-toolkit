@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ using Moq;
 
 namespace DotNetSourceGeneratorToolkit.Tests;
 
-public class ConfigurationValidatorTests
+public sealed class ConfigurationValidatorTests
 {
     private readonly ConfigurationValidator _validator = new();
 

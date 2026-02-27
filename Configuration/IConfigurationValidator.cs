@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -27,7 +29,7 @@ public interface IConfigurationValidator
 /// <summary>
 /// Result of validation operation.
 /// </summary>
-public class ValidationResult
+public sealed class ValidationResult
 {
     public bool IsValid { get; set; } = true;
     public List<string> Errors { get; set; } = new();

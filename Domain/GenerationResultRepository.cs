@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -49,13 +51,13 @@ public interface IEntityRepository
 /// <summary>
 /// In-memory implementation of entity repository.
 /// </summary>
-public class EntityRepository : IEntityRepository
+public sealed class EntityRepository : IEntityRepository
 {
     private readonly Dictionary<string, Entity> _entities = new();
 
     public async Task<Entity> SaveAsync(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         if (string.IsNullOrEmpty(entity.Id))

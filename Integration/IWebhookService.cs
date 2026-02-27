@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -57,7 +59,7 @@ public enum WebhookEventType
 /// <summary>
 /// Webhook registration details.
 /// </summary>
-public class WebhookRegistration
+public sealed class WebhookRegistration
 {
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

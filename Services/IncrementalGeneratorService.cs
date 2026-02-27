@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -85,7 +87,7 @@ public sealed class IncrementalGeneratorService : IIncrementalGeneratorService
         ProjectInfo projectInfo,
         CancellationToken cancellationToken = default)
     {
-        if (projectInfo == null)
+        if (projectInfo is null)
             throw new ArgumentNullException(nameof(projectInfo));
 
         _logger.LogDebug("Building incremental context for project: {ProjectPath}", projectInfo.ProjectPath);
@@ -94,7 +96,7 @@ public sealed class IncrementalGeneratorService : IIncrementalGeneratorService
 
         // Restore previous fingerprints from cache so we have a baseline to diff against
         var cacheKey = CacheKeyPrefix + projectInfo.ProjectPath;
-        if (_cache.TryGet<Dictionary<string, string>>(cacheKey, out var previousHashes) && previousHashes != null)
+        if (_cache.TryGet<Dictionary<string, string>>(cacheKey, out var previousHashes) && previousHashes is not null)
         {
             foreach (var kvp in previousHashes)
                 context.PreviousFileHashes[kvp.Key] = kvp.Value;
@@ -180,7 +182,7 @@ public sealed class IncrementalGeneratorService : IIncrementalGeneratorService
         IncrementalGenerationContext context,
         CancellationToken cancellationToken = default)
     {
-        if (context == null)
+        if (context is null)
             throw new ArgumentNullException(nameof(context));
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -204,9 +206,9 @@ public sealed class IncrementalGeneratorService : IIncrementalGeneratorService
         IReadOnlyList<Entity> entities,
         IncrementalGenerationContext context)
     {
-        if (entities == null)
+        if (entities is null)
             throw new ArgumentNullException(nameof(entities));
-        if (context == null)
+        if (context is null)
             throw new ArgumentNullException(nameof(context));
 
         if (context.IsFullRebuildRequired)

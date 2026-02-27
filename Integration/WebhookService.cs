@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Integration;
 /// Manages webhook registrations and asynchronously notifies subscribers of events.
 /// In-memory storage suitable for single-session use; extend with persistent storage for production.
 /// </summary>
-public class WebhookService : IWebhookService
+public sealed class WebhookService : IWebhookService
 {
     private readonly Dictionary<string, WebhookRegistration> _webhooks = new();
     private readonly IHttpClientService _httpClient;
@@ -124,7 +126,7 @@ public class WebhookService : IWebhookService
         }
     }
 
-    public class WebhookPayload
+    public sealed class WebhookPayload
     {
         [JsonPropertyName("eventType")]
         public WebhookEventType EventType { get; set; }

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -105,7 +107,7 @@ public enum SerializerFormat
     Binary,
 }
 
-public class ValidationResult
+public sealed class ValidationResult
 {
     public bool IsValid { get; set; } = true;
 

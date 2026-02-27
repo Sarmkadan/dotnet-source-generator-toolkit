@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -14,7 +16,7 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 /// Analyzes C# source files using Regex patterns to extract entity definitions
 /// including class names, properties, and metadata.
 /// </summary>
-public class EntityAnalyzer : IEntityAnalyzer
+public sealed class EntityAnalyzer : IEntityAnalyzer
 {
     private readonly ILogger<EntityAnalyzer> _logger;
 
@@ -140,7 +142,7 @@ public class EntityAnalyzer : IEntityAnalyzer
 /// <summary>
 /// Analyzes attributes decorating entities and properties.
 /// </summary>
-public class AttributeAnalyzer : IAttributeAnalyzer
+public sealed class AttributeAnalyzer : IAttributeAnalyzer
 {
     public IEnumerable<string> ExtractEntityAttributes(string classDefinition)
     {

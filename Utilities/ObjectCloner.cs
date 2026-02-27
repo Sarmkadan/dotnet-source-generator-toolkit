@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -22,7 +24,7 @@ public static class ObjectCloner
     /// <returns>Deep copy of the object</returns>
     public static T DeepClone<T>(T source) where T : class
     {
-        if (source == null)
+        if (source is null)
             throw new ArgumentNullException(nameof(source));
 
         try
@@ -50,14 +52,14 @@ public static class ObjectCloner
     {
         cloned = null;
 
-        if (source == null)
+        if (source is null)
             return false;
 
         try
         {
             var json = JsonSerializer.Serialize(source);
             cloned = JsonSerializer.Deserialize<T>(json);
-            return cloned != null;
+            return cloned is not null;
         }
         catch
         {

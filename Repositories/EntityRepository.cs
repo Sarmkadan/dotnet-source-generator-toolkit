@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Repositories;
 /// In-memory repository implementation for Entity persistence and querying.
 /// Provides complete CRUD operations and advanced query methods.
 /// </summary>
-public class EntityRepository : IEntityRepository
+public sealed class EntityRepository : IEntityRepository
 {
     private readonly List<Entity> _entities = [];
     private readonly ILogger<EntityRepository> _logger;
@@ -50,7 +52,7 @@ public class EntityRepository : IEntityRepository
 
     public async Task<Entity> AddAsync(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         var validationErrors = entity.Validate();
@@ -69,11 +71,11 @@ public class EntityRepository : IEntityRepository
 
     public async Task<Entity> UpdateAsync(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         var existing = _entities.FirstOrDefault(e => e.Id == entity.Id);
-        if (existing == null)
+        if (existing is null)
             throw new InvalidOperationException($"Entity with ID {entity.Id} not found");
 
         entity.UpdatedAt = DateTime.UtcNow;
@@ -90,7 +92,7 @@ public class EntityRepository : IEntityRepository
             return false;
 
         var entity = _entities.FirstOrDefault(e => e.Id == id);
-        if (entity == null)
+        if (entity is null)
         {
             _logger.LogWarning("Delete attempted for non-existent entity: {EntityId}", id);
             return false;
@@ -125,7 +127,7 @@ public class EntityRepository : IEntityRepository
 /// In-memory repository implementation for GenerationResult persistence and querying.
 /// Tracks and provides access to code generation operation results.
 /// </summary>
-public class GenerationResultRepository : IGenerationResultRepository
+public sealed class GenerationResultRepository : IGenerationResultRepository
 {
     private readonly List<GenerationResult> _results = [];
     private readonly ILogger<GenerationResultRepository> _logger;
@@ -170,7 +172,7 @@ public class GenerationResultRepository : IGenerationResultRepository
 
     public async Task<GenerationResult> AddAsync(GenerationResult result)
     {
-        if (result == null)
+        if (result is null)
             throw new ArgumentNullException(nameof(result));
 
         if (string.IsNullOrWhiteSpace(result.Id))
@@ -183,11 +185,11 @@ public class GenerationResultRepository : IGenerationResultRepository
 
     public async Task<GenerationResult> UpdateAsync(GenerationResult result)
     {
-        if (result == null)
+        if (result is null)
             throw new ArgumentNullException(nameof(result));
 
         var existing = _results.FirstOrDefault(r => r.Id == result.Id);
-        if (existing == null)
+        if (existing is null)
             throw new InvalidOperationException($"Generation result with ID {result.Id} not found");
 
         _results.Remove(existing);
@@ -203,7 +205,7 @@ public class GenerationResultRepository : IGenerationResultRepository
             return false;
 
         var result = _results.FirstOrDefault(r => r.Id == id);
-        if (result == null)
+        if (result is null)
         {
             _logger.LogWarning("Delete attempted for non-existent result: {ResultId}", id);
             return false;
