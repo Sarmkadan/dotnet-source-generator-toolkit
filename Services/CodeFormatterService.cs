@@ -147,21 +147,25 @@ public sealed class CodeFormatterService : ICodeFormatterService
 
         var errors = new List<string>();
 
+        // Strip string literals and comments before counting delimiters
+        // to avoid false positives from braces/parens inside strings
+        var strippedCode = StripStringLiteralsAndComments(code);
+
         // Check for matching braces
-        var openBraces = code.Count(c => c == '{');
-        var closeBraces = code.Count(c => c == '}');
+        var openBraces = strippedCode.Count(c => c == '{');
+        var closeBraces = strippedCode.Count(c => c == '}');
         if (openBraces != closeBraces)
             errors.Add($"Mismatched braces: {openBraces} open, {closeBraces} close");
 
         // Check for matching parentheses
-        var openParens = code.Count(c => c == '(');
-        var closeParens = code.Count(c => c == ')');
+        var openParens = strippedCode.Count(c => c == '(');
+        var closeParens = strippedCode.Count(c => c == ')');
         if (openParens != closeParens)
             errors.Add($"Mismatched parentheses: {openParens} open, {closeParens} close");
 
         // Check for matching brackets
-        var openBrackets = code.Count(c => c == '[');
-        var closeBrackets = code.Count(c => c == ']');
+        var openBrackets = strippedCode.Count(c => c == '[');
+        var closeBrackets = strippedCode.Count(c => c == ']');
         if (openBrackets != closeBrackets)
             errors.Add($"Mismatched brackets: {openBrackets} open, {closeBrackets} close");
 
@@ -171,11 +175,72 @@ public sealed class CodeFormatterService : ICodeFormatterService
 
         if (errors.Count > 0)
         {
-            _logger.LogWarning("Syntax validation found {Count} errors", errors.Count);
+            foreach (var error in errors)
+                _logger.LogWarning("Syntax validation error: {Error}", error);
             return false;
         }
 
         _logger.LogInformation("Syntax validation passed");
         return true;
+    }
+
+    /// <summary>
+    /// Strips string literals and comments from code to allow accurate
+    /// delimiter counting without false positives from content inside strings.
+    /// </summary>
+    private static string StripStringLiteralsAndComments(string code)
+    {
+        var result = new StringBuilder(code.Length);
+        int i = 0;
+
+        while (i < code.Length)
+        {
+            // Single-line comment
+            if (i + 1 < code.Length && code[i] == '/' && code[i + 1] == '/')
+            {
+                while (i < code.Length && code[i] != '\n') i++;
+                continue;
+            }
+
+            // Multi-line comment
+            if (i + 1 < code.Length && code[i] == '/' && code[i + 1] == '*')
+            {
+                i += 2;
+                while (i + 1 < code.Length && !(code[i] == '*' && code[i + 1] == '/')) i++;
+                i += 2;
+                continue;
+            }
+
+            // Verbatim string literal
+            if (i + 1 < code.Length && code[i] == '@' && code[i + 1] == '"')
+            {
+                i += 2;
+                while (i < code.Length)
+                {
+                    if (code[i] == '"' && (i + 1 >= code.Length || code[i + 1] != '"')) { i++; break; }
+                    if (code[i] == '"') i++; // skip escaped ""
+                    i++;
+                }
+                continue;
+            }
+
+            // Regular string literal
+            if (code[i] == '"')
+            {
+                i++;
+                while (i < code.Length && code[i] != '"')
+                {
+                    if (code[i] == '\\') i++; // skip escaped char
+                    i++;
+                }
+                i++; // skip closing quote
+                continue;
+            }
+
+            result.Append(code[i]);
+            i++;
+        }
+
+        return result.ToString();
     }
 }
