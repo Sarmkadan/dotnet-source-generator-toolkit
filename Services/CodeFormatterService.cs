@@ -64,8 +64,13 @@ public sealed class CodeFormatterService : ICodeFormatterService
             if (inMultilineComment && trimmed.EndsWith("*/"))
                 inMultilineComment = false;
 
-            // Adjust indent for closing braces
-            if (trimmed.StartsWith("}") || trimmed.StartsWith("]") || trimmed.StartsWith(")"))
+            // Adjust indent for closing delimiters, but only when the line
+            // doesn't also reopen the same delimiter type (e.g., "} else {")
+            if (trimmed.StartsWith("}") && !trimmed.EndsWith("{"))
+                indentLevel = Math.Max(0, indentLevel - 1);
+            else if (trimmed.StartsWith("}") && trimmed.EndsWith("{"))
+            { /* Same-level transition like "} else {" - no change */ }
+            else if (trimmed.StartsWith("]") || trimmed.StartsWith(")"))
                 indentLevel = Math.Max(0, indentLevel - 1);
 
             // Skip empty lines but preserve structure
