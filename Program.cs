@@ -81,6 +81,7 @@ class Program
         services.AddLogging();
         services.AddSingleton<IConfigurationManager, ConfigurationManager>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
+        services.AddSingleton<IEventPublisher, EventAggregator>();
 
         // Register core services
         services.AddScoped<ISourceGeneratorService, SourceGeneratorService>();
