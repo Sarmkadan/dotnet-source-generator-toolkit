@@ -82,6 +82,7 @@ class Program
         services.AddSingleton<IConfigurationManager, ConfigurationManager>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<IEventPublisher, EventAggregator>();
+        services.AddHttpClient<IHttpClientService, HttpClientService>();
 
         // Register core services
         services.AddScoped<ISourceGeneratorService, SourceGeneratorService>();
