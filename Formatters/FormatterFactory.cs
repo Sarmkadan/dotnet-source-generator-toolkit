@@ -52,12 +52,3 @@ public sealed class FormatterFactory : IFormatterFactory
     }
 }
 
-/// <summary>
-/// Contract for formatter factory.
-/// </summary>
-public interface IFormatterFactory
-{
-    IOutputFormatter Create(string format);
-    IEnumerable<string> GetAvailableFormats();
-    bool IsFormatAvailable(string format);
-}
