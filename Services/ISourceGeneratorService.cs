@@ -36,21 +36,6 @@ public interface ISourceGeneratorService
     Task<ValidationResult> ValidateProjectAsync(ProjectInfo projectInfo);
 }
 
-/// <summary>
-/// Generates repository implementations from entity definitions.
-/// </summary>
-public interface IRepositoryGeneratorService
-{
-    /// <summary>
-    /// Generates a repository for a single entity.
-    /// </summary>
-    Task<GenerationResult> GenerateRepositoryAsync(Entity entity);
-
-    /// <summary>
-    /// Generates repositories for multiple entities.
-    /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllRepositoriesAsync(List<Entity> entities);
-}
 
 /// <summary>
 /// Generates mapper implementations for entity transformations.
