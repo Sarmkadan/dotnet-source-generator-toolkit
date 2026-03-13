@@ -25,33 +25,3 @@ public interface IEntityAnalyzer
     Task<Entity> ParseClassAsync(string className, string classContent, string fileNamespace);
 }
 
-/// <summary>
-/// Analyzes attributes decorating entities and properties.
-/// </summary>
-public interface IAttributeAnalyzer
-{
-    /// <summary>
-    /// Extracts all attributes from entity definition.
-    /// </summary>
-    IEnumerable<string> ExtractEntityAttributes(string classDefinition);
-
-    /// <summary>
-    /// Extracts attributes from a property definition.
-    /// </summary>
-    IEnumerable<string> ExtractPropertyAttributes(string propertyDefinition);
-
-    /// <summary>
-    /// Checks if an attribute specifies repository generation.
-    /// </summary>
-    bool HasRepositoryAttribute(IEnumerable<string> attributes);
-
-    /// <summary>
-    /// Checks if an attribute specifies mapper generation.
-    /// </summary>
-    bool HasMapperAttribute(IEnumerable<string> attributes);
-
-    /// <summary>
-    /// Checks if an attribute specifies validator generation.
-    /// </summary>
-    bool HasValidatorAttribute(IEnumerable<string> attributes);
-}
