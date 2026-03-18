@@ -181,5 +181,5 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
         return await Task.FromResult(result);
     }
-
+}
 
