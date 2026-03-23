@@ -98,4 +98,59 @@ public static class CollectionExtensions
     {
         return source.SelectMany(x => x);
     }
+
+    /// <summary>Batches collection into groups of specified size.</summary>
+    public static IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> collection, int batchSize)
+    {
+        if (batchSize <= 0)
+            throw new ArgumentException("Batch size must be greater than 0");
+
+        var batch = new System.Collections.Generic.List<T>();
+        foreach (var item in collection)
+        {
+            batch.Add(item);
+            if (batch.Count >= batchSize)
+            {
+                yield return batch;
+                batch = [];
+            }
+        }
+
+        if (batch.Count > 0)
+            yield return batch;
+    }
+
+    /// <summary>Safely accesses collection element or returns default.</summary>
+    public static T SafeElementAt<T>(this IEnumerable<T> collection, int index, T defaultValue = default)
+    {
+        try
+        {
+            return collection.ElementAt(index);
+        }
+        catch
+        {
+            return defaultValue;
+        }
+    }
+
+    /// <summary>Chunks collection into groups of specified size (for .NET versions without built-in Chunk).</summary>
+    public static IEnumerable<T[]> Chunk<T>(this IEnumerable<T> collection, int size)
+    {
+        if (size <= 0)
+            throw new ArgumentException("Chunk size must be greater than 0");
+
+        var chunk = new System.Collections.Generic.List<T>(size);
+        foreach (var item in collection)
+        {
+            chunk.Add(item);
+            if (chunk.Count == size)
+            {
+                yield return chunk.ToArray();
+                chunk.Clear();
+            }
+        }
+
+        if (chunk.Count > 0)
+            yield return chunk.ToArray();
+    }
 }
