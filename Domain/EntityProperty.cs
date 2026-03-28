@@ -27,6 +27,16 @@ public sealed class EntityProperty
 
     public string? RegexPattern { get; set; }
 
+    /// <summary>
+    /// Inclusive minimum value for numeric range validation (e.g. InclusiveBetween).
+    /// </summary>
+    public decimal? MinValue { get; set; }
+
+    /// <summary>
+    /// Inclusive maximum value for numeric range validation (e.g. InclusiveBetween).
+    /// </summary>
+    public decimal? MaxValue { get; set; }
+
     public bool IsRequired { get; set; } = true;
 
     public bool IsNullable { get; set; }
@@ -89,7 +99,8 @@ public sealed class EntityProperty
     /// </summary>
     public bool RequiresValidation()
     {
-        return IsRequired || MaxLength.HasValue || MinLength.HasValue || !string.IsNullOrEmpty(RegexPattern);
+        return IsRequired || MaxLength.HasValue || MinLength.HasValue || !string.IsNullOrEmpty(RegexPattern)
+            || MinValue.HasValue || MaxValue.HasValue;
     }
 
     /// <summary>
