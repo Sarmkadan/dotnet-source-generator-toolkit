@@ -6,6 +6,7 @@
 // =============================================================================
 
 using DotNetSourceGeneratorToolkit.Caching;
+using DotNetSourceGeneratorToolkit.Configuration;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using DotNetSourceGeneratorToolkit.Repositories;
 using DotNetSourceGeneratorToolkit.Services;
@@ -26,11 +27,20 @@ public static class ServiceCollectionExtensions
     /// services. Uses <c>TryAdd</c> semantics so existing registrations are preserved.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
+    /// <param name="options">
+    /// Optional toolkit options. When provided, settings such as
+    /// <see cref="ToolkitOptions.DefaultNamespace"/> are applied to the generator services.
+    /// </param>
     /// <returns>The same <paramref name="services"/> instance to allow call chaining.</returns>
-    public static IServiceCollection AddSourceGeneratorToolkit(this IServiceCollection services)
+    public static IServiceCollection AddSourceGeneratorToolkit(
+        this IServiceCollection services,
+        ToolkitOptions? options = null)
     {
         if (services is null)
             throw new ArgumentNullException(nameof(services));
+
+        if (options is not null)
+            services.TryAddSingleton(options);
 
         // Shared infrastructure — singletons to avoid redundant allocations across scopes
         services.TryAddSingleton<ICache, MemoryCache>();

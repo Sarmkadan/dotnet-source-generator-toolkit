@@ -18,10 +18,20 @@ namespace DotNetSourceGeneratorToolkit.Services;
 public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
 {
     private readonly ILogger<RepositoryGeneratorService> _logger;
+    private readonly ToolkitOptions? _options;
 
-    public RepositoryGeneratorService(ILogger<RepositoryGeneratorService> logger)
+    public RepositoryGeneratorService(ILogger<RepositoryGeneratorService> logger, ToolkitOptions? options = null)
     {
         _logger = logger;
+        _options = options;
+    }
+
+    private string ResolveNamespace(Entity entity)
+    {
+        var baseNamespace = !string.IsNullOrWhiteSpace(_options?.DefaultNamespace)
+            ? _options.DefaultNamespace
+            : entity.Namespace;
+        return baseNamespace;
     }
 
     public async Task<GenerationResult> GenerateRepositoryAsync(Entity entity)
@@ -79,6 +89,7 @@ public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
     {
         var pkProperty = entity.GetPrimaryKeyProperty();
         var pkType = pkProperty?.GetClrTypeName() ?? "object";
+        var ns = ResolveNamespace(entity);
 
         var code = $@"// =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
@@ -88,7 +99,7 @@ public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace {entity.Namespace}.Repositories
+namespace {ns}.Repositories
 {{
     /// <summary>
     /// Repository interface for {entity.Name} entity providing data access operations.
@@ -129,6 +140,7 @@ namespace {entity.Namespace}.Repositories
         var pkProperty = entity.GetPrimaryKeyProperty();
         var pkType = pkProperty?.GetClrTypeName() ?? "object";
         var tableName = entity.TableName ?? entity.Name.ToLower();
+        var ns = ResolveNamespace(entity);
 
         var code = $@"// =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
@@ -140,7 +152,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace {entity.Namespace}.Repositories
+namespace {ns}.Repositories
 {{
     /// <summary>
     /// Repository implementation for {entity.Name} entity providing complete data access.
