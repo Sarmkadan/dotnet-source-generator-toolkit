@@ -1,8 +1,42 @@
 # Contributing to dotnet-source-generator-toolkit
 
-First off, thank you for considering contributing to `dotnet-source-generator-toolkit`! It's people like you that make open source such a great community.
+Thank you for considering contributing to `dotnet-source-generator-toolkit`!
 
-## Getting Started
+## Requirements
+
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
+- A C# IDE (Visual Studio, Rider, or VS Code with the C# extension)
+
+## Building Locally
+
+```bash
+git clone https://github.com/sarmkadan/dotnet-source-generator-toolkit.git
+cd dotnet-source-generator-toolkit
+
+# Restore packages
+dotnet restore
+
+# Build
+dotnet build --configuration Release
+
+# Run all tests
+dotnet test --configuration Release --verbosity normal
+```
+
+## Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run with detailed output
+dotnet test --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+# Run a specific test project
+dotnet test tests/dotnet-source-generator-toolkit.Tests/
+```
+
+## Getting Started with a Contribution
 
 1. **Fork** the repository on GitHub.
 2. **Clone** your fork locally:
@@ -13,37 +47,38 @@ First off, thank you for considering contributing to `dotnet-source-generator-to
    ```bash
    git checkout -b feature/my-new-feature
    ```
+4. Make your changes, add tests, and verify everything passes:
+   ```bash
+   dotnet build && dotnet test
+   ```
+5. Push your branch and open a Pull Request against `main`.
 
-## Development Requirements
+## Code Style
 
-- **.NET 10.0 SDK** or later.
+- Follow the `.editorconfig` rules present in the repository root.
+- Private fields use the `_camelCase` prefix convention.
+- Provide XML documentation comments for all public APIs.
+- Use `file`-scoped namespaces for new C# files.
+- Keep methods focused — prefer small, single-responsibility functions.
+- **Preserve all author headers** at the top of existing files; do not remove them.
 
-## Running Tests
+## Pull Request Guidelines
 
-Before submitting a Pull Request, please ensure all tests pass:
-```bash
-dotnet test
-```
-
-## Making Changes
-
-- **Code Style:** Follow the existing coding conventions used throughout the project.
-- **Documentation:** Provide XML documentation comments for new public APIs.
-- **Headers:** **KEEP ALL author headers** - DO NOT remove them from any files.
-
-## Submitting a Pull Request
-
-1. Commit your changes with clear and descriptive messages.
-2. Push your branch to your fork on GitHub.
-3. Open a Pull Request against the `main` branch of the original repository.
-4. Ensure the PR describes the problem you are fixing or the feature you are adding.
+- Ensure all existing tests pass before submitting.
+- Add or update tests for any new behaviour.
+- Write a clear PR description explaining what the change does and why.
+- Reference any related issues with `Closes #<issue-number>`.
+- Keep PRs focused — one feature or fix per PR is preferred.
 
 ## Reporting Issues
 
-If you find a bug or have a feature request, please use **GitHub Issues**.
-- Provide a clear and descriptive title.
-- Include detailed reproduction steps, expected behavior, and actual behavior.
+Use [GitHub Issues](https://github.com/sarmkadan/dotnet-source-generator-toolkit/issues) for bugs and feature requests.
+
+- Provide a clear, descriptive title.
+- Include reproduction steps, expected behaviour, and actual behaviour for bugs.
+- For feature requests, explain the use case and why it belongs in the toolkit.
 
 ## License
 
-By contributing to `dotnet-source-generator-toolkit`, you agree that your contributions will be licensed under its MIT License.
+By contributing you agree that your contributions will be licensed under the [MIT License](LICENSE).
+

@@ -139,3 +139,14 @@ tab_width = 2
 # Markdown files
 [*.md]
 trim_trailing_whitespace = false
+
+# Shell scripts
+[*.{sh,bash}]
+indent_size = 2
+tab_width = 2
+end_of_line = lf
+
+# Dockerfile
+[Dockerfile*]
+indent_size = 4
+tab_width = 4
