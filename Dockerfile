@@ -3,32 +3,43 @@
 # CTO & Software Architect
 # =============================================================================
 
-# Multi-stage build for optimization
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
-
+# Stage 1 - Restore dependencies
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
 WORKDIR /src
-
 COPY ["dotnet-source-generator-toolkit.csproj", "./"]
 RUN dotnet restore "dotnet-source-generator-toolkit.csproj"
 
+# Stage 2 - Build and publish
+FROM restore AS build
 COPY . .
-RUN dotnet build -c Release -o /app/build
+RUN dotnet publish -c Release -o /app/publish --no-restore \
+    /p:UseAppHost=false \
+    /p:PublishTrimmed=false
 
-RUN dotnet publish -c Release -o /app/publish
+# Stage 3 - Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
-# Runtime stage - minimal image
-FROM mcr.microsoft.com/dotnet/runtime:10.0
+LABEL maintainer="Vladyslav Zaiets <vladyslav@sarmkadan.com>"
+LABEL org.opencontainers.image.source="https://github.com/sarmkadan/dotnet-source-generator-toolkit"
+LABEL org.opencontainers.image.description="Roslyn source generator toolkit for .NET"
 
 WORKDIR /app
 
-COPY --from=builder /app/publish .
+RUN addgroup --system --gid 1001 appgroup \
+    && adduser --system --uid 1001 --ingroup appgroup appuser \
+    && chown -R appuser:appgroup /app
 
-# Create non-root user for security
-RUN useradd -m -u 1001 generator && chown -R generator:generator /app
-USER generator
+COPY --from=build --chown=appuser:appgroup /app/publish .
 
-# Set environment for UTF-8 support
+USER appuser
+
+ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_EnableDiagnostics=0
-ENV DOTNET_UseSystemNativeIp=true
+ENV DOTNET_ENVIRONMENT=Production
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD ["dotnet", "--list-runtimes", "||", "exit", "1"]
 
 ENTRYPOINT ["dotnet", "DotNetSourceGeneratorToolkit.dll"]
