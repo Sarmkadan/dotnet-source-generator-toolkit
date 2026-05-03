@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Batch;
 /// Processes items in configurable batch sizes with parallel execution.
 /// Provides error isolation - failure of one item doesn't stop the batch.
 /// </summary>
-public class BatchProcessor<T> : IBatchProcessor<T>
+public sealed class BatchProcessor<T> : IBatchProcessor<T>
 {
     private readonly ILogger<BatchProcessor<T>> _logger;
 
@@ -26,10 +28,10 @@ public class BatchProcessor<T> : IBatchProcessor<T>
         int batchSize = 10,
         IProgress<BatchProgress>? progress = null)
     {
-        if (items == null)
+        if (items is null)
             throw new ArgumentNullException(nameof(items));
 
-        if (processor == null)
+        if (processor is null)
             throw new ArgumentNullException(nameof(processor));
 
         if (batchSize <= 0)

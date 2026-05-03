@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 /// Represents a code generation template that defines how to generate specific code artifacts
 /// like repositories, mappers, validators, or serializers from entity definitions.
 /// </summary>
-public class GenerationTemplate
+public sealed class GenerationTemplate
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 

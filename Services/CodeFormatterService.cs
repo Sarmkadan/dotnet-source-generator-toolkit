@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -30,7 +32,7 @@ public interface ICodeFormatterService
     bool ValidateSyntax(string code);
 }
 
-public class CodeFormatterService : ICodeFormatterService
+public sealed class CodeFormatterService : ICodeFormatterService
 {
     private const int INDENT_SIZE = 4;
     private readonly ILogger<CodeFormatterService> _logger;

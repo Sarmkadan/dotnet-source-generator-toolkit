@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates FluentValidation validators for entities with comprehensive
 /// validation rules based on entity property definitions.
 /// </summary>
-public class ValidatorGeneratorService : IValidatorGeneratorService
+public sealed class ValidatorGeneratorService : IValidatorGeneratorService
 {
     private readonly ILogger<ValidatorGeneratorService> _logger;
 
@@ -23,7 +25,7 @@ public class ValidatorGeneratorService : IValidatorGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(List<Entity> entities)
     {
-        if (entities == null || entities.Count == 0)
+        if (entities is null || entities.Count == 0)
             throw new ArgumentException("Entities collection cannot be null or empty");
 
         _logger.LogInformation("Generating validators for {Count} entities", entities.Count);
@@ -39,7 +41,7 @@ public class ValidatorGeneratorService : IValidatorGeneratorService
 
     public async Task<GenerationResult> GenerateValidatorAsync(Entity entity)
     {
-        if (entity == null)
+        if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
         _logger.LogInformation("Generating validator for entity: {EntityName}", entity.Name);
@@ -89,7 +91,7 @@ namespace {entity.Namespace}.Validators
     /// FluentValidation validator for {entity.Name} entity.
     /// Provides comprehensive validation rules for all entity properties.
     /// </summary>
-    public class {validatorClassName} : AbstractValidator<{entity.Name}>
+    public sealed class {validatorClassName} : AbstractValidator<{entity.Name}>
     {{
         public {validatorClassName}()
         {{
@@ -105,13 +107,13 @@ namespace {entity.Namespace}.Validators
     /// <summary>
     /// Manual validator providing custom validation logic.
     /// </summary>
-    public class {validatorClassName}Manual
+    public sealed class {validatorClassName}Manual
     {{
         public bool Validate({entity.Name} entity, out List<string> errors)
         {{
             errors = new List<string>();
 
-            if (entity == null)
+            if (entity is null)
             {{
                 errors.Add(""{entity.Name} entity cannot be null"");
                 return false;

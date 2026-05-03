@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -32,7 +34,7 @@ public interface IFormattingService
 /// <summary>
 /// Implementation of C# code formatting service.
 /// </summary>
-public class FormattingService : IFormattingService
+public sealed class FormattingService : IFormattingService
 {
     private FormattingRules _rules = new();
     private readonly ILogger<FormattingService> _logger;
@@ -105,7 +107,7 @@ public class FormattingService : IFormattingService
 /// <summary>
 /// Configuration for code formatting.
 /// </summary>
-public class FormattingRules
+public sealed class FormattingRules
 {
     public int IndentSize { get; set; } = 4;
     public bool UseTabs { get; set; }

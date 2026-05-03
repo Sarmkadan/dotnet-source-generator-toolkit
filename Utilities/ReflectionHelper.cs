@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -75,7 +77,7 @@ public static class ReflectionHelper
     public static IEnumerable<Type> GetBaseTypes(Type type)
     {
         var current = type.BaseType;
-        while (current != null && current != typeof(object))
+        while (current is not null && current != typeof(object))
         {
             yield return current;
             current = current.BaseType;

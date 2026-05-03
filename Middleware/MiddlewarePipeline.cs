@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -11,7 +13,7 @@ namespace DotNetSourceGeneratorToolkit.Middleware;
 /// Implements a composable middleware pipeline for request processing.
 /// Builds a chain of responsibility where each middleware can process and pass control.
 /// </summary>
-public class MiddlewarePipeline : IMiddlewarePipeline
+public sealed class MiddlewarePipeline : IMiddlewarePipeline
 {
     private readonly List<MiddlewareFactory> _middlewares = new();
     private readonly IServiceProvider _serviceProvider;
@@ -50,7 +52,7 @@ public class MiddlewarePipeline : IMiddlewarePipeline
 
     public async Task ExecuteAsync(MiddlewareContext context)
     {
-        if (context == null)
+        if (context is null)
             throw new ArgumentNullException(nameof(context));
 
         // Build the chain of responsibility

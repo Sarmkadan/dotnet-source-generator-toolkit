@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// Formats generation results as XML with proper element structure and attributes.
 /// Useful for integration with tools that consume XML documents.
 /// </summary>
-public class XmlOutputFormatter : IOutputFormatter
+public sealed class XmlOutputFormatter : IOutputFormatter
 {
     public string FileExtension => ".xml";
     public string FormatName => "XML";
@@ -70,7 +72,7 @@ internal static class XmlExtensions
 {
     public static XElement? RemoveEmptyNodes(this XElement? element)
     {
-        if (element == null) return null;
+        if (element is null) return null;
 
         // Remove elements that are null
         element.Elements().Where(e => e.IsEmpty).Remove();

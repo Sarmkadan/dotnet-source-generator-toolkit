@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -14,7 +16,7 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Orchestrates the complete source generation workflow, coordinating
 /// project analysis, entity parsing, and code generation for all artifact types.
 /// </summary>
-public class SourceGeneratorService : ISourceGeneratorService
+public sealed class SourceGeneratorService : ISourceGeneratorService
 {
     private readonly IEntityAnalyzer _entityAnalyzer;
     private readonly IAttributeAnalyzer _attributeAnalyzer;
@@ -203,7 +205,7 @@ namespace {entity.Namespace}
         Task<bool> DeleteAsync(object id);
     }}
 
-    public class {entity.Name}Repository : I{entity.Name}Repository
+    public sealed class {entity.Name}Repository : I{entity.Name}Repository
     {{
         public async Task<{entity.Name}> GetByIdAsync(object id)
         {{
@@ -244,22 +246,22 @@ namespace {entity.Namespace}
         return $@"// Generated mapper for {entity.Name}
 namespace {entity.Namespace}
 {{
-    public class {entity.Name}Mapper
+    public sealed class {entity.Name}Mapper
     {{
         public static {entity.Name}Dto MapToDto({entity.Name} entity)
         {{
-            if (entity == null) return null;
+            if (entity is null) return null;
             return new {entity.Name}Dto();
         }}
 
         public static {entity.Name} MapFromDto({entity.Name}Dto dto)
         {{
-            if (dto == null) return null;
+            if (dto is null) return null;
             return new {entity.Name}();
         }}
     }}
 
-    public class {entity.Name}Dto
+    public sealed class {entity.Name}Dto
     {{
     }}
 }}";
@@ -270,13 +272,13 @@ namespace {entity.Namespace}
         return $@"// Generated validator for {entity.Name}
 namespace {entity.Namespace}
 {{
-    public class {entity.Name}Validator
+    public sealed class {entity.Name}Validator
     {{
         public bool Validate({entity.Name} entity, out List<string> errors)
         {{
             errors = new List<string>();
 
-            if (entity == null)
+            if (entity is null)
             {{
                 errors.Add(""Entity cannot be null"");
                 return false;

@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -154,7 +156,7 @@ public static class CollectionExtensions
     /// <summary>Checks if collection is null or empty.</summary>
     public static bool IsNullOrEmpty<T>(this IEnumerable<T> collection)
     {
-        return collection == null || !collection.Any();
+        return collection is null || !collection.Any();
     }
 
     /// <summary>Batches collection into groups of specified size.</summary>
