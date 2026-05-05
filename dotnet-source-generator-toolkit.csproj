@@ -12,6 +12,7 @@
     <Authors>Vladyslav Zaiets</Authors>
     <Description>Roslyn source generator toolkit for generating repositories, mappers, validators, serializers from attributes</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/sarmkadan/dotnet-source-generator-toolkit</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
