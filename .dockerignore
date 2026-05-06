@@ -1,0 +1,22 @@
+# Ignore bin and obj directories
+**/bin
+**/obj
+
+# Ignore Git directory
+.git
+
+# Ignore test files and documentation
+tests/
+docs/
+**/*.Tests
+
+# Ignore development files
+*.user
+*.suo
+*.sln.ide
+
+# Ignore log files
+*.log
+
+# Ignore user-specific files
+.user/
