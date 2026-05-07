@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -14,7 +16,7 @@ namespace DotNetSourceGeneratorToolkit.Pipeline;
 /// Orchestrates the complete code generation pipeline from analysis to output.
 /// Coordinates all services and manages the generation workflow.
 /// </summary>
-public class GenerationPipeline
+public sealed class GenerationPipeline
 {
     private readonly ISourceGeneratorService _generatorService;
     private readonly IRepositoryGeneratorService _repositoryGenerator;
@@ -123,7 +125,7 @@ public class GenerationPipeline
 /// <summary>
 /// Result of pipeline execution.
 /// </summary>
-public class PipelineResult
+public sealed class PipelineResult
 {
     public bool IsSuccessful { get; set; }
     public int EntitiesFound { get; set; }

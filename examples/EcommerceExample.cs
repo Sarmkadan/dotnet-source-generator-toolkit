@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,13 +10,13 @@ using DotNetSourceGeneratorToolkit.Domain;
 namespace DotNetSourceGeneratorToolkit.Examples;
 
 /// E-commerce domain example with repositories, mappers, validators, and serializers
-public class EcommerceExample
+public sealed class EcommerceExample
 {
     [Repository]
     [Mapper]
     [Validator]
     [Serializer(Formats = new[] { "Json", "Xml" })]
-    public class Product
+    public sealed class Product
     {
         public int Id { get; set; }
         public string Sku { get; set; } = string.Empty;
@@ -31,7 +33,7 @@ public class EcommerceExample
     [Repository]
     [Mapper]
     [Validator]
-    public class Order
+    public sealed class Order
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
@@ -44,7 +46,7 @@ public class EcommerceExample
 
     [Mapper]
     [Validator]
-    public class OrderItem
+    public sealed class OrderItem
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
@@ -55,7 +57,7 @@ public class EcommerceExample
     }
 
     [Mapper]
-    public class ProductDto
+    public sealed class ProductDto
     {
         public int Id { get; set; }
         public string Sku { get; set; } = string.Empty;
@@ -65,7 +67,7 @@ public class EcommerceExample
     }
 
     [Mapper]
-    public class OrderDto
+    public sealed class OrderDto
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
@@ -76,7 +78,7 @@ public class EcommerceExample
     }
 
     [Mapper]
-    public class OrderItemDto
+    public sealed class OrderItemDto
     {
         public int ProductId { get; set; }
         public int Quantity { get; set; }
@@ -85,7 +87,7 @@ public class EcommerceExample
     }
 
     // Usage example
-    public class OrderService
+    public sealed class OrderService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
@@ -110,7 +112,7 @@ public class EcommerceExample
         public async Task<OrderDto?> GetOrderAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
-            if (order == null)
+            if (order is null)
                 return null;
 
             var validationResult = await _orderValidator.ValidateAsync(order);
@@ -139,7 +141,7 @@ public class EcommerceExample
             foreach (var item in order.Items)
             {
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
-                if (product == null || product.StockQuantity < item.Quantity)
+                if (product is null || product.StockQuantity < item.Quantity)
                     throw new InvalidOperationException($"Insufficient stock for product {item.ProductId}");
             }
 
@@ -150,7 +152,7 @@ public class EcommerceExample
         public async Task<string> ExportOrderAsJsonAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
-            if (order == null)
+            if (order is null)
                 throw new ArgumentException("Order not found");
 
             // Use generated JSON serializer

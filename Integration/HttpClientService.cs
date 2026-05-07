@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -13,7 +15,7 @@ namespace DotNetSourceGeneratorToolkit.Integration;
 /// Implements HTTP client with resilience features including retry logic and timeouts.
 /// All requests include proper exception handling and logging.
 /// </summary>
-public class HttpClientService : IHttpClientService
+public sealed class HttpClientService : IHttpClientService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<HttpClientService> _logger;

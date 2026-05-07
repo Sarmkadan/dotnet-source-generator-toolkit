@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -12,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates mapper classes for transforming entities to/from DTOs
 /// and between different entity types with property mapping logic.
 /// </summary>
-public class MapperGeneratorService : IMapperGeneratorService
+public sealed class MapperGeneratorService : IMapperGeneratorService
 {
     private readonly ILogger<MapperGeneratorService> _logger;
 
@@ -23,7 +25,7 @@ public class MapperGeneratorService : IMapperGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities)
     {
-        if (entities == null || entities.Count == 0)
+        if (entities is null || entities.Count == 0)
             throw new ArgumentException("Entities collection cannot be null or empty");
 
         _logger.LogInformation("Generating mappers for {Count} entities", entities.Count);
@@ -44,10 +46,10 @@ public class MapperGeneratorService : IMapperGeneratorService
 
     public async Task<GenerationResult> GenerateMapperAsync(Entity sourceEntity, Entity targetEntity)
     {
-        if (sourceEntity == null)
+        if (sourceEntity is null)
             throw new ArgumentNullException(nameof(sourceEntity));
 
-        if (targetEntity == null)
+        if (targetEntity is null)
             throw new ArgumentNullException(nameof(targetEntity));
 
         _logger.LogInformation("Generating mapper from {Source} to {Target}", sourceEntity.Name, targetEntity.Name);
@@ -100,7 +102,7 @@ namespace {entity.Namespace}.Mappers
     /// <summary>
     /// DTO class for {entity.Name} entity used in API responses.
     /// </summary>
-    public class {dtoClassName}
+    public sealed class {dtoClassName}
     {{
 {dtoProperties}
     }}
@@ -108,12 +110,12 @@ namespace {entity.Namespace}.Mappers
     /// <summary>
     /// Mapper class for transforming {entity.Name} entities to/from DTOs.
     /// </summary>
-    public class {mapperClassName}
+    public sealed class {mapperClassName}
     {{
         /// <summary>Maps an entity to its DTO representation.</summary>
         public static {dtoClassName} MapToDto({entity.Name} entity)
         {{
-            if (entity == null)
+            if (entity is null)
                 return null;
 
 {mapToDto}
@@ -123,7 +125,7 @@ namespace {entity.Namespace}.Mappers
         /// <summary>Maps a DTO back to entity.</summary>
         public static {entity.Name} MapFromDto({dtoClassName} dto)
         {{
-            if (dto == null)
+            if (dto is null)
                 return null;
 
 {mapFromDto}
@@ -133,7 +135,7 @@ namespace {entity.Namespace}.Mappers
         /// <summary>Maps a collection of entities to DTOs.</summary>
         public static IEnumerable<{dtoClassName}> MapToDtos(IEnumerable<{entity.Name}> entities)
         {{
-            if (entities == null)
+            if (entities is null)
                 return new List<{dtoClassName}>();
 
             return entities.ConvertAll(e => MapToDto(e));

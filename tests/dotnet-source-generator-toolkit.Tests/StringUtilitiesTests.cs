@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -8,7 +10,7 @@ using FluentAssertions;
 
 namespace DotNetSourceGeneratorToolkit.Tests;
 
-public class StringExtensionsTests
+public sealed class StringExtensionsTests
 {
     [Fact]
     public void ToPascalCase_WithUnderscoreDelimiters_ReturnsPascalCase()
@@ -65,7 +67,7 @@ public class StringExtensionsTests
     }
 }
 
-public class StringValidatorTests
+public sealed class StringValidatorTests
 {
     [Fact]
     public void IsValidIdentifier_WithValidCSharpIdentifier_ReturnsTrue()

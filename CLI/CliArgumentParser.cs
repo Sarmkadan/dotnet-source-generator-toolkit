@@ -1,3 +1,5 @@
+#nullable enable
+
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
@@ -9,7 +11,7 @@ namespace DotNetSourceGeneratorToolkit.CLI;
 /// Parses command-line arguments into CliOptions using a simple but robust approach.
 /// Supports both long-form (--option value) and short-form (-o value) arguments.
 /// </summary>
-public class CliArgumentParser : ICliArgumentParser
+public sealed class CliArgumentParser : ICliArgumentParser
 {
     private const string Version = "1.0.0";
     private const string ProjectName = ".NET Source Generator Toolkit";
