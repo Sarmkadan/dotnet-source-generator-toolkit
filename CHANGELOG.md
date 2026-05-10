@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Docker build cache invalidation - restore stage now properly separates dependency resolution from source compilation
 
-## [1.0.0] - 2025-11-24
+## [2.0.0] - 2026-03-19
 
 ### Added
 - **Stable release**: Production-ready with full test coverage
