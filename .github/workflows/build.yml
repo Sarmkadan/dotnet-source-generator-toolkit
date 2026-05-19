@@ -54,7 +54,7 @@ jobs:
         run: dotnet publish -c ${{ env.BUILD_CONFIGURATION }} -o ./publish -r ${{ matrix.rid }} --self-contained
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: binaries-${{ matrix.rid }}
           path: ./publish/
