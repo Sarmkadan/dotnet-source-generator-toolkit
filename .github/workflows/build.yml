@@ -144,7 +144,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: ./nupkg/**
           body_path: CHANGELOG.md
