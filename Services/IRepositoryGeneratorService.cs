@@ -6,32 +6,23 @@
 // =============================================================================
 
 using DotNetSourceGeneratorToolkit.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
 /// <summary>
-/// Contract for generating repository pattern implementations.
-/// Creates interfaces and implementations for data access.
+/// Generates repository implementations from entity definitions.
 /// </summary>
 public interface IRepositoryGeneratorService
 {
     /// <summary>
-    /// Generate repository implementation for a single entity.
+    /// Generates a repository for a single entity.
     /// </summary>
     Task<GenerationResult> GenerateRepositoryAsync(Entity entity);
 
     /// <summary>
-    /// Generate repositories for multiple entities.
+    /// Generates repositories for multiple entities.
     /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllRepositoriesAsync(IEnumerable<Entity> entities);
-
-    /// <summary>
-    /// Generate repository interface only.
-    /// </summary>
-    Task<string> GenerateRepositoryInterfaceAsync(Entity entity);
-
-    /// <summary>
-    /// Generate repository implementation only.
-    /// </summary>
-    Task<string> GenerateRepositoryImplementationAsync(Entity entity);
+    Task<IEnumerable<GenerationResult>> GenerateAllRepositoriesAsync(List<Entity> entities);
 }
