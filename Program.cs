@@ -103,6 +103,9 @@ class Program
         // Register Caching
         services.AddSingleton<ICache, MemoryCache>();
 
+        // Register Middleware Pipeline
+        services.AddScoped<IMiddlewarePipeline, MiddlewarePipeline>();
+
         return services;
     }
 }
