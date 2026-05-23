@@ -73,19 +73,6 @@ public sealed class ValidatorGenerationException : GenerationException
         : base(message, "Validator", entityName) { }
 }
 
-/// <summary>
-/// Thrown when validation of entities or templates fails.
-/// </summary>
-public sealed class ValidationException : GenerationException
-{
-    public List<string> ValidationErrors { get; }
-
-    public ValidationException(string message, List<string> errors)
-        : base(message)
-    {
-        ValidationErrors = errors;
-    }
-}
 
 /// <summary>
 /// Thrown when configuration is invalid.
