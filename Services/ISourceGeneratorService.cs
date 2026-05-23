@@ -37,21 +37,6 @@ public interface ISourceGeneratorService
 }
 
 
-/// <summary>
-/// Generates mapper implementations for entity transformations.
-/// </summary>
-public interface IMapperGeneratorService
-{
-    /// <summary>
-    /// Generates all mappers for a set of entities.
-    /// </summary>
-    Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities);
-
-    /// <summary>
-    /// Generates a mapper from one entity to another.
-    /// </summary>
-    Task<GenerationResult> GenerateMapperAsync(Entity sourceEntity, Entity targetEntity);
-}
 
 /// <summary>
 /// Generates validation logic for entities.
