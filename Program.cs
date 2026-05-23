@@ -107,6 +107,9 @@ class Program
         // Register Middleware Pipeline
         services.AddScoped<IMiddlewarePipeline, MiddlewarePipeline>();
 
+        // Register Batch Processor
+        services.AddScoped(typeof(IBatchProcessor<>), typeof(BatchProcessor<>));
+
         return services;
     }
 }
