@@ -9,6 +9,10 @@ using DotNetSourceGeneratorToolkit.Domain;
 using DotNetSourceGeneratorToolkit.Exceptions;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
@@ -19,21 +23,32 @@ namespace DotNetSourceGeneratorToolkit.Services;
 public sealed class SourceGeneratorService : ISourceGeneratorService
 {
     private readonly IEntityAnalyzer _entityAnalyzer;
-    private readonly IAttributeAnalyzer _attributeAnalyzer;
+
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<SourceGeneratorService> _logger;
 
     public SourceGeneratorService(
         IEntityAnalyzer entityAnalyzer,
-        IAttributeAnalyzer attributeAnalyzer,
         IFileSystemService fileSystemService,
+        IRepositoryGeneratorService repositoryGeneratorService,
+        IMapperGeneratorService mapperGeneratorService,
+        IValidatorGeneratorService validatorGeneratorService,
+        ISerializerGeneratorService serializerGeneratorService,
         ILogger<SourceGeneratorService> logger)
     {
         _entityAnalyzer = entityAnalyzer;
-        _attributeAnalyzer = attributeAnalyzer;
         _fileSystemService = fileSystemService;
+        _repositoryGeneratorService = repositoryGeneratorService;
+        _mapperGeneratorService = mapperGeneratorService;
+        _validatorGeneratorService = validatorGeneratorService;
+        _serializerGeneratorService = serializerGeneratorService;
         _logger = logger;
     }
+
+    private readonly IRepositoryGeneratorService _repositoryGeneratorService;
+    private readonly IMapperGeneratorService _mapperGeneratorService;
+    private readonly IValidatorGeneratorService _validatorGeneratorService;
+    private readonly ISerializerGeneratorService _serializerGeneratorService;
 
     public async Task<ProjectInfo> AnalyzeProjectAsync(string projectPath)
     {
@@ -127,49 +142,25 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
         {
             if (attr.Contains("Repository", StringComparison.OrdinalIgnoreCase))
             {
-                var result = new GenerationResult
-                {
-                    EntityName = entity.Name,
-                    GeneratorType = GeneratorType.Repository,
-                    Status = GenerationStatus.InProgress,
-                };
-
-                result.GeneratedCode = GenerateRepositoryCode(entity);
-                result.OutputFilePath = Path.Combine(projectInfo.ProjectPath, $"{entity.Name}Repository.cs");
-                result.MarkAsCompleted(GenerationStatus.Completed, 100);
-
+                var result = await _repositoryGeneratorService.GenerateRepositoryAsync(entity);
                 results.Add(result);
             }
 
             if (attr.Contains("Mapper", StringComparison.OrdinalIgnoreCase))
             {
-                var result = new GenerationResult
-                {
-                    EntityName = entity.Name,
-                    GeneratorType = GeneratorType.Mapper,
-                    Status = GenerationStatus.InProgress,
-                };
-
-                result.GeneratedCode = GenerateMapperCode(entity);
-                result.OutputFilePath = Path.Combine(projectInfo.ProjectPath, $"{entity.Name}Mapper.cs");
-                result.MarkAsCompleted(GenerationStatus.Completed, 100);
-
+                var result = await _mapperGeneratorService.GenerateMapperAsync(entity, entity); // Assuming source and target entity are the same for simplicity
                 results.Add(result);
             }
 
             if (attr.Contains("Validator", StringComparison.OrdinalIgnoreCase))
             {
-                var result = new GenerationResult
-                {
-                    EntityName = entity.Name,
-                    GeneratorType = GeneratorType.Validator,
-                    Status = GenerationStatus.InProgress,
-                };
+                var result = await _validatorGeneratorService.GenerateValidatorAsync(entity);
+                results.Add(result);
+            }
 
-                result.GeneratedCode = GenerateValidatorCode(entity);
-                result.OutputFilePath = Path.Combine(projectInfo.ProjectPath, $"{entity.Name}Validator.cs");
-                result.MarkAsCompleted(GenerationStatus.Completed, 100);
-
+            if (attr.Contains("Serializer", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = await _serializerGeneratorService.GenerateSerializerAsync(entity, SerializerFormat.Json); // Default to JSON for now
                 results.Add(result);
             }
         }
@@ -191,102 +182,4 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
         return await Task.FromResult(result);
     }
 
-    private string GenerateRepositoryCode(Entity entity)
-    {
-        var code = $@"// Generated repository for {entity.Name}
-namespace {entity.Namespace}
-{{
-    public interface I{entity.Name}Repository
-    {{
-        Task<{entity.Name}> GetByIdAsync(object id);
-        Task<IEnumerable<{entity.Name}>> GetAllAsync();
-        Task<{entity.Name}> CreateAsync({entity.Name} entity);
-        Task<{entity.Name}> UpdateAsync({entity.Name} entity);
-        Task<bool> DeleteAsync(object id);
-    }}
 
-    public sealed class {entity.Name}Repository : I{entity.Name}Repository
-    {{
-        public async Task<{entity.Name}> GetByIdAsync(object id)
-        {{
-            // Implementation
-            return await Task.FromResult(new {entity.Name}());
-        }}
-
-        public async Task<IEnumerable<{entity.Name}>> GetAllAsync()
-        {{
-            // Implementation
-            return await Task.FromResult(new List<{entity.Name}>());
-        }}
-
-        public async Task<{entity.Name}> CreateAsync({entity.Name} entity)
-        {{
-            // Implementation
-            return await Task.FromResult(entity);
-        }}
-
-        public async Task<{entity.Name}> UpdateAsync({entity.Name} entity)
-        {{
-            // Implementation
-            return await Task.FromResult(entity);
-        }}
-
-        public async Task<bool> DeleteAsync(object id)
-        {{
-            // Implementation
-            return await Task.FromResult(true);
-        }}
-    }}
-}}";
-        return code;
-    }
-
-    private string GenerateMapperCode(Entity entity)
-    {
-        return $@"// Generated mapper for {entity.Name}
-namespace {entity.Namespace}
-{{
-    public sealed class {entity.Name}Mapper
-    {{
-        public static {entity.Name}Dto MapToDto({entity.Name} entity)
-        {{
-            if (entity is null) return null;
-            return new {entity.Name}Dto();
-        }}
-
-        public static {entity.Name} MapFromDto({entity.Name}Dto dto)
-        {{
-            if (dto is null) return null;
-            return new {entity.Name}();
-        }}
-    }}
-
-    public sealed class {entity.Name}Dto
-    {{
-    }}
-}}";
-    }
-
-    private string GenerateValidatorCode(Entity entity)
-    {
-        return $@"// Generated validator for {entity.Name}
-namespace {entity.Namespace}
-{{
-    public sealed class {entity.Name}Validator
-    {{
-        public bool Validate({entity.Name} entity, out List<string> errors)
-        {{
-            errors = new List<string>();
-
-            if (entity is null)
-            {{
-                errors.Add(""Entity cannot be null"");
-                return false;
-            }}
-
-            return errors.Count == 0;
-        }}
-    }}
-}}";
-    }
-}
