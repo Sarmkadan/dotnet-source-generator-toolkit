@@ -89,6 +89,7 @@ class Program
         services.AddScoped<IMapperGeneratorService, MapperGeneratorService>();
         services.AddScoped<IValidatorGeneratorService, ValidatorGeneratorService>();
         services.AddScoped<ISerializerGeneratorService, SerializerGeneratorService>();
+        services.AddScoped<IWebhookService, WebhookService>();
 
         // Register repositories
         services.AddScoped<IEntityRepository, EntityRepository>();
