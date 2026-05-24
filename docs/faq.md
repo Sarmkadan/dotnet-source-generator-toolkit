@@ -74,6 +74,50 @@ A: Yes. Generated code includes:
 
 ## Configuration Questions
 
+### Q: How do I control the namespace of generated repositories, mappers, and validators?
+
+A: The namespace of generated artifacts is derived directly from the namespace of your source entity.
+For example, an entity in `MyApp.Domain` produces a repository in `MyApp.Domain.Repositories`, a mapper
+in `MyApp.Domain.Mappers`, and a validator in `MyApp.Domain.Validators`.
+
+**Option 1 – Use `defaultNamespace` in configuration**
+
+Set `defaultNamespace` in `toolkit-config.json` to override the base namespace for all generated files:
+
+```json
+{
+  "defaultNamespace": "MyApp.Generated"
+}
+```
+
+With this configuration an entity from any source namespace will have its generated code placed under
+`MyApp.Generated.Repositories`, `MyApp.Generated.Mappers`, etc.
+
+**Option 2 – Control entity namespace directly**
+
+Place your entity class in the exact namespace you want the generator to use as the base:
+
+```csharp
+// Entity lives in MyApp.Orders → generated repo is in MyApp.Orders.Repositories
+namespace MyApp.Orders
+{
+    [Repository]
+    public class Order
+    {
+        public Guid Id { get; set; }
+        public string CustomerName { get; set; } = default!;
+    }
+}
+```
+
+**Option 3 – CLI argument**
+
+Pass the desired namespace prefix on the command line:
+
+```bash
+dotnet run -- --path . --namespace MyApp.Generated
+```
+
 ### Q: Where should I put toolkit-config.json?
 
 A: Place it in your project root or specify a custom path via CLI:
