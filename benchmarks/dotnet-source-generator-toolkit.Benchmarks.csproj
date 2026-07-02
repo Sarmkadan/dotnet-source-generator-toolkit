@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>false</IsTestProject>
+    <AssemblyTitle>dotnet-source-generator-toolkit.Benchmarks</AssemblyTitle>
+    <Description>Performance benchmarks for the .NET Source Generator Toolkit</Description>
+    <Version>1.0.0</Version>
+    <Authors>Vladyslav Zaiets</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DotNetSourceGeneratorToolkit">
+      <HintPath>../bin/Release/net8.0/DotNetSourceGeneratorToolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
