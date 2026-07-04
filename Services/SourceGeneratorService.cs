@@ -52,6 +52,8 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
     public async Task<ProjectInfo> AnalyzeProjectAsync(string projectPath)
     {
+        if (string.IsNullOrWhiteSpace(projectPath))
+            throw new ArgumentNullException(nameof(projectPath));
         if (!Directory.Exists(projectPath))
             throw new GenerationException($"Project path does not exist: {projectPath}");
 
@@ -108,6 +110,8 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllAsync(ProjectInfo projectInfo)
     {
+        if (projectInfo is null)
+            throw new ArgumentNullException(nameof(projectInfo));
         var validationResult = await ValidateProjectAsync(projectInfo);
         if (!validationResult.IsValid)
             throw new ValidationException("Project validation failed", validationResult.Errors);
@@ -128,6 +132,10 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
     public async Task<IEnumerable<GenerationResult>> GenerateForEntityAsync(Entity entity, ProjectInfo projectInfo)
     {
+        if (entity is null)
+            throw new ArgumentNullException(nameof(entity));
+        if (projectInfo is null)
+            throw new ArgumentNullException(nameof(projectInfo));
         var results = new List<GenerationResult>();
 
         // Validate entity
@@ -170,6 +178,8 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
     public async Task<ValidationResult> ValidateProjectAsync(ProjectInfo projectInfo)
     {
+        if (projectInfo is null)
+            throw new ArgumentNullException(nameof(projectInfo));
         var result = new ValidationResult();
 
         var projectErrors = projectInfo.Validate();
