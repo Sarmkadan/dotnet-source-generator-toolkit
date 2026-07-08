@@ -230,7 +230,7 @@ public sealed class {className}
 
         var result = await _repositoryGenerator!.GenerateRepositoryAsync(entity);
 
-        if (string.IsNullOrEmpty(result.Code))
+        if (string.IsNullOrEmpty(result.GeneratedCode))
         {
             throw new InvalidOperationException("Repository generation failed");
         }
@@ -255,7 +255,7 @@ public sealed class {className}
 
         var result = await _mapperGenerator!.GenerateMapperAsync(entity, entity);
 
-        if (string.IsNullOrEmpty(result.Code))
+        if (string.IsNullOrEmpty(result.GeneratedCode))
         {
             throw new InvalidOperationException("Mapper generation failed");
         }
@@ -281,7 +281,7 @@ public sealed class {className}
 
         var result = await _validatorGenerator!.GenerateValidatorAsync(entity);
 
-        if (string.IsNullOrEmpty(result.Code))
+        if (string.IsNullOrEmpty(result.GeneratedCode))
         {
             throw new InvalidOperationException("Validator generation failed");
         }
@@ -306,7 +306,7 @@ public sealed class {className}
 
         var result = await _serializerGenerator!.GenerateSerializerAsync(entity, SerializerFormat.Json);
 
-        if (string.IsNullOrEmpty(result.Code))
+        if (string.IsNullOrEmpty(result.GeneratedCode))
         {
             throw new InvalidOperationException("Serializer generation failed");
         }
@@ -356,7 +356,7 @@ public sealed class {className}
         var projectInfo = await _generatorService!.AnalyzeProjectAsync(_tempProjectPath!);
         var entities = projectInfo.Entities.ToList();
 
-        var tasks = new List<Task>();
+        var tasks = new List<Task<IEnumerable<GenerationResult>>>();
         foreach (var entity in entities)
         {
             tasks.Add(_generatorService.GenerateForEntityAsync(entity, projectInfo));

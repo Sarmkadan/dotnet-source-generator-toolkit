@@ -75,12 +75,12 @@ public sealed class ValidatorGenerationException : GenerationException
 
 
 /// <summary>
-/// Thrown when configuration is invalid.
+/// Thrown when generation-time configuration is invalid.
 /// </summary>
-public class ConfigurationException : GenerationException
+public class GenerationConfigurationException : GenerationException
 {
-    public ConfigurationException(string message) : base(message) { }
+    public GenerationConfigurationException(string message) : base(message) { }
 
-    public ConfigurationException(string message, Exception innerException)
+    public GenerationConfigurationException(string message, Exception innerException)
         : base(message, innerException) { }
 }

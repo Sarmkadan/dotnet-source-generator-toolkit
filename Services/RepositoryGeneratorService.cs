@@ -5,6 +5,7 @@
 // CTO & Software Architect
 // =============================================================================
 
+using DotNetSourceGeneratorToolkit.Configuration;
 using DotNetSourceGeneratorToolkit.Domain;
 using DotNetSourceGeneratorToolkit.Exceptions;
 using Microsoft.Extensions.Logging;
