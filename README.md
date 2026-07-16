@@ -605,6 +605,44 @@ foreach (var attribute in validationAttributes)
 }
 ```
 
+## ValidationResult
+
+The `ValidationResult` class represents the outcome of a validation operation, tracking both errors and warnings. It provides methods to add validation messages, check overall validity, and retrieve all messages in a single collection. This type is used throughout the toolkit for validating configuration, entities, generation results, and other components.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create a validation result for a configuration check
+var configValidation = new ValidationResult();
+
+// Add validation messages
+configValidation.AddError("Output directory cannot be null or empty");
+configValidation.AddError("Template directory must exist and be accessible");
+configValidation.AddWarning("Cache expiration set to 30 minutes (recommended: 60+ minutes)");
+
+// Check overall validity
+if (!configValidation.IsValid)
+{
+    Console.WriteLine("Configuration validation failed!");
+    Console.WriteLine(configValidation.ToString());
+}
+
+// Access all messages
+foreach (var message in configValidation.GetAllMessages())
+{
+    Console.WriteLine($" - {message}");
+}
+
+// Check if there are any issues (errors or warnings)
+bool hasIssues = configValidation.HasIssues;
+
+// Get formatted string representation
+string validationSummary = configValidation.ToString();
+Console.WriteLine(validationSummary);
+```
+
 ## ProjectInfo
 
 The `ProjectInfo` class represents the core metadata and structure of a .NET project analyzed by the toolkit, aggregating information about its entities, generation templates, and overall generation results. It provides a robust API to manage project properties, register entities and templates, record generation outcomes, and retrieve diagnostic statistics or validation results to ensure project integrity.
