@@ -8,6 +8,7 @@
 using DotNetSourceGeneratorToolkit.Batch;
 using DotNetSourceGeneratorToolkit.Caching;
 using DotNetSourceGeneratorToolkit.Events;
+using DotNetSourceGeneratorToolkit.Extensions;
 using DotNetSourceGeneratorToolkit.Formatters;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using DotNetSourceGeneratorToolkit.Integration;
@@ -88,37 +89,17 @@ class Program
     {
         var services = new ServiceCollection();
 
-        // Register infrastructure
+        // Core toolkit registrations (infrastructure, analyzers, repositories, generators)
+        // live in one place so the CLI host and embedding hosts cannot drift apart.
+        services.AddSourceGeneratorToolkit();
+
+        // CLI-host specific pieces on top of the toolkit
         services.AddLogging();
-        services.AddSingleton<IConfigurationManager, ConfigurationManager>();
-        services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<IEventPublisher, EventAggregator>();
         services.AddHttpClient<IHttpClientService, HttpClientService>();
         services.AddSingleton<IFormatterFactory, FormatterFactory>();
-
-        // Register core services
-        services.AddScoped<ISourceGeneratorService, SourceGeneratorService>();
-        services.AddScoped<IRepositoryGeneratorService, RepositoryGeneratorService>();
-        services.AddScoped<IMapperGeneratorService, MapperGeneratorService>();
-        services.AddScoped<IValidatorGeneratorService, ValidatorGeneratorService>();
-        services.AddScoped<ISerializerGeneratorService, SerializerGeneratorService>();
         services.AddScoped<IWebhookService, WebhookService>();
-
-        // Register repositories
-        services.AddScoped<IEntityRepository, EntityRepository>();
-        services.AddScoped<IGenerationResultRepository, GenerationResultRepository>();
-
-        // Register analyzers
-        services.AddScoped<IAttributeAnalyzer, AttributeAnalyzer>();
-        services.AddScoped<IEntityAnalyzer, EntityAnalyzer>();
-
-        // Register Caching
-        services.AddSingleton<ICache, MemoryCache>();
-
-        // Register Middleware Pipeline
         services.AddScoped<IMiddlewarePipeline, MiddlewarePipeline>();
-
-        // Register Batch Processor
         services.AddScoped(typeof(IBatchProcessor<>), typeof(BatchProcessor<>));
 
         return services;
