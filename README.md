@@ -2086,6 +2086,102 @@ public interface ISerializerGeneratorService
 }
 ```
 
+#### `IProjectMetadataService`
+
+Extracts and manages metadata from .NET project files including dependencies, framework targets, and project configuration.
+
+```csharp
+public interface IProjectMetadataService
+{
+    /// <summary>Reads project file metadata (.csproj).</summary>
+    Task<ProjectMetadata> ReadProjectMetadataAsync(string projectPath);
+
+    /// <summary>Gets NuGet dependencies from the project.</summary>
+    Task<IEnumerable<Dependency>> GetDependenciesAsync(string projectPath);
+
+    /// <summary>Gets target framework information.</summary>
+    Task<string> GetTargetFrameworkAsync(string projectPath);
+
+    /// <summary>Gets root namespace of the project.</summary>
+    Task<string> GetRootNamespaceAsync(string projectPath);
+
+    /// <summary>Validates project file exists and is valid.</summary>
+    Task<bool> ValidateProjectAsync(string projectPath);
+}
+
+// Represents project metadata extracted from project file.
+public sealed class ProjectMetadata
+{
+    public string ProjectName { get; set; } = string.Empty;
+    public string ProjectPath { get; set; } = string.Empty;
+    public string TargetFramework { get; set; } = string.Empty;
+    public string RootNamespace { get; set; } = string.Empty;
+    public Version? ProjectVersion { get; set; }
+    public List<Dependency> Dependencies { get; } = [];
+    public Dictionary<string, string> Properties { get; } = [];
+    public DateTime LoadedAt { get; set; } = DateTime.UtcNow;
+}
+
+// Represents a NuGet package dependency.
+public sealed class Dependency
+{
+    public string Name { get; set; } = string.Empty;
+    public string Version { get; set; } = string.Empty;
+    public bool IsDevDependency { get; set; }
+}
+```
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Services;
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Set up dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddSingleton<IFileSystemService, FileSystemService>();
+services.AddSingleton<IProjectMetadataService, ProjectMetadataService>();
+
+var serviceProvider = services.BuildServiceProvider();
+var metadataService = serviceProvider.GetRequiredService<IProjectMetadataService>();
+
+// Read project metadata
+var projectPath = "./MyProject";
+var metadata = await metadataService.ReadProjectMetadataAsync(projectPath);
+
+Console.WriteLine($"Project Name: {metadata.ProjectName}");
+Console.WriteLine($"Target Framework: {metadata.TargetFramework}");
+Console.WriteLine($"Root Namespace: {metadata.RootNamespace}");
+Console.WriteLine($"Loaded At: {metadata.LoadedAt}");
+
+// Get dependencies
+var dependencies = await metadataService.GetDependenciesAsync(projectPath);
+Console.WriteLine($"Dependencies ({dependencies.Count()}):");
+foreach (var dep in dependencies)
+{
+    Console.WriteLine($"  - {dep.Name} v{dep.Version}");
+}
+
+// Get specific metadata values
+var targetFramework = await metadataService.GetTargetFrameworkAsync(projectPath);
+var rootNamespace = await metadataService.GetRootNamespaceAsync(projectPath);
+var isValid = await metadataService.ValidateProjectAsync(projectPath);
+
+Console.WriteLine($"Target Framework: {targetFramework}");
+Console.WriteLine($"Root Namespace: {rootNamespace}");
+Console.WriteLine($"Project Valid: {isValid}");
+```
+
 ## MiddlewarePipeline
 
 The `MiddlewarePipeline` class implements a composable middleware pipeline for request processing using the chain-of-responsibility pattern. It builds a flexible chain where each middleware component can inspect, modify, or short-circuit the pipeline execution before passing control to the next middleware. This pattern enables clean separation of concerns and extensible request/response processing across the generation pipeline.
