@@ -153,6 +153,64 @@ Supporting Infrastructure:
 ├── Configuration (ConfigurationManager, ToolkitOptions)
 └── File I/O (FileSystemService)
 
+## MemoryCache
+
+The `MemoryCache` class provides a lightweight in-memory caching implementation for storing and retrieving objects with configurable expiration policies. It supports basic cache operations including get, set, contains, remove, and clear, along with statistics tracking for monitoring cache performance. The cache is designed for single-process scenarios and provides thread-safe operations for concurrent access.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create a memory cache instance
+var cache = new MemoryCache(loggerFactory.CreateLogger<MemoryCache>());
+
+// Set a value with default expiration (60 minutes)
+cache.Set("user_42", new { Name = "John Doe", Email = "john@example.com" });
+
+// Set a value with custom expiration (10 minutes from now)
+cache.Set("config_settings", settingsObject, TimeSpan.FromMinutes(10));
+
+// Try to get a value
+if (cache.TryGet<object>("user_42", out var userValue))
+{
+    Console.WriteLine($"Retrieved user: {userValue.Name}");
+}
+else
+{
+    Console.WriteLine("User not found in cache");
+}
+
+// Check if a key exists
+bool containsKey = cache.Contains("config_settings");
+Console.WriteLine($"Cache contains key: {containsKey}");
+
+// Remove a specific item
+cache.Remove("user_42");
+
+// Clear the entire cache
+cache.Clear();
+
+// Get cache statistics
+var stats = cache.GetStatistics();
+Console.WriteLine($"Cache hits: {stats.Hits}, Cache misses: {stats.Misses}");
+Console.WriteLine($"Current items: {stats.CurrentItems}, Total items added: {stats.TotalItemsAdded}");
+Console.WriteLine($"Hit rate: {stats.HitRate:P}");
+
+// Access cache metadata
+var cachedItem = cache.GetStatistics();
+Console.WriteLine($"Cache created at: {cachedItem.CreatedAt}");
+Console.WriteLine($"Cache expires at: {cachedItem.ExpiresAt}");
+```
+
 ## FileSystemService
 
 The `FileSystemService` provides asynchronous file system operations including reading, writing, appending, and directory management. It handles file existence checks, path manipulation, and comprehensive error handling with detailed logging. The service automatically creates parent directories when writing files and provides methods for both synchronous and asynchronous file operations.
