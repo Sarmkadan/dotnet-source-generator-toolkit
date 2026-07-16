@@ -39,7 +39,10 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton(options);
+        // TryAddSingleton(instance) throws on null, so only register when options were supplied.
+        // Consumers should take ToolkitOptions? as an optional dependency.
+        if (options is not null)
+            services.TryAddSingleton(options);
 
         // Shared infrastructure — singletons to avoid redundant allocations across scopes
         services.TryAddSingleton<ICache, MemoryCache>();
