@@ -415,7 +415,111 @@ mockResult.IsValid.Should().BeFalse();
 mockResult.Errors.Should().ContainSingle(e => e == "Simulated validation failure");
 ```
 
-## EntityProperty
+## GenerationResult
+
+The `GenerationResult` class represents the outcome of a single code generation operation. It contains comprehensive metadata about the generation process including the generated code content, output file path, status information, warnings, errors, performance metrics, and timestamps. This type is returned by all generator services (`RepositoryGeneratorService`, `MapperGeneratorService`, `ValidatorGeneratorService`, `SerializerGeneratorService`) and provides detailed information for logging, error handling, and monitoring.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+
+// Create a sample entity
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities"
+};
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000
+});
+
+// Generate repository using RepositoryGeneratorService
+var repositoryGenerator = new RepositoryGeneratorService();
+var generationResult = await repositoryGenerator.GenerateRepositoryAsync(productEntity);
+
+// Access result properties
+Console.WriteLine($"Generation ID: {generationResult.Id}");
+Console.WriteLine($"Entity Name: {generationResult.EntityName}");
+Console.WriteLine($"Generator Type: {generationResult.GeneratorType}");
+Console.WriteLine($"Output File: {generationResult.OutputFilePath}");
+Console.WriteLine($"Status: {generationResult.Status}");
+Console.WriteLine($"Code Lines: {generationResult.CodeLineCount}");
+Console.WriteLine($"Duration: {generationResult.GenerationDurationMs}ms");
+Console.WriteLine($"Created: {generationResult.CreatedAt}");
+Console.WriteLine($"Completed: {generationResult.CompletedAt}");
+
+// Check if generation was successful
+if (generationResult.IsSuccessful)
+{
+    Console.WriteLine("✅ Generation successful!");
+    Console.WriteLine($"Generated code:\n{generationResult.GeneratedCode}");
+}
+else
+{
+    Console.WriteLine("❌ Generation failed with errors:");
+    foreach (var error in generationResult.Errors)
+    {
+        Console.WriteLine($"  - {error}");
+    }
+    
+    if (generationResult.Warnings.Any())
+    {
+        Console.WriteLine("\n⚠️ Warnings:");
+        foreach (var warning in generationResult.Warnings)
+        {
+            Console.WriteLine($"  - {warning}");
+        }
+    }
+}
+
+// Use validation methods
+var validationErrors = generationResult.Validate().ToList();
+if (validationErrors.Any())
+{
+    Console.WriteLine("Validation errors found:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($"  - {error}");
+    }
+}
+
+// Access metadata
+foreach (var kvp in generationResult.Metadata)
+{
+    Console.WriteLine($"Metadata: {kvp.Key} = {kvp.Value}");
+}
+
+// Mark as completed (if needed)
+generationResult.MarkAsCompleted();
+
+// Add custom warnings or errors
+generationResult.AddWarning("Property naming convention differs from team standards");
+generationResult.AddError("Primary key validation failed");
+```
 
 The `EntityProperty` class represents a property of an entity with comprehensive metadata for code generation. It includes type information, validation rules, database mapping configuration, and access modifiers. This class is the foundation for generating repositories, mappers, validators, and serializers.
 
