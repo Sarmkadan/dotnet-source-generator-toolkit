@@ -415,6 +415,92 @@ mockResult.IsValid.Should().BeFalse();
 mockResult.Errors.Should().ContainSingle(e => e == "Simulated validation failure");
 ```
 
+## EntityProperty
+
+The `EntityProperty` class represents a property of an entity with comprehensive metadata for code generation. It includes type information, validation rules, database mapping configuration, and access modifiers. This class is the foundation for generating repositories, mappers, validators, and serializers.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create a product entity property for database mapping
+var productIdProperty = new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true,
+    IsRequired = true,
+    GetterAccess = AccessModifier.Public,
+    SetterAccess = AccessModifier.Private,
+    Description = "Primary key identifier for the product"
+};
+
+// Create a product name property with validation
+var productNameProperty = new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100,
+    MinLength = 2,
+    Description = "Product name"
+};
+
+// Create an email property with regex validation
+var emailProperty = new EntityProperty
+{
+    Name = "Email",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 256,
+    RegexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+    Description = "User email address"
+};
+
+// Create a price property with range validation
+var priceProperty = new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000,
+    Description = "Product price"
+};
+
+// Create a tags collection property
+var tagsProperty = new EntityProperty
+{
+    Name = "Tags",
+    Type = "string",
+    IsCollection = true,
+    IsRequired = false,
+    Description = "Product tags"
+};
+
+// Create a navigation property to another entity
+var categoryProperty = new EntityProperty
+{
+    Name = "Category",
+    Type = "Category",
+    IsNavigationProperty = true,
+    IsRequired = true,
+    Description = "Product category"
+};
+
+// Use the property for code generation
+Console.WriteLine($"Property: {productIdProperty.Name}, Type: {productIdProperty.GetClrTypeName()}");
+
+// Generate validation attributes
+var validationAttributes = productNameProperty.GenerateValidationAttributes();
+foreach (var attribute in validationAttributes)
+{
+    Console.WriteLine(attribute);
+}
+```
+
 ## EntityTests
 
 The `EntityTests` class provides unit tests for the `Entity` domain model, ensuring that entity operations like property management, validation, and primary key identification work correctly. These tests validate the core domain logic that drives the entire code generation pipeline, including duplicate property detection, primary key retrieval, and entity validation rules.
