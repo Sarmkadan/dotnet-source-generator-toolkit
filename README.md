@@ -1112,6 +1112,78 @@ public class User
 // - GetPagedAsync(int pageNumber, int pageSize)
 ```
 
+## BasicExample
+
+The `BasicExample` class demonstrates fundamental usage patterns for the .NET Source Generator Toolkit. It shows how to define domain entities with generation attributes, create DTOs for API responses, and implement service classes that leverage generated repositories, mappers, and validators.
+
+This example generates repository, mapper, and validator implementations for a `User` entity with properties including identification fields, contact information, timestamps, and status flags.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Examples;
+using DotNetSourceGeneratorToolkit.Services;
+
+// Define your domain entity with generation attributes
+[Repository]
+[Mapper]
+[Validator]
+public sealed class User
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsActive { get; set; } = true;
+}
+
+// Define a DTO for API responses
+[Mapper]
+public sealed class UserDto
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+}
+
+// Use the generated services in your application
+public sealed class UserService
+{
+    public async Task<UserDto?> GetUserAsync(
+        int userId,
+        IUserRepository repository,
+        IUserMapper mapper,
+        IUserValidator validator)
+    {
+        var user = await repository.GetByIdAsync(userId);
+        if (user is null) return null;
+        
+        var validationResult = await validator.ValidateAsync(user);
+        if (!validationResult.IsValid) 
+            throw new InvalidOperationException("User validation failed");
+        
+        return mapper.MapToDto(user);
+    }
+    
+    public async Task<User> CreateUserAsync(
+        UserDto dto,
+        IUserRepository repository,
+        IUserMapper mapper,
+        IUserValidator validator)
+    {
+        var user = mapper.MapFromDto(dto);
+        
+        var validationResult = await validator.ValidateAsync(user);
+        if (!validationResult.IsValid) 
+            throw new InvalidOperationException("User validation failed");
+        
+        return await repository.CreateAsync(user);
+    }
+}
+```
+
 ### Example 2: DTO Mapping with Profile
 
 ```csharp
