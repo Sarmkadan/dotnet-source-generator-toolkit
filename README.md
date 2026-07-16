@@ -21,6 +21,7 @@
 - [API Reference](#api-reference)
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
+- [TypeExtensions](#typeextensions)
 - [StringValidator](#stringvalidator)
 - [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
@@ -1616,6 +1617,79 @@ width of 30 characters so it
 demonstrates the wrapping
 functionality properly
 */
+```
+
+## TypeExtensions
+
+The `TypeExtensions` class provides extension methods for working with `Type` objects, enabling simplified type checking, introspection, and type conversion patterns. It includes utilities for checking nullable types, numeric types, simple types, getting friendly type names, retrieving default values, checking assignability, traversing inheritance hierarchies, and identifying collection types.
+
+### Public Members
+
+- `IsNullable(this Type type)` - Checks if a type is a nullable reference type or nullable value type
+- `IsNumeric(this Type type)` - Checks if a type is a numeric type
+- `IsSimpleType(this Type type)` - Checks if a type is a simple type (primitive or common value type)
+- `GetFriendlyName(this Type type)` - Gets a friendly name representation of a type
+- `GetDefaultValue(this Type type)` - Gets the default value for a type
+- `IsAssignableTo(this Type type, Type targetType)` - Checks if a type can be assigned to another type
+- `GetBaseTypes(this Type type)` - Gets all base types in the inheritance hierarchy
+- `IsCollection(this Type type)` - Checks if type is a collection type (but not string)
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+using System.Collections.Generic;
+
+// Check if a type is nullable
+Type nullableIntType = typeof(int?);
+bool isNullable = nullableIntType.IsNullable(); // true
+
+Type stringType = typeof(string);
+isNullable = stringType.IsNullable(); // false (reference types are not considered nullable by this method)
+
+// Check if a type is numeric
+Type intType = typeof(int);
+bool isNumeric = intType.IsNumeric(); // true
+
+Type stringType = typeof(string);
+isNumeric = stringType.IsNumeric(); // false
+
+// Check if a type is a simple type
+Type simpleType = typeof(DateTime);
+bool isSimple = simpleType.IsSimpleType(); // true
+
+Type complexType = typeof(List<string>);
+isSimple = complexType.IsSimpleType(); // false
+
+// Get friendly name for a type
+Type genericListType = typeof(List<string>);
+string friendlyName = genericListType.GetFriendlyName(); // "List<String>"
+
+Type dictionaryType = typeof(Dictionary<string, int>);
+friendlyName = dictionaryType.GetFriendlyName(); // "Dictionary<String, Int32>"
+
+// Get default value for a type
+Type intType = typeof(int);
+object? defaultValue = intType.GetDefaultValue(); // 0
+
+Type stringType = typeof(string);
+defaultValue = stringType.GetDefaultValue(); // null
+
+// Check if a type can be assigned to another type
+Type derivedType = typeof(DerivedClass);
+Type baseType = typeof(BaseClass);
+bool isAssignable = derivedType.IsAssignableTo(baseType); // true (if DerivedClass inherits from BaseClass)
+
+// Get all base types in inheritance hierarchy
+Type childType = typeof(ChildClass);
+IEnumerable<Type> baseTypes = childType.GetBaseTypes(); // [typeof(ParentClass), typeof(BaseClass), typeof(object)]
+
+// Check if type is a collection
+Type listType = typeof(List<int>);
+bool isCollection = listType.IsCollection(); // true
+
+Type stringType = typeof(string);
+isCollection = stringType.IsCollection(); // false (string is explicitly excluded)
 ```
 
 ## StringValidator
