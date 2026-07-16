@@ -24,6 +24,7 @@
 - [EnumExtensions](#enumextensions)
 - [TypeExtensions](#typeextensions)
 - [ReflectionHelper](#reflectionhelper)
+- [FormatterFactory](#formatterfactory)
 - [PathHelper](#pathhelper)
 - [StringValidator](#stringvalidator)
 - [FilePathValidator](#filepathvalidator)
@@ -1809,6 +1810,51 @@ Console.WriteLine($"Base types: {string.Join(" → ", baseTypes.Select(t => t.Na
 PropertyInfo idProperty = productType.GetProperty("Id")!;
 bool isAutoProperty = ReflectionHelper.IsAutoProperty(idProperty);
 Console.WriteLine($"Id property is auto-implemented: {isAutoProperty}");
+```
+
+## FormatterFactory
+
+The `FormatterFactory` class provides a factory pattern implementation for creating output formatter instances based on format name. It enables type-safe formatter selection, runtime extensibility through custom formatter registration, and centralized management of available output formats. The factory maintains a registry of format names mapped to factory functions, allowing dynamic formatter creation without tight coupling to specific formatter implementations.
+
+### Public Members
+
+- `Register(string format, Func<IOutputFormatter> factory)` - Registers a new formatter factory function with the specified format name
+- `Create(string format)` - Creates and returns an output formatter instance for the specified format name
+- `GetAvailableFormats()` - Returns an enumerable of all registered format names
+- `IsFormatAvailable(string format)` - Checks if a specific format is available
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Formatters;
+using DotNetSourceGeneratorToolkit.Services;
+
+// Create the formatter factory
+var formatterFactory = new FormatterFactory();
+
+// Get available formats
+var availableFormats = formatterFactory.GetAvailableFormats();
+Console.WriteLine("Available formats: " + string.Join(", ", availableFormats));
+
+// Check if a format is available
+bool hasJson = formatterFactory.IsFormatAvailable("json");
+Console.WriteLine($"JSON format available: {hasJson}");
+
+// Create a formatter instance
+IOutputFormatter jsonFormatter = formatterFactory.Create("json");
+Console.WriteLine($"Created formatter: {jsonFormatter.GetType().Name}");
+
+// Register a custom formatter (extensibility example)
+formatterFactory.Register("yaml", () => new YamlOutputFormatter());
+Console.WriteLine("YAML formatter registered");
+
+// Verify the new format is available
+bool hasYaml = formatterFactory.IsFormatAvailable("yaml");
+Console.WriteLine($"YAML format available: {hasYaml}");
+
+// Create the newly registered formatter
+IOutputFormatter yamlFormatter = formatterFactory.Create("yaml");
+Console.WriteLine($"Created custom formatter: {yamlFormatter.GetType().Name}");
 ```
 
 ## PathHelper
