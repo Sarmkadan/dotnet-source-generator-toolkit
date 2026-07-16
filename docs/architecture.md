@@ -3,543 +3,245 @@
 // CTO & Software Architect
 // =============================================================================
 
-# Architecture Documentation
+# Architecture
+
+This document describes the solution as it actually is in the code, not as an
+aspiration. Everything referenced below exists in the repository; file paths are
+given so claims can be checked.
 
 ## System Overview
 
-The .NET Source Generator Toolkit is built on a layered, modular architecture designed for extensibility, maintainability, and performance.
+The toolkit is a single console project (`dotnet-source-generator-toolkit.csproj`,
+`net10.0`, `OutputType=Exe`) that contains **two distinct code-generation paths**:
+
+1. **Runtime generation services** (`Services/`) - a CLI-driven tool that scans a
+   project directory, extracts entity metadata, and produces repository / mapper /
+   validator / serializer source as strings. This is template-based generation
+   executed at *tool run time*, orchestrated from `Program.cs`.
+2. **A real Roslyn incremental generator** (`Generators/AutoImplementGenerator.cs`) -
+   an `IIncrementalGenerator` that plugs into the compiler and emits `ToString()`
+   and value-equality members for partial classes annotated with
+   `[GenerateToString]` / `[GenerateEquals]`. It ships its own marker attributes
+   via `RegisterPostInitializationOutput` and reports diagnostics `SGTK001`-`SGTK003`.
+
+Understanding this split is the single most important thing about the codebase:
+the `Services/` layer does *not* run inside the compiler; only
+`AutoImplementGenerator` does. The rest of the assembly is a conventional
+layered console application around path 1.
+
+`benchmarks/`, `tests/`, and `examples/` are excluded from the main compile via
+`<Compile Remove>` in the csproj; the test project lives in
+`tests/dotnet-source-generator-toolkit.Tests/`.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│           CLI & User Interface                       │
-│  (CliArgumentParser, CliOptions, Program.cs)        │
-└──────────────────────┬────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ Program.cs (composition root)  |  CLI/ (argument parsing)    │
+└──────────────────────┬───────────────────────────────────────┘
                        │
-┌──────────────────────▼────────────────────────────────┐
-│         Middleware Pipeline Layer                    │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Logging  │→ │ Error Handler│→ │  Validation  │  │
-│  └────────────┘  └──────────────┘  └──────────────┘  │
-└──────────────────────┬────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────────┐
+│ Services/  - SourceGeneratorService (analyze + orchestrate)  │
+│            - Repository/Mapper/Validator/Serializer services │
+│            - IncrementalGeneratorService (change detection)  │
+│            - TemplateEngineService, ProjectMetadataService   │
+└──────────────────────┬───────────────────────────────────────┘
                        │
-┌──────────────────────▼────────────────────────────────┐
-│     Core Generation Services Layer                   │
-│  ┌──────────────────────────────────────────────────┐│
-│  │  - SourceGeneratorService (Orchestrator)        ││
-│  │  - RepositoryGeneratorService                   ││
-│  │  - MapperGeneratorService                       ││
-│  │  - ValidatorGeneratorService                    ││
-│  │  - SerializerGeneratorService                   ││
-│  └──────────────────────────────────────────────────┘│
-└──────────────────────┬────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────────┐
+│ Infrastructure/ - AttributeAnalyzer, EntityAnalyzer,         │
+│                   ConfigurationManager, FileSystemService    │
+│ Domain/         - Entity, EntityProperty, ProjectInfo,       │
+│                   GenerationResult, SourceFile, ...          │
+└──────────────────────┬───────────────────────────────────────┘
                        │
-┌──────────────────────▼────────────────────────────────┐
-│      Infrastructure & Analysis Layer                 │
-│  ┌──────────────────────────────────────────────────┐│
-│  │  - AttributeAnalyzer (Roslyn-based)             ││
-│  │  - EntityAnalyzer (Property introspection)      ││
-│  │  - ConfigurationManager (File-based config)     ││
-│  │  - FileSystemService (I/O operations)           ││
-│  └──────────────────────────────────────────────────┘│
-└──────────────────────┬────────────────────────────────┘
-                       │
-┌──────────────────────▼────────────────────────────────┐
-│        Cross-Cutting Concerns                         │
-│  ┌──────────────────────────────────────────────────┐│
-│  │  - Event System (EventAggregator, pub-sub)       ││
-│  │  - Caching (MemoryCache with TTL)               ││
-│  │  - Metrics (Performance monitoring)             ││
-│  │  - Batch Processing (Parallel execution)        ││
-│  │  - HTTP Integration (Webhook delivery)          ││
-│  └──────────────────────────────────────────────────┘│
-└──────────────────────┬────────────────────────────────┘
-                       │
-┌──────────────────────▼────────────────────────────────┐
-│        Output & Formatting Layer                     │
-│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐        │
-│  │  JSON  │ │  CSV   │ │  XML   │ │  Text  │        │
-│  └────────┘ └────────┘ └────────┘ └────────┘        │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────▼───────────────────────────────────────┐
+│ Cross-cutting: Events/ (EventAggregator), Caching/           │
+│ (MemoryCache), Metrics/, Batch/, Middleware/, Integration/   │
+│ (HttpClientService, WebhookService), Formatters/             │
+└──────────────────────────────────────────────────────────────┘
+
+Separate, compiler-hosted:
+  Generators/AutoImplementGenerator.cs (IIncrementalGenerator)
 ```
 
-## Design Patterns
+## Components
 
-### 1. Middleware Pipeline Pattern
+### Composition root - `Program.cs`
 
-**Location**: `Middleware/`
+`Program.Main` builds a `ServiceCollection`, resolves `ISourceGeneratorService`,
+analyzes the project path given as `args[0]` (defaults to the current
+directory), then runs the repository, mapper, and validator generators over the
+discovered entities and logs the results. Failures log and exit with code 1.
 
-The toolkit implements a chain-of-responsibility middleware pipeline:
+Note what `Main` does *not* do today: it does not invoke the serializer
+generator, the formatter factory, the middleware pipeline, or the webhook
+service, even though all of them are registered in DI. Those components are
+exercised through the library surface (`Extensions/ServiceCollectionExtensions.cs`)
+and the examples, not by the default CLI flow. See "Known limitations".
 
-```csharp
-public interface IMiddleware
-{
-    Task ExecuteAsync(
-        GenerationContext context,
-        Func<GenerationContext, Task> next);
-}
-```
+### DI registration - `Extensions/ServiceCollectionExtensions.cs`
 
-**Implementations**:
-- `LoggingMiddleware`: Logs generation events
-- `ValidationMiddleware`: Validates configuration and input
-- `ErrorHandlingMiddleware`: Handles exceptions with retry logic
+`AddSourceGeneratorToolkit(this IServiceCollection, ToolkitOptions?)` is the
+public entry point for embedding the toolkit in a host application. Design
+decisions here:
 
-**Execution Flow**:
-```
-Request
-  ↓
-LoggingMiddleware
-  ↓
-ErrorHandlingMiddleware
-  ↓
-ValidationMiddleware
-  ↓
-Generation Services
-  ↓
-Response
-```
+- **`TryAdd` semantics everywhere** - a host that already registered its own
+  `ICache` or `IFileSystemService` keeps its registration. The toolkit never
+  fights the host container.
+- **Lifetimes**: infrastructure that is stateless or holds shared state
+  (`MemoryCache`, `FileSystemService`, `ConfigurationManager`,
+  `TemplateEngineService`, `ProjectMetadataService`) is singleton; analyzers,
+  repositories, and generator services are scoped so a "scope = one generation
+  run" convention is possible.
+- `AddIncrementalGeneration()` is a smaller registration for hosts that only
+  want change-detection-based selective regeneration without the full toolkit.
 
-**Benefits**:
-- Clean separation of concerns
-- Easy to add/remove middleware
-- Testable in isolation
-- Extensible for custom middleware
+`Program.ConfigureServices` builds on `AddSourceGeneratorToolkit` and adds the
+CLI-host-specific pieces: logging, `IEventPublisher`, the typed HTTP client
+(`AddHttpClient<IHttpClientService, HttpClientService>`), `IFormatterFactory`,
+`IWebhookService`, `IMiddlewarePipeline`, and the open-generic
+`IBatchProcessor<>`.
 
-### 2. Factory Pattern
+### Runtime generation - `Services/`
 
-**Location**: `Formatters/FormatterFactory.cs`
+- `SourceGeneratorService.AnalyzeProjectAsync(path)` walks `.cs` files via
+  `IFileSystemService`, feeds file contents to `IEntityAnalyzer`, and returns a
+  `ProjectInfo` with the discovered `Entity` list. `GenerateAllAsync` /
+  `GenerateForEntityAsync` fan out to the per-kind generator services;
+  `ValidateProjectAsync` produces a `ValidationResult`.
+- `RepositoryGeneratorService`, `MapperGeneratorService`,
+  `ValidatorGeneratorService`, `SerializerGeneratorService` - each turns an
+  `Entity` (name, namespace, properties) into a `GenerationResult` containing
+  generated source text. Generation is string/template based
+  (`TemplateEngineService`), not Roslyn syntax-tree construction. That is a
+  deliberate trade-off: templates are trivially readable and diffable in
+  snapshot tests, at the cost of no syntactic guarantees on the output -
+  `CodeFormatterService`/`FormattingService` exist to compensate on formatting.
+- `IncrementalGeneratorService` builds an `IncrementalGenerationContext` by
+  hashing/tracking source files between runs so unchanged entities can be
+  skipped. It explicitly handles partial classes spanning multiple files: if
+  any file of a partial class changed, the whole entity is considered dirty.
+  See `docs/IncrementalGenerationContext.md` for the contract.
 
-Encapsulates object creation for output formatters:
+### Compiler-hosted generation - `Generators/`
 
-```csharp
-public interface IFormatterFactory
-{
-    IOutputFormatter CreateFormatter(string format);
-}
+`AutoImplementGenerator` is the reference implementation of a *correct* modern
+incremental generator, and several decisions in it are worth recording:
 
-public class FormatterFactory : IFormatterFactory
-{
-    public IOutputFormatter CreateFormatter(string format) => format.ToLower() switch
-    {
-        "json" => new JsonOutputFormatter(),
-        "csv" => new CsvOutputFormatter(),
-        "xml" => new XmlOutputFormatter(),
-        "text" => new TextOutputFormatter(),
-        _ => throw new InvalidOperationException($"Unknown format: {format}")
-    };
-}
-```
+- Uses `SyntaxProvider.ForAttributeWithMetadataName` rather than scanning all
+  syntax nodes - this is the cheap, cache-friendly API and keeps the generator
+  out of the IDE hot path.
+- The pipeline model type (`Target`) is a `sealed record` holding
+  `EquatableArray<string>` / `EquatableArray<DiagnosticInfo>` instead of
+  `ImmutableArray`, because incremental caching is defeated by types without
+  value equality. `DiagnosticInfo` carries id + location + type name instead of
+  a `Diagnostic` instance for the same reason.
+- Diagnostics are flowed *through* the pipeline and reported in
+  `RegisterSourceOutput`, never from the transform, so they survive caching.
+- `SGTK001` (not partial) and `SGTK003` (static type) are errors that suppress
+  generation; `SGTK002` (no public instance properties) is a warning and
+  generation still proceeds with a trivial body.
 
-**Implementations**:
-- `JsonOutputFormatter`: Structured JSON with metadata
-- `CsvOutputFormatter`: Spreadsheet-compatible CSV
-- `XmlOutputFormatter`: Document-oriented XML
-- `TextOutputFormatter`: Human-readable text
+Snapshot, diagnostic, and caching behavior are covered by
+`tests/.../Generators/AutoImplementGenerator*Tests.cs` using the harness in
+`GeneratorTestHarness.cs`.
 
-### 3. Repository Pattern
+### Infrastructure - `Infrastructure/`
 
-**Location**: `Repositories/`
+- `AttributeAnalyzer` / `EntityAnalyzer` - parse source (Roslyn
+  `Microsoft.CodeAnalysis.CSharp` 4.8.0) to find generation attributes and
+  extract entity metadata into `Domain` types.
+- `ConfigurationManager` - loads file-based configuration; results are cached
+  through `ICache`.
+- `FileSystemService` - the only place that touches the disk. Everything else
+  depends on `IFileSystemService`, which is what makes the services unit-testable
+  without a real file system.
 
-Abstracts data access and persistence:
+### Domain - `Domain/`
 
-```csharp
-public interface IEntityRepository
-{
-    Task<Entity?> GetByIdAsync(string id);
-    Task<List<Entity>> GetAllAsync();
-    Task AddAsync(Entity entity);
-    Task UpdateAsync(Entity entity);
-    Task DeleteAsync(string id);
-}
+Plain models: `Entity`, `EntityProperty`, `ProjectInfo`, `GenerationResult`,
+`GenerationTemplate`, `SourceFile`, `ValidationResult`, `SerializerFormat`.
+Validation and mapping helpers live in sibling `*Validation.cs` /
+`*Extensions.cs` files rather than on the models themselves, keeping the models
+serialization-friendly.
 
-public interface IGenerationResultRepository
-{
-    Task SaveResultAsync(GenerationResult result);
-    Task<GenerationResult?> GetResultAsync(string resultId);
-}
-```
+### Cross-cutting
 
-**Benefits**:
-- Decouples business logic from data access
-- Easy to mock for testing
-- Supports multiple storage backends
-- Consistent interface for persistence
+- **Events** (`Events/`): `EventAggregator` implements `IEventPublisher` with an
+  async `PublishAsync<TEvent>` for `IDomainEvent` types
+  (`GenerationStartedEvent`, `GenerationCompletedEvent`);
+  `LoggingEventHandler` is the built-in subscriber.
+- **Caching** (`Caching/`): `MemoryCache : ICache` - synchronous
+  `TryGet/Set/Contains/Remove/Clear` with per-entry TTL (`CacheEntry`).
+  In-process only, by design: the toolkit is a short-lived CLI, so a
+  distributed cache would be complexity without payoff. `ICache` exists so a
+  host can substitute one anyway.
+- **Middleware** (`Middleware/`): `MiddlewarePipeline : IMiddlewarePipeline`
+  composes `IMiddleware` steps (`LoggingMiddleware`, `ValidationMiddleware`,
+  `ErrorHandlingMiddleware`) around a `MiddlewareContext`, chain-of-responsibility
+  style, including a `DelegateMiddleware` adapter for lambda steps.
+- **Batch** (`Batch/`): `BatchProcessor<T>` runs items with bounded parallelism
+  and returns per-item `BatchResult<T>`. Registered as the open generic
+  `typeof(IBatchProcessor<>)`.
+- **Pipeline** (`Pipeline/`): `GenerationPipeline` is a stage-based runner
+  returning a `PipelineResult`; `IncrementalGenerationContext` carries
+  change-tracking state between runs.
+- **Formatters** (`Formatters/`): `FormatterFactory : IFormatterFactory` maps a
+  format string to `Json/Csv/Xml/TextOutputFormatter` (`IOutputFormatter`).
+  Classic factory + strategy; adding a format means one class and one switch arm.
+- **Integration** (`Integration/`): `HttpClientService` (typed `HttpClient` via
+  `Microsoft.Extensions.Http`) and `WebhookService` for post-generation
+  notifications.
+- **Metrics** (`Metrics/`): `MetricsCollector : IMetricsCollector` for timing
+  counters. Registered by hosts that want it; not wired into `Program.Main`.
 
-### 4. Observer Pattern (Pub-Sub)
-
-**Location**: `Events/`
-
-Decouples components through event-driven architecture:
-
-```csharp
-public interface IEventPublisher
-{
-    void Publish<T>(T @event) where T : IEvent;
-}
-
-public interface IEventSubscriber
-{
-    void Subscribe<T>(Action<T> handler) where T : IEvent;
-}
-
-public class EventAggregator : IEventPublisher, IEventSubscriber
-{
-    private readonly Dictionary<Type, List<Delegate>> _subscribers = [];
-    
-    public void Publish<T>(T @event) where T : IEvent
-    {
-        if (_subscribers.TryGetValue(typeof(T), out var handlers))
-        {
-            foreach (var handler in handlers)
-                ((Action<T>)handler)(@event);
-        }
-    }
-    
-    public void Subscribe<T>(Action<T> handler) where T : IEvent
-    {
-        var key = typeof(T);
-        if (!_subscribers.ContainsKey(key))
-            _subscribers[key] = [];
-        _subscribers[key].Add(handler);
-    }
-}
-```
-
-**Events**:
-- `GenerationStartedEvent`: Fired when generation begins
-- `GenerationCompletedEvent`: Fired when generation completes
-- `ValidationFailedEvent`: Fired on validation errors
-
-### 5. Strategy Pattern
-
-**Location**: `Services/` and `Formatters/`
-
-Different implementations for different output strategies:
-
-```csharp
-public interface IOutputFormatter
-{
-    string Format(GenerationResult result);
-    Task<string> FormatAsync(GenerationResult result);
-}
-```
-
-Multiple concrete implementations for different formats.
-
-## Layer Responsibilities
-
-### CLI Layer
-- **Responsibility**: Parse command-line arguments and options
-- **Files**: `CLI/CliArgumentParser.cs`, `CLI/CliOptions.cs`
-- **Interfaces**: `ICliArgumentParser`
-
-### Middleware Layer
-- **Responsibility**: Pre/post processing of requests
-- **Files**: `Middleware/MiddlewarePipeline.cs`, `Middleware/*Middleware.cs`
-- **Interfaces**: `IMiddleware`, `IMiddlewarePipeline`
-- **Execution Order**: LoggingMiddleware → ErrorHandlingMiddleware → ValidationMiddleware
-
-### Service Layer
-- **Responsibility**: Core business logic and code generation
-- **Files**: `Services/*.cs`
-- **Key Services**:
-  - `ISourceGeneratorService`: Orchestrates entire generation
-  - `IRepositoryGeneratorService`: Repository code generation
-  - `IMapperGeneratorService`: Mapping code generation
-  - `IValidatorGeneratorService`: Validation code generation
-  - `ISerializerGeneratorService`: Serialization code generation
-
-### Infrastructure Layer
-- **Responsibility**: Low-level operations and Roslyn analysis
-- **Files**: `Infrastructure/*.cs`
-- **Key Components**:
-  - `AttributeAnalyzer`: Finds generation attributes using Roslyn
-  - `EntityAnalyzer`: Extracts entity metadata
-  - `ConfigurationManager`: Loads/validates configuration
-  - `FileSystemService`: File I/O operations
-
-### Data Layer
-- **Responsibility**: Entity and result persistence
-- **Files**: `Repositories/*.cs`, `Domain/*.cs`
-- **Interfaces**: `IEntityRepository`, `IGenerationResultRepository`
-
-### Cross-Cutting Concerns
-- **Events**: `Events/EventAggregator.cs`
-- **Caching**: `Caching/MemoryCache.cs`
-- **Metrics**: `Metrics/MetricsCollector.cs`
-- **Batch Processing**: `Batch/BatchProcessor.cs`
-- **Integration**: `Integration/WebhookService.cs`, `Integration/HttpClientService.cs`
-
-## Data Flow
-
-### Generation Pipeline
+## Data Flow (default CLI run)
 
 ```
-1. CLI Input Parsing
-   └─→ args → CliArgumentParser.Parse()
-
-2. Configuration Loading
-   └─→ toolkit-config.json → ConfigurationManager.LoadAsync()
-
-3. Middleware Pipeline Initialization
-   └─→ LoggingMiddleware → ErrorHandlingMiddleware → ValidationMiddleware
-
-4. Project Analysis
-   └─→ AttributeAnalyzer.FindAttributesAsync()
-   └─→ EntityAnalyzer.AnalyzeEntitiesAsync()
-
-5. Service Execution (in SourceGeneratorService)
-   ├─→ RepositoryGeneratorService.GenerateAllAsync()
-   ├─→ MapperGeneratorService.GenerateAllMappersAsync()
-   ├─→ ValidatorGeneratorService.GenerateAllValidatorsAsync()
-   └─→ SerializerGeneratorService.GenerateSerializersAsync()
-
-6. Result Formatting
-   └─→ FormatterFactory.CreateFormatter()
-   └─→ IOutputFormatter.FormatAsync()
-
-7. Output & Persistence
-   ├─→ FileSystemService.WriteAsync()
-   ├─→ GenerationResultRepository.SaveResultAsync()
-   ├─→ EventAggregator.Publish(GenerationCompletedEvent)
-   └─→ WebhookService.SendAsync() (if configured)
+args[0] (project path, defaults to cwd)
+  → SourceGeneratorService.AnalyzeProjectAsync
+      → IFileSystemService (enumerate + read .cs files)
+      → IEntityAnalyzer.AnalyzeFileAsync (per file)
+      → ProjectInfo { Entities }
+  → per entity: RepositoryGeneratorService.GenerateRepositoryAsync
+  → MapperGeneratorService.GenerateAllMappersAsync(entities)
+  → ValidatorGeneratorService.GenerateAllValidatorsAsync(entities)
+  → logging of GenerationResults
 ```
 
-### Cache Interaction
+## Extension Points
 
-```
-Request
-  ↓
-ConfigurationManager checks cache
-  ├─ Hit: Return cached result
-  └─ Miss: Generate and store
-  ↓
-MemoryCache stores with TTL
-```
+Grounded in actual seams, in rough order of usefulness:
 
-### Event Flow
+1. **Host integration**: call `AddSourceGeneratorToolkit()` from any app and
+   resolve `ISourceGeneratorService`; override any dependency beforehand thanks
+   to `TryAdd`.
+2. **`IOutputFormatter` + `FormatterFactory`**: add an output format.
+3. **`IMiddleware` / `IMiddlewarePipeline`**: wrap generation with custom
+   pre/post steps (auditing, timing).
+4. **`ICache`**: replace `MemoryCache` with a persistent/distributed cache.
+5. **`IEventPublisher` subscribers**: react to
+   `GenerationStartedEvent`/`GenerationCompletedEvent` (see
+   `LoggingEventHandler` as the model).
+6. **New generator service**: implement alongside
+   `I{Repository,Mapper,Validator,Serializer}GeneratorService` and register it;
+   `SourceGeneratorService` orchestration is the only place that needs to know.
 
-```
-Generation Starts
-  ↓
-EventAggregator.Publish(GenerationStartedEvent)
-  ├─→ MetricsCollector records start time
-  └─→ LoggingMiddleware logs event
+## Known Limitations
 
-Generation Processing
-  └─→ Entity analysis and code generation
+Honest list, current as of this writing:
 
-Generation Completes
-  ↓
-EventAggregator.Publish(GenerationCompletedEvent)
-  ├─→ MetricsCollector records completion
-  ├─→ FileSystemService persists results
-  ├─→ WebhookService sends webhook (if configured)
-  └─→ LoggingMiddleware logs event
-```
-
-## Dependency Injection
-
-The toolkit uses .NET's built-in DI container:
-
-```csharp
-static IServiceCollection ConfigureServices()
-{
-    var services = new ServiceCollection();
-    
-    // Infrastructure
-    services.AddLogging();
-    services.AddSingleton<IConfigurationManager, ConfigurationManager>();
-    services.AddSingleton<IFileSystemService, FileSystemService>();
-    services.AddSingleton<ICache, MemoryCache>();
-    services.AddSingleton<IEventAggregator, EventAggregator>();
-    services.AddSingleton<IMetricsCollector, MetricsCollector>();
-    
-    // Core Services
-    services.AddScoped<ISourceGeneratorService, SourceGeneratorService>();
-    services.AddScoped<IRepositoryGeneratorService, RepositoryGeneratorService>();
-    services.AddScoped<IMapperGeneratorService, MapperGeneratorService>();
-    services.AddScoped<IValidatorGeneratorService, ValidatorGeneratorService>();
-    services.AddScoped<ISerializerGeneratorService, SerializerGeneratorService>();
-    
-    // Analyzers
-    services.AddScoped<IAttributeAnalyzer, AttributeAnalyzer>();
-    services.AddScoped<IEntityAnalyzer, EntityAnalyzer>();
-    
-    // Repositories
-    services.AddScoped<IEntityRepository, EntityRepository>();
-    services.AddScoped<IGenerationResultRepository, GenerationResultRepository>();
-    
-    return services;
-}
-```
-
-**Lifetimes**:
-- **Singleton**: Expensive to create, thread-safe (ConfigurationManager, FileSystemService)
-- **Scoped**: New instance per generation request (Services, Analyzers)
-- **Transient**: Lightweight, stateless (would use if any)
-
-## Extensibility Points
-
-### 1. Custom Middleware
-
-```csharp
-public class CustomAnalyticsMiddleware : IMiddleware
-{
-    public async Task ExecuteAsync(
-        GenerationContext context,
-        Func<GenerationContext, Task> next)
-    {
-        var sw = Stopwatch.StartNew();
-        await next(context);
-        sw.Stop();
-        
-        // Send analytics
-        await _analyticsService.RecordAsync(new
-        {
-            EntityName = context.EntityName,
-            Duration = sw.ElapsedMilliseconds
-        });
-    }
-}
-```
-
-Register in DI:
-```csharp
-services.AddScoped<IMiddleware, CustomAnalyticsMiddleware>();
-```
-
-### 2. Custom Output Formatter
-
-```csharp
-public class MarkdownOutputFormatter : IOutputFormatter
-{
-    public string Format(GenerationResult result)
-    {
-        // Format as Markdown
-    }
-    
-    public Task<string> FormatAsync(GenerationResult result)
-    {
-        return Task.FromResult(Format(result));
-    }
-}
-```
-
-Register in factory:
-```csharp
-public IOutputFormatter CreateFormatter(string format) => format.ToLower() switch
-{
-    "markdown" => new MarkdownOutputFormatter(),
-    // ... other formats
-};
-```
-
-### 3. Custom Cache Implementation
-
-```csharp
-public class RedisCache : ICache
-{
-    public async Task<T?> GetAsync<T>(string key)
-    {
-        // Retrieve from Redis
-    }
-    
-    public async Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
-    {
-        // Store in Redis
-    }
-    
-    public async Task RemoveAsync(string key)
-    {
-        // Remove from Redis
-    }
-}
-```
-
-### 4. Custom Event Handlers
-
-```csharp
-public class CustomEventHandler
-{
-    private readonly IEventAggregator _eventAggregator;
-    
-    public void Subscribe()
-    {
-        _eventAggregator.Subscribe<GenerationCompletedEvent>(ev =>
-        {
-            // Custom handling
-            SendNotification(ev.EntityName);
-        });
-    }
-}
-```
-
-## Performance Considerations
-
-### Caching Strategy
-- Configuration files cached for 60 minutes (configurable)
-- Results cached with TTL
-- Cache clearing available on demand
-
-### Parallelization
-- Batch processing leverages `Parallel.ForEach`
-- Configurable degree of parallelism (defaults to CPU count)
-- Thread-safe operations throughout
-
-### Memory Management
-- Streaming for large file I/O
-- EventAggregator uses weak references
-- Proper disposal patterns for resources
-
-## Testing Strategy
-
-### Unit Tests
-- Test each service independently
-- Mock dependencies via DI
-- Test edge cases and error conditions
-
-### Integration Tests
-- Test middleware pipeline
-- Test full generation flow
-- Test output formatters
-
-### Example Test Structure
-```csharp
-[TestClass]
-public class RepositoryGeneratorServiceTests
-{
-    private IRepositoryGeneratorService _service;
-    private Mock<IFileSystemService> _fileSystemMock;
-    
-    [TestInitialize]
-    public void Setup()
-    {
-        _fileSystemMock = new Mock<IFileSystemService>();
-        _service = new RepositoryGeneratorService(_fileSystemMock.Object);
-    }
-    
-    [TestMethod]
-    public async Task GenerateRepository_WithValidEntity_CreatesFile()
-    {
-        // Arrange
-        var entity = new Entity { Name = "User", Namespace = "MyApp" };
-        
-        // Act
-        var result = await _service.GenerateRepositoryAsync(entity);
-        
-        // Assert
-        Assert.IsNotNull(result);
-        _fileSystemMock.Verify(x => x.WriteAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-    }
-}
-```
-
-## Security Considerations
-
-- Input validation at system boundaries
-- Path traversal prevention in FileSystemService
-- Webhook URL validation
-- Safe reflection usage with Roslyn
-- No arbitrary code execution
-- Configuration file permissions (recommend 0600)
+- `Program.Main` only exercises repository/mapper/validator generation; the
+  serializer service, formatters, middleware pipeline, metrics, and webhook
+  integration are registered but reachable only through the library API. The
+  CLI options in `CLI/` are similarly richer than what `Main` consumes.
+- The runtime generators emit source as strings; there is no compile check of
+  the emitted code inside the tool itself (the snapshot tests are the safety
+  net).
+- `MemoryCache` is per-process; two concurrent tool runs share nothing.
+- `EventAggregator` holds strong references to subscribers - fine for a
+  short-lived CLI, a leak hazard if embedded in a long-lived host without
+  unsubscribing.
+- Entity discovery is file-based analysis of loose `.cs` files; it does not
+  load a `Compilation` for the whole project, so cross-file semantic
+  information (base types in other assemblies, etc.) is out of scope for the
+  runtime path. The compiler-hosted `AutoImplementGenerator` does not have this
+  limitation.
