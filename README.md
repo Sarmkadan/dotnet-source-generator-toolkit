@@ -636,6 +636,91 @@ generationResult.AddWarning("Property naming convention differs from team standa
 generationResult.AddError("Primary key validation failed");
 ```
 
+## ITemplateEngineService
+
+The `ITemplateEngineService` interface provides template processing and rendering functionality for code generation. It supports variable substitution, conditional blocks, loops, and custom filters, enabling dynamic code generation from templates with context variables. This service is used internally by generator services to create code artifacts from template files.
+
+### Public Members
+
+- `Task<string> RenderAsync(string template, Dictionary<string, object> context)` - Renders a template with the provided context variables
+- `Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context)` - Loads a template from file and renders it
+- `bool ValidateTemplate(string template)` - Validates template syntax for balanced tags and structure
+- `void RegisterFilter(string filterName, Func<object, string> filterFunc)` - Registers a custom filter for template processing
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the template engine service
+var fileSystemService = new FileSystemService(loggerFactory.CreateLogger<FileSystemService>());
+var templateEngine = new TemplateEngineService(fileSystemService, loggerFactory.CreateLogger<TemplateEngineService>());
+
+// Define template context with variables
+dynamic context = new Dictionary<string, object>
+{
+    ["ClassName"] = "Product",
+    ["Namespace"] = "MyApp.Domain.Entities",
+    ["Properties"] = new List<EntityProperty>
+    {
+        new EntityProperty { Name = "Id", Type = "int", IsPrimaryKey = true },
+        new EntityProperty { Name = "Name", Type = "string", IsRequired = true },
+        new EntityProperty { Name = "Price", Type = "decimal" }
+    },
+    ["HasValidation"] = true,
+    ["IsSealed"] = false
+};
+
+// Define a template with variable placeholders
+string template = @"
+namespace {{Namespace}}
+{
+    public {{#if IsSealed}}sealed {{/if}}class {{ClassName}}
+    {
+        {{#for prop in Properties}}
+        public {{prop.Type}} {{prop.Name}} { get; set; }
+        {{/for}}
+
+        {{#if HasValidation}}
+        public bool Validate()
+        {
+            return !string.IsNullOrEmpty(Name) && Price >= 0;
+        }
+        {{/if}}
+    }
+}
+";
+
+// Validate template syntax before rendering
+bool isValid = templateEngine.ValidateTemplate(template);
+Console.WriteLine($"Template valid: {isValid}");
+
+// Register a custom filter
+templateEngine.RegisterFilter("pascalCase", obj =>
+{
+    var str = obj?.ToString();
+    if (string.IsNullOrEmpty(str)) return string.Empty;
+    return str.Length == 1 ? char.ToUpper(str[0]).ToString() : char.ToUpper(str[0]) + str[1..];
+});
+
+// Render the template with context
+string renderedCode = await templateEngine.RenderAsync(template, context);
+Console.WriteLine(renderedCode);
+
+// Load and render from a template file
+string templatePath = "./Templates/ProductTemplate.txt";
+string fileRenderedCode = await templateEngine.RenderFromFileAsync(templatePath, context);
+Console.WriteLine(fileRenderedCode);
+```
+
 ## IGenerationResultAggregatorService
 
 The `IGenerationResultAggregatorService` interface provides functionality to aggregate, analyze, and report on code generation results. It collects statistics across multiple generation operations, generates comprehensive reports, and provides insights into success rates, performance metrics, and error patterns. This service is essential for monitoring batch generation processes and generating actionable insights from generation results.
