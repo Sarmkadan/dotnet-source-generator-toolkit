@@ -605,6 +605,50 @@ foreach (var attribute in validationAttributes)
 }
 ```
 
+## ProjectInfo
+
+The `ProjectInfo` class represents the core metadata and structure of a .NET project analyzed by the toolkit, aggregating information about its entities, generation templates, and overall generation results. It provides a robust API to manage project properties, register entities and templates, record generation outcomes, and retrieve diagnostic statistics or validation results to ensure project integrity.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Initialize a new project context
+var project = new ProjectInfo
+{
+    Id = Guid.NewGuid().ToString(),
+    ProjectName = "EcommerceSystem",
+    ProjectPath = "/src/EcommerceSystem",
+    TargetFramework = "net10.0",
+    RootNamespace = "EcommerceSystem.Domain"
+};
+
+// Add entities and templates
+project.AddEntity(new Entity { Name = "Product", Namespace = "EcommerceSystem.Domain" });
+project.AddTemplate(new GenerationTemplate { Name = "RepositoryTemplate", GeneratorType = GeneratorType.Repository });
+
+// Record a generation result
+var result = new GenerationResult { EntityName = "Product", GeneratorType = "Repository", Status = "Success" };
+project.RecordGenerationResult(result);
+
+// Analyze project statistics
+var stats = project.GetStatistics();
+Console.WriteLine($"Total Entities: {stats.TotalEntities}");
+Console.WriteLine($"Total Lines Generated: {stats.TotalCodeLines}");
+
+// Validate the project structure
+var validationErrors = project.Validate().ToList();
+if (validationErrors.Any())
+{
+    Console.WriteLine("Project validation errors:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($"- {error}");
+    }
+}
+```
+
 ## EntityTests
 
 The `EntityTests` class provides unit tests for the `Entity` domain model, ensuring that entity operations like property management, validation, and primary key identification work correctly. These tests validate the core domain logic that drives the entire code generation pipeline, including duplicate property detection, primary key retrieval, and entity validation rules.
