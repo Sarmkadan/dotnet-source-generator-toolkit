@@ -1,0 +1,69 @@
+// =============================================================================
+// Author: Vladyslav Zaiets | https://sarmkadan.com
+// CTO & Software Architect
+// =============================================================================
+
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+
+namespace Shop.Domain.Mappers
+{
+    /// <summary>
+    /// DTO class for Product entity used in API responses.
+    /// </summary>
+    public sealed class ProductDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    /// <summary>
+    /// Mapper class for transforming Product entities to/from DTOs.
+    /// </summary>
+    public sealed class ProductMapper
+    {
+        /// <summary>Maps an entity to its DTO representation.</summary>
+        public static ProductDto? MapToDto(Product? entity)
+        {
+            if (entity is null)
+                return null;
+
+            var dto = new ProductDto();
+
+            dto.Id = entity.Id;
+            dto.Name = entity.Name;
+            return dto;
+        }
+
+        /// <summary>Maps a DTO back to entity.</summary>
+        public static Product? MapFromDto(ProductDto? dto)
+        {
+            if (dto is null)
+                return null;
+
+            var entity = new Product();
+
+            entity.Id = dto.Id;
+            entity.Name = dto.Name;
+            return entity;
+        }
+
+        /// <summary>Maps a collection of entities to DTOs.</summary>
+        public static IEnumerable<ProductDto> MapToDtos(IEnumerable<Product>? entities)
+        {
+            if (entities is null)
+                return new List<ProductDto>();
+
+            var results = new List<ProductDto>();
+            foreach (var e in entities)
+            {
+                var dto = MapToDto(e);
+                if (dto is not null)
+                    results.Add(dto);
+            }
+            return results;
+        }
+    }
+}

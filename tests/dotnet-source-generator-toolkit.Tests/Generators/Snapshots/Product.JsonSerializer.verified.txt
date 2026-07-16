@@ -1,0 +1,50 @@
+// =============================================================================
+// Author: Vladyslav Zaiets | https://sarmkadan.com
+// CTO & Software Architect
+// =============================================================================
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Shop.Domain.Serializers
+{
+    /// <summary>
+    /// JSON serializer for Product entity.
+    /// Provides methods for converting entities to/from JSON format.
+    /// </summary>
+    public sealed class ProductJsonSerializer
+    {
+        private static readonly JsonSerializerOptions Options = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        };
+
+        /// <summary>Serializes an entity to JSON string.</summary>
+        public static string Serialize(Product entity)
+        {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
+
+            return JsonSerializer.Serialize(entity, Options);
+        }
+
+        /// <summary>Deserializes JSON string to entity.</summary>
+        public static Product Deserialize(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentNullException(nameof(json));
+
+            var entity = JsonSerializer.Deserialize<Product>(json, Options);
+            return entity ?? throw new InvalidOperationException("Failed to deserialize JSON");
+        }
+
+        /// <summary>Serializes entity to JsonElement.</summary>
+        public static JsonElement ToJsonElement(Product entity)
+        {
+            var json = Serialize(entity);
+            return JsonDocument.Parse(json).RootElement;
+        }
+    }
+}
