@@ -2225,6 +2225,119 @@ public interface IValidatorGeneratorService
 }
 ```
 
+## ValidatorGeneratorService
+
+The `ValidatorGeneratorService` generates FluentValidation validators for domain entities with comprehensive validation rules based on entity property definitions. It creates both automated FluentValidation-based validators and manual validation classes with custom validation logic, providing robust validation for business rules enforcement.
+
+### Public Members
+
+- `ValidatorGeneratorService(ILogger<ValidatorGeneratorService> logger)` - Constructor that accepts a logger for diagnostic output
+- `Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(List<Entity> entities)` - Generates validators for all provided entities in parallel
+- `Task<GenerationResult> GenerateValidatorAsync(Entity entity)` - Generates a validator for a single entity
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the validator generator service
+var validatorGenerator = new ValidatorGeneratorService(
+    loggerFactory.CreateLogger<ValidatorGeneratorService>()
+);
+
+// Define a sample entity with validation requirements
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities",
+    TableName = "Products",
+    IsSealed = false,
+    AccessModifier = AccessModifier.Public
+};
+
+// Add properties with validation constraints
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true,
+    IsRequired = true,
+    GetterAccess = AccessModifier.Public,
+    SetterAccess = AccessModifier.Private
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100,
+    Description = "Product name"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000,
+    Description = "Product price"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Sku",
+    Type = "string",
+    IsRequired = true,
+    MinLength = 8,
+    MaxLength = 20,
+    RegexPattern = "^[A-Z0-9]{8,20}$",
+    Description = "Product stock keeping unit"
+});
+
+// Generate validator for the entity
+var generationResult = await validatorGenerator.GenerateValidatorAsync(productEntity);
+
+// Check if generation was successful
+if (generationResult.IsSuccessful)
+{
+    Console.WriteLine("✅ Validator generated successfully!");
+    Console.WriteLine($"📄 Output file: {generationResult.OutputFilePath}");
+    Console.WriteLine($"📊 Lines of code: {generationResult.CodeLineCount}");
+    
+    // The generated code includes:
+    // 1. ProductValidator : AbstractValidator<Product> with FluentValidation rules
+    // 2. ProductValidatorManual with custom validation logic
+    
+    Console.WriteLine($"💾 Generated code:\n{generationResult.GeneratedCode}");
+}
+else
+{
+    Console.WriteLine("❌ Validator generation failed:");
+    foreach (var error in generationResult.Errors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Generate validators for multiple entities in batch
+var entities = new List<Entity> { productEntity /* add more entities */ };
+var allResults = await validatorGenerator.GenerateAllValidatorsAsync(entities);
+
+Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Count} validators");
+```
+
 #### `ISerializerGeneratorService`
 
 Generates serialization code for multiple formats.
