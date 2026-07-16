@@ -2362,6 +2362,59 @@ if (specificEntity != null)
 
 ### Core Interfaces
 
+#### `IMetricsCollector`
+
+The `IMetricsCollector` interface provides performance monitoring and metrics collection capabilities throughout the code generation pipeline. It enables tracking of execution time, resource usage, and throughput by collecting gauge, counter, and histogram metrics. This interface is essential for monitoring performance, identifying bottlenecks, and generating diagnostic reports during batch processing operations.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Metrics;
+using Microsoft.Extensions.DependencyInjection;
+
+// Configure dependency injection (typically in your application startup)
+var services = new ServiceCollection();
+services.AddSingleton<IMetricsCollector, MetricsCollector>();
+
+var serviceProvider = services.BuildServiceProvider();
+var metricsCollector = serviceProvider.GetRequiredService<IMetricsCollector>();
+
+// Record a gauge metric (instantaneous measurement)
+metricsCollector.RecordGauge("ActiveGenerations", 5);
+
+// Increment a counter metric
+metricsCollector.IncrementCounter("TotalEntitiesProcessed");
+metricsCollector.IncrementCounter("TotalFilesGenerated", 8);
+
+// Record a histogram metric (distribution)
+metricsCollector.RecordHistogram("GenerationTimeMs", 142);
+metricsCollector.RecordHistogram("GenerationTimeMs", 285);
+metricsCollector.RecordHistogram("GenerationTimeMs", 98);
+
+// Start a timer for measuring operation duration
+using (var timer = metricsCollector.StartTimer("RepositoryGeneration"))
+{
+    // Simulate repository generation work
+    await Task.Delay(150);
+}
+
+// Get all collected metrics
+var snapshot = metricsCollector.GetSnapshot();
+Console.WriteLine($"Captured at: {snapshot.CapturedAt:yyyy-MM-dd HH:mm:ss}");
+Console.WriteLine($"Gauges: {string.Join(", ", snapshot.Gauges.Select(g => $"{g.Key}={g.Value}"))}");
+Console.WriteLine($"Counters: {string.Join(", ", snapshot.Counters.Select(c => $"{c.Key}={c.Value}"))}");
+
+foreach (var histogram in snapshot.Histograms)
+{
+    Console.WriteLine($"Histogram {histogram.Key}: Count={histogram.Value.Count}, " +
+                     $"Sum={histogram.Value.Sum}, Min={histogram.Value.Min}, " +
+                     $"Max={histogram.Value.Max}, Avg={histogram.Value.Average:F2}");
+}
+
+// Reset metrics for a new batch
+metricsCollector.Reset();
+```
+
 #### `ISourceGeneratorService`
 
 Main orchestration service for the entire generation pipeline.
