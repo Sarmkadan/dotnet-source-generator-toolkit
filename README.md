@@ -758,6 +758,101 @@ string validationSummary = configValidation.ToString();
 Console.WriteLine(validationSummary);
 ```
 
+## Product
+
+The `Product` class represents a product entity with properties for identification, name, price, creation date, and availability status. It serves as a domain model for e-commerce applications and demonstrates how to use the source generator toolkit to automatically generate mappers, repositories, validators, and serializers from simple entity definitions.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Define a product entity with generation attributes
+[Repository]
+[Mapper]
+[Validator]
+[Serializer(Formats = new[] { "Json", "Xml" })]
+public sealed class Product
+{
+    /// <summary>
+    /// Gets the unique identifier for the product.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Gets or sets the name of the product.
+    /// </summary>
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the price of the product.
+    /// </summary>
+    public decimal Price { get; set; }
+
+    /// <summary>
+    /// Gets the date and time when the product was created.
+    /// </summary>
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// Gets a value indicating whether the product is available.
+    /// </summary>
+    public bool IsAvailable { get; set; } = true;
+}
+
+// Define a DTO for API responses
+[Mapper]
+public sealed class ProductDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string PriceDisplay { get; set; } = string.Empty;
+    public string CreatedDateString { get; set; } = string.Empty;
+    public string AvailabilityStatus { get; set; } = string.Empty;
+}
+
+// Use the generated services in your application
+public sealed class ProductService
+{
+    private readonly IProductRepository _productRepository;
+    private readonly IProductMapper _productMapper;
+    private readonly IProductValidator _productValidator;
+
+    public ProductService(
+        IProductRepository productRepository,
+        IProductMapper productMapper,
+        IProductValidator productValidator)
+    {
+        _productRepository = productRepository;
+        _productMapper = productMapper;
+        _productValidator = productValidator;
+    }
+
+    public async Task<ProductDto> GetProductAsync(int productId)
+    {
+        var product = await _productRepository.GetByIdAsync(productId);
+        if (product is null) return null;
+
+        var validationResult = await _productValidator.ValidateAsync(product);
+        if (!validationResult.IsValid)
+            throw new InvalidOperationException("Product validation failed");
+
+        return _productMapper.MapToDto(product);
+    }
+
+    public async Task<Product> CreateProductAsync(ProductDto productDto)
+    {
+        var product = _productMapper.MapFromDto(productDto);
+        
+        var validationResult = await _productValidator.ValidateAsync(product);
+        if (!validationResult.IsValid)
+            throw new InvalidOperationException("Product validation failed");
+
+        return await _productRepository.CreateAsync(product);
+    }
+}
+```
+
 ## ProjectInfo
 
 The `ProjectInfo` class represents the core metadata and structure of a .NET project analyzed by the toolkit, aggregating information about its entities, generation templates, and overall generation results. It provides a robust API to manage project properties, register entities and templates, record generation outcomes, and retrieve diagnostic statistics or validation results to ensure project integrity.
