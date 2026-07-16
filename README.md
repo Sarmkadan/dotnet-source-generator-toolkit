@@ -1919,6 +1919,121 @@ var allResults = await repositoryGenerator.GenerateAllRepositoriesAsync(entities
 Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Length} repositories");
 ```
 
+## MapperGeneratorService
+
+The `MapperGeneratorService` generates mapper classes for transforming entities to/from DTOs and between different entity types with property mapping logic. It creates bidirectional mapping implementations with methods for converting between entity and DTO representations, supporting collection mappings and null-safety throughout.
+
+
+### Public Members
+
+- `MapperGeneratorService(ILogger<MapperGeneratorService> logger)` - Constructor that accepts a logger for diagnostic output
+- `Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities)` - Generates mappers for all provided entities in parallel
+- `Task<GenerationResult> GenerateMapperAsync(Entity sourceEntity, Entity targetEntity)` - Generates a mapper between source and target entities
+- `public sealed class MapperGeneratorService` - The service is sealed
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the mapper generator service
+var mapperGenerator = new MapperGeneratorService(
+    loggerFactory.CreateLogger<MapperGeneratorService>()
+);
+
+// Define a sample entity
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities"
+};
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "CreatedDate",
+    Type = "DateTime",
+    IsRequired = false
+});
+
+// Generate mapper for the entity
+var generationResult = await mapperGenerator.GenerateMapperAsync(productEntity, productEntity);
+
+// Check if generation was successful
+if (generationResult.IsSuccessful)
+{
+    Console.WriteLine("✅ Mapper generated successfully!");
+    Console.WriteLine($"📄 Output file: {generationResult.OutputFilePath}");
+    Console.WriteLine($"📊 Lines of code: {generationResult.CodeLineCount}");
+    
+    // Use the generated mapper methods
+    var product = new Product
+    {
+        Id = 1,
+        Name = "Laptop",
+        Price = 999.99m,
+        CreatedDate = DateTime.UtcNow
+    };
+    
+    // Map to DTO
+    var dto = ProductMapper.MapToDto(product);
+    Console.WriteLine($"🔄 Mapped to DTO: {dto.Name} - {dto.Price}");
+    
+    // Map back to entity
+    var mappedEntity = ProductMapper.MapFromDto(dto);
+    Console.WriteLine($"🔄 Mapped back to entity: {mappedEntity?.Name}");
+    
+    // Map collection
+    var products = new List<Product> { product };
+    var dtos = ProductMapper.MapToDtos(products);
+    Console.WriteLine($"📊 Mapped {dtos.Count()} items");
+}
+else
+{
+    Console.WriteLine("❌ Mapper generation failed:");
+    foreach (var error in generationResult.Errors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Generate mappers for multiple entities in batch
+var entities = new List<Entity> { productEntity /* add more entities */ };
+var allResults = await mapperGenerator.GenerateAllMappersAsync(entities);
+
+Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Count} mappers");
+```
+
 ## SerializerGeneratorService
 
 The `SerializerGeneratorService` generates serializer classes for converting entities to/from various formats including JSON, XML, and binary representations. It creates type-safe serializer implementations with methods for serialization and deserialization, supporting multiple output formats with consistent naming conventions.
