@@ -1511,6 +1511,80 @@ Console.WriteLine($"Average generation time: {metrics.AverageGenerationTimeMs}ms
 Console.WriteLine($"Cache hit rate: {metrics.CacheHitRate:P}");
 ```
 
+## IBatchProcessor
+
+The `IBatchProcessor<T>` interface defines a contract for processing items in batches with comprehensive error handling, progress tracking, and performance monitoring. It enables efficient processing of large collections while providing detailed feedback about each item's processing status, execution time, and any errors encountered. This is particularly useful for code generation scenarios where you need to process multiple entities, files, or generation tasks in parallel with proper resource management.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Batch;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+// Define your entity type
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+}
+
+// Create a batch processor instance
+var batchProcessor = new BatchProcessor<Product>();
+
+// Define your items to process
+var products = new List<Product>
+{
+    new Product { Id = 1, Name = "Laptop", Price = 999.99m },
+    new Product { Id = 2, Name = "Mouse", Price = 29.99m },
+    new Product { Id = 3, Name = "Keyboard", Price = 79.99m },
+    new Product { Id = 4, Name = "Monitor", Price = 249.99m }
+};
+
+// Define your processing function
+async Task ProcessProductAsync(Product product)
+{
+    // Simulate processing work
+    await Task.Delay(100);
+    Console.WriteLine($"Processing product: {product.Name}");
+}
+
+// Process items in batches with progress reporting
+var progress = new Progress<BatchProgress>(progressReport =>
+{
+    Console.WriteLine($"Progress: {progressReport.PercentComplete:F1}% - " +
+                     $"Processed: {progressReport.ProcessedCount}/{progressReport.TotalCount} - " +
+                     $"Errors: {progressReport.ErrorCount}");
+});
+
+var results = await batchProcessor.ProcessAsync(
+    items: products,
+    processor: ProcessProductAsync,
+    batchSize: 2,  // Process 2 items at a time
+    progress: progress
+);
+
+// Analyze results
+int successfulCount = results.Count(r => r.IsSuccessful);
+int failedCount = results.Count(r => !r.IsSuccessful);
+long totalTimeMs = results.Sum(r => r.ExecutionTimeMs);
+
+Console.WriteLine($"\nProcessing complete:");
+Console.WriteLine($"✅ Successful: {successfulCount}");
+Console.WriteLine($"❌ Failed: {failedCount}");
+Console.WriteLine($"⏱️ Total time: {totalTimeMs}ms");
+
+// Handle failed items
+foreach (var result in results.Where(r => !r.IsSuccessful))
+{
+    Console.WriteLine($"\n⚠️ Failed to process item: {result.Item}");
+    Console.WriteLine($"   Error: {result.ErrorMessage}");
+    Console.WriteLine($"   Time: {result.ExecutionTimeMs}ms");
+}
+```
+
 ## API Reference
 
 ### Core Interfaces
