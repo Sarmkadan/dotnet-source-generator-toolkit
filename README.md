@@ -1511,6 +1511,121 @@ Console.WriteLine($"Average generation time: {metrics.AverageGenerationTimeMs}ms
 Console.WriteLine($"Cache hit rate: {metrics.CacheHitRate:P}");
 ```
 
+## IMiddleware
+
+The `IMiddleware` interface defines the contract for middleware components that can inspect, modify, or short-circuit the generation pipeline. Middleware enables extensible request/response processing patterns where each component in the chain can add functionality such as logging, validation, error handling, or custom processing logic before passing control to the next middleware in the pipeline.
+
+Middleware is particularly useful for:
+- Logging pipeline execution and performance metrics
+- Validating generation context before processing
+- Adding custom processing logic for specific scenarios
+- Short-circuiting the pipeline when errors occur or preconditions aren't met
+- Injecting cross-cutting concerns like caching or metrics collection
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Middleware;
+using DotNetSourceGeneratorToolkit.Domain;
+using System.Threading.Tasks;
+
+// Define custom middleware for logging and validation
+public class LoggingMiddleware : IMiddleware
+{
+    public async Task InvokeAsync(MiddlewareContext context, MiddlewareDelegate next)
+    {
+        // Pre-processing: log start of pipeline execution
+        Console.WriteLine($"[{context.RequestId}] Starting pipeline execution at {context.StartTime:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"Project: {context.ProjectInfo?.ProjectName ?? "Unknown"}");
+        
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        
+        try
+        {
+            // Pass control to next middleware in the chain
+            await next(context);
+            
+            // Post-processing: log successful completion
+            stopwatch.Stop();
+            Console.WriteLine($"[{context.RequestId}] Pipeline completed successfully in {stopwatch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"Generated files: {context.GenerationResults.Count}");
+        }
+        catch (Exception ex)
+        {
+            // Handle errors and add to context
+            context.AddError($"Pipeline failed: {ex.Message}");
+            Console.WriteLine($"[{context.RequestId}] Pipeline failed: {ex.Message}");
+            throw;
+        }
+    }
+}
+
+// Define validation middleware
+public class ValidationMiddleware : IMiddleware
+{
+    public async Task InvokeAsync(MiddlewareContext context, MiddlewareDelegate next)
+    {
+        // Validate project info exists
+        if (context.ProjectInfo == null)
+        {
+            context.AddError("ProjectInfo is null - cannot proceed with generation");
+            context.ShortCircuit();
+            return;
+        }
+        
+        // Validate at least one entity exists
+        if (context.ProjectInfo.Entities.Count == 0)
+        {
+            context.AddError("No entities found in project - generation aborted");
+            context.ShortCircuit();
+            return;
+        }
+        
+        // Pass control to next middleware
+        await next(context);
+    }
+}
+
+// Define error handling middleware
+public class ErrorHandlingMiddleware : IMiddleware
+{
+    public async Task InvokeAsync(MiddlewareContext context, MiddlewareDelegate next)
+    {
+        try
+        {
+            await next(context);
+            
+            // Check if pipeline was short-circuited
+            if (context.IsShortCircuited)
+            {
+                Console.WriteLine($"[{context.RequestId}] Pipeline was short-circuited - skipping remaining middleware");
+            }
+        }
+        catch (Exception ex)
+        {
+            context.AddError($"Unhandled exception: {ex.Message}");
+            context.ShortCircuit();
+            throw;
+        }
+    }
+}
+
+// Usage: Register middleware in your pipeline
+var middlewarePipeline = new MiddlewarePipeline();
+middlewarePipeline.AddMiddleware(new LoggingMiddleware());
+middlewarePipeline.AddMiddleware(new ValidationMiddleware());
+middlewarePipeline.AddMiddleware(new ErrorHandlingMiddleware());
+
+// Execute pipeline with context
+var context = new MiddlewareContext
+{
+    CliOptions = new CLI.CliOptions { /* configure options */ },
+    ProjectInfo = new Domain.ProjectInfo { /* project metadata */ }
+};
+
+await middlewarePipeline.ExecuteAsync(context);
+```
+
 ## IBatchProcessor
 
 The `IBatchProcessor<T>` interface defines a contract for processing items in batches with comprehensive error handling, progress tracking, and performance monitoring. It enables efficient processing of large collections while providing detailed feedback about each item's processing status, execution time, and any errors encountered. This is particularly useful for code generation scenarios where you need to process multiple entities, files, or generation tasks in parallel with proper resource management.
