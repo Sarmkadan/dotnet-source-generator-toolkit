@@ -1489,6 +1489,78 @@ foreach (var chunk in chunks)
 }
 ```
 
+## StringExtensions
+
+The `StringExtensions` class provides a comprehensive set of extension methods for string manipulation and formatting. It includes utilities for case conversion, repetition, truncation, numeric validation, and text formatting, making it easier to handle string operations in code generation scenarios.
+
+### Public Members
+
+- `ToPascalCase(this string str)` - Converts string to PascalCase
+- `ToCamelCase(this string str)` - Converts string to camelCase
+- `ToSnakeCase(this string str)` - Converts string to snake_case
+- `ToKebabCase(this string str)` - Converts string to kebab-case
+- `Repeat(this string str, int count)` - Repeats the string n times
+- `Truncate(this string str, int maxLength, bool addEllipsis = true)` - Truncates string to specified length with optional ellipsis
+- `IsNumeric(this string str)` - Checks if string represents a numeric value
+- `IsLettersOnly(this string str)` - Checks if string contains only letters
+- `CountWord(this string str, string word)` - Counts word occurrences in string (case-insensitive)
+- `GetLines(this string str, bool removeEmpty = false)` - Gets lines from string, optionally removing empty lines
+- `Indent(this string str, int spaces = 4)` - Indents all lines by the specified number of spaces
+- `Wrap(this string str, int lineWidth = 80)` - Wraps text to specified line width
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Convert between different case formats
+string input = "hello_world-example";
+string pascalCase = input.ToPascalCase(); // "HelloWorldExample"
+string camelCase = input.ToCamelCase(); // "helloWorldExample"
+string snakeCase = input.ToSnakeCase(); // "hello_world_example"
+string kebabCase = input.ToKebabCase(); // "hello-world-example"
+
+// Repeat strings for padding or patterns
+string separator = "-".Repeat(10); // "----------"
+string repeatedText = "Hello ".Repeat(3); // "Hello Hello Hello "
+
+// Truncate long strings
+string longText = "This is a very long text that needs to be shortened";
+string truncated = longText.Truncate(20); // "This is a very long..."
+string truncatedNoEllipsis = longText.Truncate(20, false); // "This is a very long"
+
+// Validate string content
+string numericText = "12345";
+bool isNumeric = numericText.IsNumeric(); // true
+string lettersText = "abcXYZ";
+bool isLettersOnly = lettersText.IsLettersOnly(); // true
+
+// Count word occurrences
+string sentence = "The quick brown fox jumps over the lazy dog";
+int count = sentence.CountWord("the"); // 2
+
+// Split text into lines
+string multiLine = "Line 1\nLine 2\r\nLine 3\rLine 4";
+string[] lines = multiLine.GetLines(); // ["Line 1", "Line 2", "Line 3", "Line 4"]
+string[] nonEmptyLines = multiLine.GetLines(true); // Removes empty lines
+
+// Indent text for code generation
+string codeBlock = "public class MyClass\n{\n    public int Id { get; set; }\n}";
+string indented = codeBlock.Indent(2); // Indents by 2 spaces
+
+// Wrap text to fit within line width
+string paragraph = "This is a long paragraph that needs to be wrapped to fit within the specified line width of 30 characters so it demonstrates the wrapping functionality properly";
+string wrapped = paragraph.Wrap(30);
+/*
+This is a long paragraph
+that needs to be wrapped to
+fit within the specified line
+width of 30 characters so it
+demonstrates the wrapping
+functionality properly
+*/
+```
+
 ## Installation
 
 ### Prerequisites
