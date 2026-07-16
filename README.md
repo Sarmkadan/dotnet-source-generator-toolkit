@@ -1781,6 +1781,54 @@ public interface ISerializerGeneratorService
 }
 ```
 
+## MiddlewarePipeline
+
+The `MiddlewarePipeline` class implements a composable middleware pipeline for request processing using the chain-of-responsibility pattern. It builds a flexible chain where each middleware component can inspect, modify, or short-circuit the pipeline execution before passing control to the next middleware. This pattern enables clean separation of concerns and extensible request/response processing across the generation pipeline.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Middleware;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+// Configure dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddTransient<LoggingMiddleware>();
+services.AddTransient<ValidationMiddleware>();
+
+var serviceProvider = services.BuildServiceProvider();
+
+// Create middleware pipeline
+var pipeline = new MiddlewarePipeline(serviceProvider, 
+    serviceProvider.GetRequiredService<ILogger<MiddlewarePipeline>>());
+
+// Add middleware components to the pipeline
+pipeline.Use<LoggingMiddleware>()
+      .Use<ValidationMiddleware>()
+      .Use(async (context, next) =>
+      {
+          Console.WriteLine("Inline middleware executing");
+          await next(context);
+          Console.WriteLine("Inline middleware completed");
+      });
+
+// Create and execute pipeline context
+var context = new MiddlewareContext
+{
+    RequestId = Guid.NewGuid().ToString(),
+    ProjectInfo = new Domain.ProjectInfo
+    {
+        ProjectName = "MyProject",
+        Entities = new List<Entity> { /* your entities */ }
+    }
+};
+
+// Execute the pipeline
+await pipeline.ExecuteAsync(context);
+```
+
 ### Configuration
 
 #### `ToolkitOptions`
