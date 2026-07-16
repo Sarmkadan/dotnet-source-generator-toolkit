@@ -23,6 +23,7 @@
 - [CollectionExtensions](#collectionextensions)
 - [TypeExtensions](#typeextensions)
 - [StringValidator](#stringvalidator)
+- [FilePathValidator](#filepathvalidator)
 - [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
 - [CLI Reference](#cli-reference)
@@ -1775,6 +1776,65 @@ if (StringValidator.IsValidIdentifier(propertyName))
 string generatedFileName = "ProductRepository.Generated.cs";
 string sanitizedFileName = StringValidator.SanitizeForFileName(generatedFileName);
 Console.WriteLine($"Sanitized filename: {sanitizedFileName}");
+```
+
+## FilePathValidator
+
+The `FilePathValidator` class provides utility methods for validating and manipulating file system paths in a secure and safe manner. It includes methods for validating path safety, ensuring directory existence, computing relative paths, safely combining path segments, and extracting directory information. This class is essential for preventing path traversal attacks and ensuring file operations are performed within expected directory boundaries.
+
+### Public Members
+
+- `bool IsValidPath(string? path)` - Validates that a file path is accessible and safe by checking for invalid characters and attempting to normalize it
+- `bool EnsureDirectoryExists(string path)` - Ensures a directory path is safe and creates it if it doesn't exist
+- `string? GetRelativePath(string basePath, string targetPath)` - Gets a safe relative path from base directory to target, ensuring target is under base for security
+- `string? CombineSafePath(string basePath, params string[] segments)` - Combines path segments safely, preventing path traversal attacks by ensuring result stays under base directory
+- `string? GetDirectory(string filePath)` - Gets the directory containing a file with validation
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Validate file paths before operations
+string projectPath = "./src/MyProject";
+string outputFile = "./src/MyProject/Generated/ProductRepository.cs";
+
+// Check if path is valid and safe
+bool isValid = FilePathValidator.IsValidPath(projectPath);
+Console.WriteLine($"Project path valid: {isValid}");
+
+// Ensure output directory exists
+bool directoryCreated = FilePathValidator.EnsureDirectoryExists(projectPath);
+Console.WriteLine($"Directory created/exists: {directoryCreated}");
+
+// Get relative path for logging
+string relativePath = FilePathValidator.GetRelativePath(projectPath, outputFile);
+Console.WriteLine($"Relative output path: {relativePath}");
+
+// Safely combine paths for file operations
+string safePath = FilePathValidator.CombineSafePath(projectPath, "Generated", "ProductRepository.cs");
+Console.WriteLine($"Safe combined path: {safePath}");
+
+// Get directory information
+string? directory = FilePathValidator.GetDirectory(outputFile);
+Console.WriteLine($"File directory: {directory}");
+
+// Example: Validate paths before file generation
+string tempDirectory = "./temp";
+string outputDirectory = "./output/GeneratedCode";
+
+if (FilePathValidator.IsValidPath(tempDirectory) && FilePathValidator.EnsureDirectoryExists(tempDirectory))
+{
+    Console.WriteLine("✅ Temporary directory is valid and accessible");
+}
+
+// Example: Safely construct output paths
+string baseOutputPath = "./src/MyProject";
+string entityName = "Product";
+string repositoryPath = FilePathValidator.CombineSafePath(baseOutputPath, "Repositories", $"{entityName}Repository.cs")
+    ?? throw new InvalidOperationException("Invalid output path combination");
+
+Console.WriteLine($"Generated repository will be written to: {repositoryPath}");
 ```
 
 ## Installation
