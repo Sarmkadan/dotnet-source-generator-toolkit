@@ -1,0 +1,63 @@
+// =============================================================================
+// Author: Vladyslav Zaiets | https://sarmkadan.com
+// CTO & Software Architect
+// =============================================================================
+
+using System.Collections.Generic;
+using FluentValidation;
+
+namespace Shop.Domain.Validators
+{
+    /// <summary>
+    /// FluentValidation validator for Product entity.
+    /// Provides comprehensive validation rules for all entity properties.
+    /// </summary>
+    public sealed class ProductValidator : AbstractValidator<Product>
+    {
+        public ProductValidator()
+        {
+            ConfigureRules();
+        }
+
+        private void ConfigureRules()
+        {
+            RuleFor(x => x.Id)
+                .NotEmpty().WithMessage($"{{nameof({entity.Name}.{prop.Name})}} is required.")
+                ;
+
+            RuleFor(x => x.Name)
+                .NotEmpty().WithMessage($"{{nameof({entity.Name}.{prop.Name})}} is required.")
+                .MaximumLength(100).WithMessage($"{nameof({entity.Name}.{prop.Name})} must not exceed {prop.MaxLength} characters.")
+                ;
+
+        }
+    }
+
+    /// <summary>
+    /// Manual validator providing custom validation logic.
+    /// </summary>
+    public sealed class ProductValidatorManual
+    {
+        public bool Validate(Product entity, out List<string> errors)
+        {
+            errors = new List<string>();
+
+            if (entity is null)
+            {
+                errors.Add("Product entity cannot be null");
+                return false;
+            }
+
+            // Perform custom validation logic here
+
+            // Validate required properties
+            if (entity.Id == null) errors.Add("Id is required.");
+            if (string.IsNullOrWhiteSpace(entity.Name)) errors.Add("Name is required.");
+
+            // Validate length constraints
+            if (entity.Name?.Length > 100) errors.Add("Name exceeds maximum length.");
+
+            return errors.Count == 0;
+        }
+    }
+}

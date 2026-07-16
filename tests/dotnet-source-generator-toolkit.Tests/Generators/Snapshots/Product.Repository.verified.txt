@@ -1,0 +1,127 @@
+// =============================================================================
+// Author: Vladyslav Zaiets | https://sarmkadan.com
+// CTO & Software Architect
+// =============================================================================
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Shop.Domain.Repositories
+{
+    /// <summary>
+    /// Repository interface for Product entity providing data access operations.
+    /// </summary>
+    public interface IProductRepository
+    {
+        /// <summary>Gets an entity by its primary key.</summary>
+        Task<Product> GetByIdAsync(int id);
+
+        /// <summary>Gets all entities from storage.</summary>
+        Task<IEnumerable<Product>> GetAllAsync();
+
+        /// <summary>Gets entities with pagination support.</summary>
+        Task<IEnumerable<Product>> GetPagedAsync(int pageNumber, int pageSize);
+
+        /// <summary>Checks if an entity exists by primary key.</summary>
+        Task<bool> ExistsAsync(int id);
+
+        /// <summary>Creates a new entity in storage.</summary>
+        Task<Product> CreateAsync(Product entity);
+
+        /// <summary>Updates an existing entity.</summary>
+        Task<Product> UpdateAsync(Product entity);
+
+        /// <summary>Deletes an entity by primary key.</summary>
+        Task<bool> DeleteAsync(int id);
+
+        /// <summary>Counts total entities in storage.</summary>
+        Task<int> CountAsync();
+    }
+}
+
+// =============================================================================
+// Author: Vladyslav Zaiets | https://sarmkadan.com
+// CTO & Software Architect
+// =============================================================================
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Shop.Domain.Repositories
+{
+    /// <summary>
+    /// Repository implementation for Product entity providing complete data access.
+    /// </summary>
+    public sealed class ProductRepository : IProductRepository
+    {
+        private List<Product> _data = new();
+
+        public async Task<Product> GetByIdAsync(int id)
+        {
+            var entity = _data.FirstOrDefault(e => e.Id.Equals(id));
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<IEnumerable<Product>> GetAllAsync()
+        {
+            return await Task.FromResult(_data.AsEnumerable());
+        }
+
+        public async Task<IEnumerable<Product>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var skip = (pageNumber - 1) * pageSize;
+            var paged = _data.Skip(skip).Take(pageSize);
+
+            return await Task.FromResult(paged);
+        }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            var exists = _data.Any(e => e.Id.Equals(id));
+            return await Task.FromResult(exists);
+        }
+
+        public async Task<Product> CreateAsync(Product entity)
+        {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
+
+            _data.Add(entity);
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<Product> UpdateAsync(Product entity)
+        {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
+
+            var existing = _data.FirstOrDefault(e => e.Id.Equals(entity.Id));
+            if (existing is null)
+                throw new InvalidOperationException($"Entity with id {entity.Id} not found");
+
+            _data.Remove(existing);
+            _data.Add(entity);
+
+            return await Task.FromResult(entity);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var entity = _data.FirstOrDefault(e => e.Id.Equals(id));
+            if (entity is null)
+                return await Task.FromResult(false);
+
+            return _data.Remove(entity) ? await Task.FromResult(true) : await Task.FromResult(false);
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await Task.FromResult(_data.Count);
+        }
+    }
+}
