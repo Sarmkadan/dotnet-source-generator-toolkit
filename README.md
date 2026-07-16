@@ -1726,6 +1726,104 @@ Console.WriteLine($"Average generation time: {metrics.AverageGenerationTimeMs}ms
 Console.WriteLine($"Cache hit rate: {metrics.CacheHitRate:P}");
 ```
 
+## MetricsCollector
+
+The `MetricsCollector` class provides comprehensive performance monitoring and metrics collection for the .NET Source Generator Toolkit. It tracks timers, counters, gauges, and histograms to measure generation performance, resource usage, and system health. The collector is thread-safe and designed for concurrent metric collection from parallel tasks, making it ideal for monitoring batch generation processes and identifying performance bottlenecks.
+
+### Public Members
+
+- `ITimer StartTimer(string operationName)` - Starts a timer for measuring operation duration
+- `void RecordGauge(string metricName, long value)` - Records a gauge metric with a specific value
+- `void IncrementCounter(string metricName, long amount = 1)` - Increments a counter metric by the specified amount
+- `void RecordHistogram(string metricName, long value)` - Records a histogram metric for distribution analysis
+- `MetricsSnapshot GetSnapshot()` - Gets a snapshot of all collected metrics
+- `void Reset()` - Resets all collected metrics
+- `ITimer` - Timer interface returned by StartTimer for measuring elapsed time
+- `void Stop()` - Stops the timer and records the elapsed time
+- `void Dispose()` - Stops the timer and releases resources
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Metrics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+// Configure logging and dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+
+var serviceProvider = services.BuildServiceProvider();
+var metricsCollector = serviceProvider.GetRequiredService<IMetricsCollector>();
+
+// Start timing a generation operation
+using (var timer = metricsCollector.StartTimer("EntityGeneration"))
+{
+    // Simulate generation work
+    await Task.Delay(150);
+    
+    // Record a gauge metric (e.g., cache size)
+    metricsCollector.RecordGauge("CacheSize", 42);
+    
+    // Increment a counter metric (e.g., generated files)
+    metricsCollector.IncrementCounter("GeneratedFiles");
+    metricsCollector.IncrementCounter("GeneratedFiles", 3); // Increment by 3
+    
+    // Record histogram metrics for performance distribution
+    metricsCollector.RecordHistogram("GenerationTimeMs", 150);
+    metricsCollector.RecordHistogram("GenerationTimeMs", 210);
+    metricsCollector.RecordHistogram("GenerationTimeMs", 180);
+}
+
+// Get a snapshot of all collected metrics
+var snapshot = metricsCollector.GetSnapshot();
+
+// Access gauge metrics
+foreach (var gauge in snapshot.Gauges)
+{
+    Console.WriteLine($"Gauge {gauge.Key}: {gauge.Value}");
+}
+
+// Access counter metrics
+foreach (var counter in snapshot.Counters)
+{
+    Console.WriteLine($"Counter {counter.Key}: {counter.Value}");
+}
+
+// Access histogram metrics
+foreach (var histogram in snapshot.Histograms)
+{
+    Console.WriteLine($"Histogram {histogram.Key}:");
+    Console.WriteLine($"  Count: {histogram.Value.Count}");
+    Console.WriteLine($"  Sum: {histogram.Value.Sum}");
+    Console.WriteLine($"  Min: {histogram.Value.Min}");
+    Console.WriteLine($"  Max: {histogram.Value.Max}");
+    Console.WriteLine($"  Average: {(double)histogram.Value.Sum / histogram.Value.Count:F2}");
+}
+
+// Reset metrics for a new batch
+metricsCollector.Reset();
+
+// Example: Monitor batch processing performance
+var batchMetrics = serviceProvider.GetRequiredService<IMetricsCollector>();
+
+async Task ProcessEntityAsync(Entity entity)
+{
+    using (var timer = batchMetrics.StartTimer("ProcessEntity"))
+    {
+        // Process entity
+        await Task.Delay(new Random().Next(50, 300));
+    }
+}
+
+var entities = new List<Entity> { /* your entities */ };
+var tasks = entities.Select(ProcessEntityAsync);
+await Task.WhenAll(tasks);
+
+var finalSnapshot = batchMetrics.GetSnapshot();
+Console.WriteLine($"Batch completed - Average time: {(double)finalSnapshot.Histograms["ProcessEntity"].Sum / finalSnapshot.Histograms["ProcessEntity"].Count:F2}ms");
+```
+
 ## IMiddleware
 
 The `IMiddleware` interface defines the contract for middleware components that can inspect, modify, or short-circuit the generation pipeline. Middleware enables extensible request/response processing patterns where each component in the chain can add functionality such as logging, validation, error handling, or custom processing logic before passing control to the next middleware in the pipeline.
