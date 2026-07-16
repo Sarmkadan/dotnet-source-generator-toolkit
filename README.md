@@ -22,6 +22,7 @@
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
 - [TypeExtensions](#typeextensions)
+- [ReflectionHelper](#reflectionhelper)
 - [StringValidator](#stringvalidator)
 - [FilePathValidator](#filepathvalidator)
 - [ToolkitOptions](#toolkitoptions)
@@ -1691,6 +1692,69 @@ bool isCollection = listType.IsCollection(); // true
 
 Type stringType = typeof(string);
 isCollection = stringType.IsCollection(); // false (string is explicitly excluded)
+```
+
+## ReflectionHelper
+
+The `ReflectionHelper` class provides utility methods for reflection-based operations commonly used throughout the .NET Source Generator Toolkit. It simplifies common reflection patterns by offering type-safe, exception-safe methods for inspecting types, retrieving members, checking inheritance relationships, and creating instances. This class is particularly useful for analyzing entity definitions, validating type hierarchies, and dynamically working with generated types.
+
+### Public Members
+
+- `GetPublicProperties(Type type)` - Gets all public instance properties of a type
+- `GetPublicMethods(Type type)` - Gets all public instance methods declared on a type
+- `ImplementsInterface(Type type, Type interfaceType)` - Checks if a type implements a specific interface
+- `GetImplementations(Assembly assembly, Type interfaceType)` - Finds all types in an assembly that implement a specific interface
+- `CreateInstance(Type type)` - Creates an instance of a type using its parameterless constructor
+- `GetCustomAttributes<T>(Type type)` - Gets custom attributes of a specific type from a type
+- `GetBaseTypes(Type type)` - Gets all base types up the inheritance hierarchy
+- `IsAutoProperty(PropertyInfo property)` - Checks if a property is auto-implemented (has backing field)
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+using System.Reflection;
+
+// Example: Analyze a domain entity type
+Type productType = typeof(Product);
+
+// Get all public properties for code generation
+IEnumerable<PropertyInfo> properties = ReflectionHelper.GetPublicProperties(productType);
+Console.WriteLine($"Properties: {properties.Count()}");
+foreach (var prop in properties)
+{
+    Console.WriteLine($" - {prop.Name}: {prop.PropertyType.Name}");
+}
+
+// Get all public methods for validation
+IEnumerable<MethodInfo> methods = ReflectionHelper.GetPublicMethods(productType);
+Console.WriteLine($"Methods: {methods.Count()}");
+
+// Check if type implements specific interfaces
+bool implementsRepository = ReflectionHelper.ImplementsInterface(productType, typeof(IRepository<>));
+Console.WriteLine($"Implements IRepository<T>: {implementsRepository}");
+
+// Find all repository implementations in an assembly
+Assembly assembly = Assembly.GetExecutingAssembly();
+IEnumerable<Type> repositoryImplementations = ReflectionHelper.GetImplementations(assembly, typeof(IRepository<>));
+Console.WriteLine($"Repository implementations: {repositoryImplementations.Count()}");
+
+// Create an instance of a type
+object? productInstance = ReflectionHelper.CreateInstance(productType);
+Console.WriteLine($"Created instance: {productInstance != null}");
+
+// Get custom attributes for validation
+IEnumerable<RepositoryAttribute> repositoryAttributes = ReflectionHelper.GetCustomAttributes<RepositoryAttribute>(productType);
+Console.WriteLine($"Repository attributes: {repositoryAttributes.Count()}");
+
+// Get base types for inheritance analysis
+IEnumerable<Type> baseTypes = ReflectionHelper.GetBaseTypes(productType);
+Console.WriteLine($"Base types: {string.Join(" → ", baseTypes.Select(t => t.Name))}");
+
+// Check if a property is auto-implemented
+PropertyInfo idProperty = productType.GetProperty("Id")!;
+bool isAutoProperty = ReflectionHelper.IsAutoProperty(idProperty);
+Console.WriteLine($"Id property is auto-implemented: {isAutoProperty}");
 ```
 
 ## StringValidator
