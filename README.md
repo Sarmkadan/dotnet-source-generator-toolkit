@@ -2144,6 +2144,72 @@ var currentRules = formattingService.GetRules();
 Console.WriteLine($"Current indent size: {currentRules.IndentSize}");
 Console.WriteLine($"Current line length: {currentRules.LineLength}");
 ```
+
+## ICodeFormatterService
+
+The `ICodeFormatterService` interface provides functionality for formatting and normalizing generated C# code with consistent indentation, spacing, and code style conventions. It serves as the primary formatting service used throughout the code generation pipeline to ensure all generated files follow standardized formatting rules.
+
+### Public Members
+
+- `string FormatCode(string code)` - Formats C# code with proper indentation and spacing
+- `string AddFileHeader(string code, string generatorType, string entityName)` - Adds header comments to generated code
+- `string TrimWhitespace(string code)` - Removes trailing whitespace from code
+- `string NormalizeLineEndings(string code)` - Normalizes line endings to Unix format
+- `bool ValidateSyntax(string code)` - Validates C# code syntax correctness
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the code formatter service
+var formatter = new CodeFormatterService(loggerFactory.CreateLogger<CodeFormatterService>());
+
+// Sample generated code
+string generatedCode = @"
+public class ProductRepository
+{
+public int Id { get; set; }
+public string Name { get; set; }
+}
+";
+
+// Format the code with proper indentation
+string formattedCode = formatter.FormatCode(generatedCode);
+Console.WriteLine("Formatted code:");
+Console.WriteLine(formattedCode);
+
+// Add file header with metadata
+string codeWithHeader = formatter.AddFileHeader(
+    formattedCode,
+    generatorType: "Repository",
+    entityName: "Product"
+);
+Console.WriteLine("\nCode with header:");
+Console.WriteLine(codeWithHeader);
+
+// Trim trailing whitespace
+string trimmedCode = formatter.TrimWhitespace(codeWithHeader);
+Console.WriteLine("\nTrimmed code:");
+Console.WriteLine(trimmedCode);
+
+// Normalize line endings to Unix format
+string normalizedCode = formatter.NormalizeLineEndings(trimmedCode);
+Console.WriteLine("\nNormalized code:");
+Console.WriteLine(normalizedCode);
+
+// Validate syntax correctness
+bool isValid = formatter.ValidateSyntax(normalizedCode);
+Console.WriteLine($"\nSyntax validation: {(isValid ? "✅ Valid" : "❌ Invalid")}");
+```
 #### `IProjectMetadataService`
 
 Extracts and manages metadata from .NET project files including dependencies, framework targets, and project configuration.
