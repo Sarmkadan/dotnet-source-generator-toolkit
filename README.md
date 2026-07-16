@@ -2086,6 +2086,64 @@ public interface ISerializerGeneratorService
 }
 ```
 
+
+#### `IFormattingService`
+
+
+The `IFormattingService` interface provides functionality for formatting generated C# code according to configurable style rules. It handles indentation, spacing, line breaks, and other formatting aspects to ensure consistent code style across all generated files. The service supports customizable formatting rules including indent size, tab vs space preference, line length limits, and blank line management.
+
+### Public Members
+
+- `string FormatCode(string code)` - Formats C# code according to configured rules
+- `FormattingRules GetRules()` - Retrieves current formatting configuration
+- `void SetRules(FormattingRules rules)` - Updates formatting configuration
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the formatting service
+var formattingService = new FormattingService(loggerFactory.CreateLogger<FormattingService>());
+
+// Define formatting rules
+var rules = new FormattingRules
+{
+    IndentSize = 4,
+    UseTabs = false,
+    LineLength = 120,
+    AddBlankLineBeforeMethod = true,
+    RemoveTrailingWhitespace = true
+};
+
+// Apply formatting rules
+formattingService.SetRules(rules);
+
+// Format generated code
+string generatedCode = @"
+public class Product
+{
+public int Id { get; set; }
+public string Name { get; set; }
+}
+";
+
+string formattedCode = formattingService.FormatCode(generatedCode);
+Console.WriteLine(formattedCode);
+
+// Get current formatting rules
+var currentRules = formattingService.GetRules();
+Console.WriteLine($"Current indent size: {currentRules.IndentSize}");
+Console.WriteLine($"Current line length: {currentRules.LineLength}");
+```
 #### `IProjectMetadataService`
 
 Extracts and manages metadata from .NET project files including dependencies, framework targets, and project configuration.
