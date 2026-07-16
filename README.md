@@ -415,6 +415,117 @@ mockResult.IsValid.Should().BeFalse();
 mockResult.Errors.Should().ContainSingle(e => e == "Simulated validation failure");
 ```
 
+## Entity
+
+The `Entity` class represents a domain entity that will be processed by the source generator toolkit. It contains metadata about the entity and its properties for generation, including information about the entity's structure, relationships, and validation rules. This is the core domain model used throughout the code generation pipeline.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create a new entity for a Product domain model
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities",
+    Description = "Represents a product in the e-commerce system",
+    TableName = "Products",
+    IsSealed = false,
+    AccessModifier = AccessModifier.Public
+};
+
+// Add properties to the entity
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true,
+    IsRequired = true,
+    GetterAccess = AccessModifier.Public,
+    SetterAccess = AccessModifier.Private,
+    Description = "Primary key identifier for the product"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100,
+    Description = "Product name"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000,
+    Description = "Product price"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Category",
+    Type = "Category",
+    IsNavigationProperty = true,
+    IsRequired = true,
+    Description = "Product category"
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Tags",
+    Type = "string",
+    IsCollection = true,
+    IsRequired = false,
+    Description = "Product tags"
+});
+
+// Add attributes and interfaces
+productEntity.Attributes.Add("[Table(\"Products\")]");
+productEntity.Interfaces.Add("IPricedEntity");
+productEntity.Interfaces.Add("IAuditable");
+
+// Set base class
+productEntity.BaseClass = "AuditableEntity";
+
+// Access entity metadata
+Console.WriteLine($"Entity: {productEntity.Name}");
+Console.WriteLine($"Namespace: {productEntity.Namespace}");
+Console.WriteLine($"Table: {productEntity.TableName}");
+Console.WriteLine($"Properties: {productEntity.Properties.Count}");
+Console.WriteLine($"Interfaces: {string.Join(", ", productEntity.Interfaces)}");
+
+// Validate the entity
+var validationErrors = productEntity.Validate().ToList();
+if (validationErrors.Any())
+{
+    Console.WriteLine("Validation errors:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Get primary key
+var primaryKey = productEntity.GetPrimaryKeyProperty();
+if (primaryKey != null)
+{
+    Console.WriteLine($"Primary key: {primaryKey.Name} ({primaryKey.Type})");
+}
+
+// Get navigation properties
+var navigationProperties = productEntity.GetNavigationProperties();
+Console.WriteLine($"Navigation properties: {navigationProperties.Count()}");
+
+// Remove a property if needed
+productEntity.RemoveProperty("Tags");
+```
+
 ## GenerationResult
 
 The `GenerationResult` class represents the outcome of a single code generation operation. It contains comprehensive metadata about the generation process including the generated code content, output file path, status information, warnings, errors, performance metrics, and timestamps. This type is returned by all generator services (`RepositoryGeneratorService`, `MapperGeneratorService`, `ValidatorGeneratorService`, `SerializerGeneratorService`) and provides detailed information for logging, error handling, and monitoring.
