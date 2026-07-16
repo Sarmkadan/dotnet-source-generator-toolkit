@@ -636,6 +636,136 @@ generationResult.AddWarning("Property naming convention differs from team standa
 generationResult.AddError("Primary key validation failed");
 ```
 
+## IGenerationResultAggregatorService
+
+The `IGenerationResultAggregatorService` interface provides functionality to aggregate, analyze, and report on code generation results. It collects statistics across multiple generation operations, generates comprehensive reports, and provides insights into success rates, performance metrics, and error patterns. This service is essential for monitoring batch generation processes and generating actionable insights from generation results.
+
+### Public Members
+
+- `GenerationReport Analyze(IEnumerable<GenerationResult> results)` - Analyzes a collection of generation results and returns a detailed report
+- `string GenerateReport(GenerationReport report)` - Generates a formatted text report from analysis results
+- `GenerationStatistics GetStatistics(IEnumerable<GenerationResult> results)` - Gets statistical analysis of generation performance
+- `Task<string> ExportToJsonAsync(GenerationReport report)` - Exports results to JSON format
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the aggregator service
+var aggregator = new GenerationResultAggregatorService(
+    loggerFactory.CreateLogger<GenerationResultAggregatorService>()
+);
+
+// Simulate multiple generation results
+var results = new List<GenerationResult>
+{
+    new GenerationResult
+    {
+        EntityName = "Product",
+        GeneratorType = GeneratorType.Repository,
+        Status = GenerationStatus.Completed,
+        CodeLineCount = 150,
+        GenerationDurationMs = 250,
+        Warnings = new List<string> { "Consider adding async methods" },
+        Errors = new List<string>()
+    },
+    new GenerationResult
+    {
+        EntityName = "Customer",
+        GeneratorType = GeneratorType.Mapper,
+        Status = GenerationStatus.Completed,
+        CodeLineCount = 120,
+        GenerationDurationMs = 180,
+        Warnings = new List<string>(),
+        Errors = new List<string>()
+    },
+    new GenerationResult
+    {
+        EntityName = "Order",
+        GeneratorType = GeneratorType.Validator,
+        Status = GenerationStatus.Failed,
+        CodeLineCount = 0,
+        GenerationDurationMs = 45,
+        Warnings = new List<string>(),
+        Errors = new List<string> { "Validation rule syntax error" }
+    },
+    new GenerationResult
+    {
+        EntityName = "User",
+        GeneratorType = GeneratorType.Serializer,
+        Status = GenerationStatus.Completed,
+        CodeLineCount = 95,
+        GenerationDurationMs = 150,
+        Warnings = new List<string> { "Consider adding XML support" },
+        Errors = new List<string>()
+    }
+};
+
+// Analyze the results
+var report = aggregator.Analyze(results);
+
+// Generate a formatted report
+string formattedReport = aggregator.GenerateReport(report);
+Console.WriteLine(formattedReport);
+
+// Get detailed statistics
+var statistics = aggregator.GetStatistics(results);
+Console.WriteLine($"\n📊 Statistics:");
+Console.WriteLine($"Success Rate: {statistics.SuccessPercentage:F2}%");
+Console.WriteLine($"Total Duration: {statistics.TotalCodeLines:N0} lines across {statistics.EntitiesProcessed} entities");
+Console.WriteLine($"Average Duration: {statistics.AverageDurationMs:F2}ms");
+Console.WriteLine($"Min/Max Duration: {statistics.MinDurationMs}ms / {statistics.MaxDurationMs}ms");
+
+// Export to JSON for further processing
+string jsonReport = await aggregator.ExportToJsonAsync(report);
+Console.WriteLine($"\n📄 JSON Report (first 200 chars):");
+Console.WriteLine(jsonReport[..Math.Min(200, jsonReport.Length)] + "...");
+
+// Access report properties
+Console.WriteLine($"\n📈 Report Summary:");
+Console.WriteLine($"Total Results: {report.TotalResults}");
+Console.WriteLine($"Success: {report.SuccessCount} ({report.SuccessRate:F2}%)");
+Console.WriteLine($"Failed: {report.FailureCount}");
+Console.WriteLine($"Skipped: {report.SkippedCount}");
+Console.WriteLine($"Total Duration: {report.TotalDurationMs}ms");
+Console.WriteLine($"Total Lines: {report.TotalLinesGenerated:N0}");
+Console.WriteLine($"Total Warnings: {report.TotalWarnings}");
+Console.WriteLine($"Total Errors: {report.TotalErrors}");
+Console.WriteLine($"Report Generated: {report.ReportGeneratedAt:yyyy-MM-dd HH:mm:ss}");
+
+// Access breakdown by generator type
+Console.WriteLine("\n📊 Results by Type:");
+foreach (var kvp in report.ResultsByType)
+{
+    Console.WriteLine($"  {kvp.Key}: {kvp.Value} results");
+}
+
+// Access failed results for troubleshooting
+if (report.FailedResults.Count > 0)
+{
+    Console.WriteLine($"\n❌ Failed Entities ({report.FailedResults.Count}):");
+    foreach (var failedResult in report.FailedResults)
+    {
+        Console.WriteLine($"  - {failedResult.EntityName} ({failedResult.GeneratorType}):");
+        foreach (var error in failedResult.Errors)
+        {
+            Console.WriteLine($"    • {error}");
+        }
+    }
+}
+```
+
+
 The `EntityProperty` class represents a property of an entity with comprehensive metadata for code generation. It includes type information, validation rules, database mapping configuration, and access modifiers. This class is the foundation for generating repositories, mappers, validators, and serializers.
 
 ### Usage Example
