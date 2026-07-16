@@ -4672,6 +4672,217 @@ The above copyright notice and this permission notice shall be included in all c
 
 ---
 
+## EntityRepository
+
+The `EntityRepository` class provides an in-memory implementation of the repository pattern for persisting and querying `Entity` objects. It offers complete CRUD operations with async/await support, along with advanced query methods for filtering entities by name, namespace, and other criteria. This repository is ideal for temporary storage, testing scenarios, or as a foundation for more sophisticated data access implementations.
+
+### Key Features
+
+- **Complete CRUD operations**: Create, Read, Update, and Delete entities with full async support
+- **Advanced querying**: Filter entities by name, namespace, and retrieve all entities
+- **Validation**: Automatic validation of entities before insertion or update
+- **Logging**: Integrated logging for tracking repository operations
+- **Thread-safe**: Async operations ensure thread safety for concurrent access
+
+### Public Members
+
+- `EntityRepository(ILogger<EntityRepository> logger)` - Constructor that accepts a logger for diagnostic output
+- `Task<Entity?> GetByIdAsync(string id)` - Retrieves an entity by its unique identifier
+- `Task<IEnumerable<Entity>> GetAllAsync()` - Retrieves all entities in the repository
+- `Task<IEnumerable<Entity>> GetByNameAsync(string name)` - Retrieves entities filtered by name (case-insensitive)
+- `Task<Entity> AddAsync(Entity entity)` - Adds a new entity to the repository with validation
+- `Task<Entity> UpdateAsync(Entity entity)` - Updates an existing entity in the repository
+- `Task<bool> DeleteAsync(string id)` - Deletes an entity by its identifier
+- `Task<IEnumerable<Entity>> GetByNamespaceAsync(string namespaceName)` - Retrieves entities filtered by namespace (case-insensitive)
+- `Task<int> CountAsync()` - Gets the total count of entities in the repository
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Repositories;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the entity repository
+var entityRepository = new EntityRepository(loggerFactory.CreateLogger<EntityRepository>());
+
+// Create and add a new entity
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities",
+    Description = "Represents a product in the system",
+    TableName = "Products",
+    IsSealed = false,
+    AccessModifier = AccessModifier.Public
+};
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true,
+    IsRequired = true,
+    GetterAccess = AccessModifier.Public,
+    SetterAccess = AccessModifier.Private
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000
+});
+
+// Add the entity to the repository
+var addedEntity = await entityRepository.AddAsync(productEntity);
+Console.WriteLine($"Added entity with ID: {addedEntity.Id}");
+
+// Retrieve all entities
+var allEntities = await entityRepository.GetAllAsync();
+Console.WriteLine($"Total entities in repository: {await entityRepository.CountAsync()}");
+
+// Retrieve entity by ID
+var retrievedEntity = await entityRepository.GetByIdAsync(addedEntity.Id);
+if (retrievedEntity != null)
+{
+    Console.WriteLine($"Retrieved entity: {retrievedEntity.Name}");
+}
+
+// Retrieve entities by name
+var entitiesByName = await entityRepository.GetByNameAsync("Product");
+Console.WriteLine($"Entities with name 'Product': {entitiesByName.Count()}");
+
+// Retrieve entities by namespace
+var entitiesByNamespace = await entityRepository.GetByNamespaceAsync("MyApp.Domain.Entities");
+Console.WriteLine($"Entities in namespace 'MyApp.Domain.Entities': {entitiesByNamespace.Count()}");
+
+// Update an entity
+retrievedEntity.Description = "Updated product entity";
+var updatedEntity = await entityRepository.UpdateAsync(retrievedEntity);
+Console.WriteLine($"Updated entity: {updatedEntity.Description}");
+
+// Delete an entity
+bool deleted = await entityRepository.DeleteAsync(addedEntity.Id);
+Console.WriteLine($"Entity deleted successfully: {deleted}");
+
+// Get total count
+int totalCount = await entityRepository.CountAsync();
+Console.WriteLine($"Final entity count: {totalCount}");
+```
+
+## GenerationResultEntityRepository
+
+The `GenerationResultEntityRepository` class provides an in-memory implementation of the repository pattern for persisting and querying `GenerationResult` objects. It tracks code generation operation results, enabling retrieval by entity name, status, and other criteria. This repository is useful for monitoring generation processes, analyzing results, and maintaining a history of generation operations.
+
+### Key Features
+
+- **Result tracking**: Store and retrieve generation operation results
+- **Status filtering**: Filter results by generation status (Completed, Failed, Pending, etc.)
+- **Entity-based queries**: Retrieve results associated with specific entities
+- **Counting**: Get total results or results by status
+- **Logging**: Integrated logging for tracking repository operations
+
+### Public Members
+
+- `GenerationResultEntityRepository(ILogger<GenerationResultEntityRepository> logger)` - Constructor that accepts a logger for diagnostic output
+- `Task<GenerationResult?> GetByIdAsync(string id)` - Retrieves a generation result by its unique identifier
+- `Task<IEnumerable<GenerationResult>> GetAllAsync()` - Retrieves all generation results in the repository
+- `Task<IEnumerable<GenerationResult>> GetByEntityAsync(string entityName)` - Retrieves results filtered by entity name (case-insensitive)
+- `Task<IEnumerable<GenerationResult>> GetByStatusAsync(GenerationStatus status)` - Retrieves results filtered by generation status
+- `Task<GenerationResult> AddAsync(GenerationResult result)` - Adds a new generation result to the repository
+- `Task<GenerationResult> UpdateAsync(GenerationResult result)` - Updates an existing generation result in the repository
+- `Task<bool> DeleteAsync(string id)` - Deletes a generation result by its identifier
+- `Task<int> CountAsync()` - Gets the total count of generation results in the repository
+- `Task<int> CountByStatusAsync(GenerationStatus status)` - Gets the count of results by status
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Repositories;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the generation result repository
+var resultRepository = new GenerationResultEntityRepository(loggerFactory.CreateLogger<GenerationResultEntityRepository>());
+
+// Create and add a generation result
+var generationResult = new GenerationResult
+{
+    EntityName = "Product",
+    GeneratorType = GeneratorType.Repository,
+    Status = GenerationStatus.Completed,
+    CodeLineCount = 150,
+    GenerationDurationMs = 250,
+    Warnings = new List<string> { "Consider adding async methods" },
+    Errors = new List<string>()
+};
+
+var addedResult = await resultRepository.AddAsync(generationResult);
+Console.WriteLine($"Added generation result with ID: {addedResult.Id}");
+
+// Retrieve all results
+var allResults = await resultRepository.GetAllAsync();
+Console.WriteLine($"Total results in repository: {await resultRepository.CountAsync()}");
+
+// Retrieve result by ID
+var retrievedResult = await resultRepository.GetByIdAsync(addedResult.Id);
+if (retrievedResult != null)
+{
+    Console.WriteLine($"Retrieved result for entity: {retrievedResult.EntityName}");
+}
+
+// Retrieve results by entity name
+var resultsByEntity = await resultRepository.GetByEntityAsync("Product");
+Console.WriteLine($"Results for entity 'Product': {resultsByEntity.Count()}");
+
+// Retrieve results by status
+var completedResults = await resultRepository.GetByStatusAsync(GenerationStatus.Completed);
+Console.WriteLine($"Completed results: {completedResults.Count()}");
+
+// Count results by status
+int failedCount = await resultRepository.CountByStatusAsync(GenerationStatus.Failed);
+Console.WriteLine($"Failed results count: {failedCount}");
+
+// Update a result
+retrievedResult.Status = GenerationStatus.Completed;
+var updatedResult = await resultRepository.UpdateAsync(retrievedResult);
+Console.WriteLine($"Updated result status: {updatedResult.Status}");
+
+// Delete a result
+bool deleted = await resultRepository.DeleteAsync(addedResult.Id);
+Console.WriteLine($"Result deleted successfully: {deleted}");
+
+// Get total count
+int totalCount = await resultRepository.CountAsync();
+Console.WriteLine($"Final result count: {totalCount}");
+```
+
 **Built by [Vladyslav Zaiets](https://sarmkadan.com) - CTO & Software Architect**
 
 [Portfolio](https://sarmkadan.com) | [GitHub](https://github.com/Sarmkadan) | [Telegram](https://t.me/sarmkadan)
