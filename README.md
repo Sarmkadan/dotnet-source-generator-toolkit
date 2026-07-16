@@ -2418,6 +2418,70 @@ cd tests/dotnet-source-generator-toolkit.Tests
 dotnet test --configuration Release
 ```
 
+## SourceFile
+
+The `SourceFile` class represents a C# source file with its metadata, content, and processing state. It serves as the primary data structure for analyzing existing files, tracking generated artifacts, and managing the source file lifecycle throughout the code generation pipeline. The class provides comprehensive metadata extraction, content manipulation, and validation capabilities for working with C# source files.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+
+// Create a source file from an existing C# file
+var sourceFile = new SourceFile
+{
+    FilePath = "/path/to/MyProject/Entities/Product.cs",
+    FileName = "Product.cs",
+    FileContent = """
+using System;
+using System.Collections.Generic;
+
+namespace MyApp.Domain.Entities;
+
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+""",
+    ProjectPath = "/path/to/MyProject"
+};
+
+// Analyze the file content to extract metadata
+sourceFile.AnalyzeContent();
+
+// Access extracted metadata
+Console.WriteLine($"File: {sourceFile.FileName}");
+Console.WriteLine($"Namespace: {sourceFile.Namespaces.FirstOrDefault()}");
+Console.WriteLine($"Types: {string.Join(", ", sourceFile.TypeNames)}");
+Console.WriteLine($"Usings: {string.Join(", ", sourceFile.Usings)}");
+Console.WriteLine($"Line count: {sourceFile.LineCount}");
+Console.WriteLine($"File size: {sourceFile.FileSizeBytes} bytes");
+
+// Add additional using statements
+sourceFile.AddUsing("System.ComponentModel.DataAnnotations");
+
+// Validate the source file
+var validationErrors = sourceFile.Validate().ToList();
+if (validationErrors.Any())
+{
+    Console.WriteLine("Validation errors:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Prepend using statements to the content
+sourceFile.PrependUsings();
+
+// Mark as processed
+sourceFile.Status = SourceFileStatus.Processed;
+sourceFile.ModifiedAt = DateTime.UtcNow;
+```
+
 ## Related Projects
 
 - [dotnet-micro-orm](https://github.com/sarmkadan/dotnet-micro-orm) - High-performance micro-ORM for .NET - compiled expressions, batch operations, change tracking, multi-DB support
