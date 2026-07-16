@@ -10976,3 +10976,243 @@
 +- docs: add ValidationExceptionExtensions documentation section with usage examples
 +- docs: describe .aider.chat.history usage in README
 +- docs: add ConfigurationManagerExtensions documentation section with usage examples
+
+# 2026-07-16 14:52:08.240172
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
+
+# 2026-07-16 14:52:08.240234
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
+
+# 2026-07-16 14:52:23.502080
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
+
+# 2026-07-16 14:52:23.502158
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
+
+# 2026-07-16 14:53:33.082124
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
+
+# 2026-07-16 14:53:33.082180
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `CliOptions` (defined in `CLI/CliOptions.cs`).
++
++Add a "## CliOptions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public string ProjectPath
++public string? OutputPath
++public List<string> GeneratorTypes
++public string OutputFormat
++public bool Verbose
++public bool ShowHelp
++public bool ShowVersion
++public string? NamespaceOverride
++public bool Recursive
++public bool GenerateDtos
++public string? ConfigFile
++public bool DryRun
++public bool ValidateOnly
++public int DegreeOfParallelism
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme tweaks
++- document README in the readme
++- reamde: README usage
++- explain README in readme
++- update readme
++- docs: add BasicExample documentation section to README
++- link the architecture doc from readme
++- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
++- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
++- rewrite architecture doc to match the actual code
