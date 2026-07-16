@@ -19,6 +19,7 @@
 - [Quick Start](#quick-start)
 - [Usage Examples](#usage-examples)
 - [API Reference](#api-reference)
+- [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
 - [CLI Reference](#cli-reference)
 - [Troubleshooting](#troubleshooting)
@@ -2457,6 +2458,50 @@ if (specificEntity != null)
 ```
 
 ## API Reference
+
+## ToolkitOptions
+
+The `ToolkitOptions` class provides centralized configuration for the code generation toolkit. It controls caching behavior, parallelism, output formatting, logging verbosity, and other generation parameters. This type is typically loaded from configuration files or environment variables and passed to generator services.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Configuration;
+
+// Create configuration with custom settings
+var options = new ToolkitOptions
+{
+    EnableCaching = true,
+    CacheExpirationMinutes = 30,
+    EnableCodeFormatting = true,
+    CodeFormattingLineLength = 120,
+    VerboseLogging = true,
+    MaxDegreeOfParallelism = 4,
+    OperationTimeoutSeconds = 60,
+    GenerateDtos = true,
+    DefaultNamespace = "MyApp.Domain.Generated",
+    OutputDirectory = "./GeneratedCode",
+    BackupExistingFiles = true,
+    GenerateInterfaces = true,
+    GenerateXmlComments = true
+};
+
+// Use with generator services
+var repositoryGenerator = new RepositoryGeneratorService(
+    logger,
+    options
+);
+
+var mapperGenerator = new MapperGeneratorService(
+    logger,
+    options
+);
+
+// Access configuration values
+Console.WriteLine($"Output directory: {options.OutputDirectory}");
+Console.WriteLine($"Parallelism: {options.MaxDegreeOfParallelism}");
+Console.WriteLine($"Timeout: {options.OperationTimeoutSeconds}s");
+```
 
 ### Core Interfaces
 
