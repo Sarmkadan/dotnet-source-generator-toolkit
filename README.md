@@ -19,6 +19,7 @@
 - [Quick Start](#quick-start)
 - [Usage Examples](#usage-examples)
 - [API Reference](#api-reference)
+- [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
 - [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
@@ -1405,6 +1406,61 @@ IReadOnlyDictionary<string, string> allConfig = configuration.GetAllConfig();
 - `XmlOutputFormatter`: Document-oriented XML
 - `TextOutputFormatter`: Human-readable summaries
 - `FormatterFactory`: Runtime formatter selection
+
+## DateTimeExtensions
+
+The `DateTimeExtensions` class provides a comprehensive set of extension methods for working with `DateTime` values in .NET. It includes utilities for temporal comparisons, elapsed time calculations, ISO 8601 formatting, human-readable relative formatting, and date boundary calculations (start/end of day/month), making it easier to handle date/time operations in code generation scenarios.
+
+### Public Members
+
+- `bool IsPast(this DateTime dateTime)` - Determines whether the specified DateTime is in the past
+- `bool IsFuture(this DateTime dateTime)` - Determines whether the specified DateTime is in the future
+- `TimeSpan ElapsedSince(this DateTime dateTime)` - Gets the elapsed time from the specified DateTime to the current UTC time
+- `string ToIso8601(this DateTime dateTime)` - Formats the specified DateTime as an ISO 8601 string
+- `string ToRelativeFormat(this DateTime dateTime)` - Formats the specified DateTime in human-readable relative format
+- `DateTime StartOfDay(this DateTime dateTime)` - Gets the start of the day (midnight) for the specified DateTime
+- `DateTime EndOfDay(this DateTime dateTime)` - Gets the end of the day (23:59:59.999) for the specified DateTime
+- `DateTime StartOfMonth(this DateTime dateTime)` - Gets the start of the month (first day at midnight) for the specified DateTime
+- `DateTime EndOfMonth(this DateTime dateTime)` - Gets the end of the month (last day at 23:59:59.999) for the specified DateTime
+- `bool IsBetween(this DateTime dateTime, DateTime startDate, DateTime endDate)` - Determines whether the specified DateTime is between two dates (inclusive)
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Create a UTC DateTime for consistent comparisons
+DateTime now = DateTime.UtcNow;
+DateTime yesterday = now.AddDays(-1);
+DateTime tomorrow = now.AddDays(1);
+DateTime lastMonth = now.AddMonths(-1);
+
+// Check if dates are in the past or future
+bool isPast = yesterday.IsPast(); // true
+bool isFuture = tomorrow.IsFuture(); // true
+
+// Calculate elapsed time
+TimeSpan elapsed = yesterday.ElapsedSince(); // TimeSpan representing how long ago yesterday was
+Console.WriteLine($"Yesterday was {elapsed.TotalHours} hours ago");
+
+// Format dates in ISO 8601
+string isoDate = now.ToIso8601(); // "2025-07-16T14:30:45.1234567Z"
+
+// Format dates in human-readable relative format
+string relative = yesterday.ToRelativeFormat(); // "1 day ago"
+string justNow = now.ToRelativeFormat(); // "just now"
+
+// Get start/end of day
+DateTime startOfToday = now.StartOfDay(); // Midnight of current day
+DateTime endOfToday = now.EndOfDay(); // 23:59:59.999 of current day
+
+// Get start/end of month
+DateTime startOfCurrentMonth = now.StartOfMonth(); // First day of current month
+DateTime endOfCurrentMonth = now.EndOfMonth(); // Last day of current month
+
+// Check if date is between two dates
+bool isBetween = now.IsBetween(yesterday, tomorrow); // true
+```
 
 ## CollectionExtensions
 
