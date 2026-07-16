@@ -19,6 +19,7 @@
 - [Quick Start](#quick-start)
 - [Usage Examples](#usage-examples)
 - [API Reference](#api-reference)
+- [CollectionExtensions](#collectionextensions)
 - [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
 - [CLI Reference](#cli-reference)
@@ -1404,6 +1405,89 @@ IReadOnlyDictionary<string, string> allConfig = configuration.GetAllConfig();
 - `XmlOutputFormatter`: Document-oriented XML
 - `TextOutputFormatter`: Human-readable summaries
 - `FormatterFactory`: Runtime formatter selection
+
+## CollectionExtensions
+
+The `CollectionExtensions` class provides a comprehensive set of extension methods for working with collections and enumerables in .NET. It includes utilities for batch processing, parallel operations, partitioning, and safe element access, making it easier to handle collections efficiently in code generation scenarios.
+
+### Public Members
+
+- `IEnumerable<IEnumerable<T>> Partition<T>(this IEnumerable<T> source, int partitionSize)` - Partitions a collection into chunks of specified size
+- `Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int degreeOfParallelism = -1)` - Processes collection items in parallel with configurable degree of parallelism
+- `void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)` - Adds multiple items to a collection in one call
+- `bool IsNullOrEmpty<T>(this IEnumerable<T>? source)` - Checks if collection is null or empty
+- `IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)` - Returns distinct elements based on a key selector function
+- `IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> source)` - Flattens a collection of collections into a single collection
+- `IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> collection, int batchSize)` - Batches collection into groups of specified size
+- `T SafeElementAt<T>(this IEnumerable<T> collection, int index, T defaultValue = default)` - Safely accesses collection element or returns default value if out of range
+- `IEnumerable<T[]> Chunk<T>(this IEnumerable<T> collection, int size)` - Chunks collection into groups of specified size (for .NET versions without built-in Chunk)
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Sample data
+var numbers = Enumerable.Range(1, 20);
+var products = new List<Product> 
+{
+    new Product { Id = 1, Name = "Laptop", Price = 999.99m },
+    new Product { Id = 2, Name = "Mouse", Price = 29.99m },
+    new Product { Id = 3, Name = "Keyboard", Price = 79.99m },
+    new Product { Id = 4, Name = "Monitor", Price = 249.99m }
+};
+
+// Partition a collection into chunks of 5 items each
+var partitions = numbers.Partition(5);
+foreach (var partition in partitions)
+{
+    Console.WriteLine($"Partition: [{string.Join(", ", partition)}]");
+}
+
+// Process collection in parallel with 4 concurrent operations
+await products.ParallelForEachAsync(async product => 
+{
+    Console.WriteLine($"Processing product {product.Id}: {product.Name}");
+    await Task.Delay(100); // Simulate async work
+}, degreeOfParallelism: 4);
+
+// Add multiple items to a collection at once
+var categories = new List<string>();
+categories.AddRange(new[] { "Electronics", "Computers", "Accessories" });
+
+// Check if collection is null or empty
+bool isEmpty = products.IsNullOrEmpty(); // false
+bool isNullCollectionEmpty = ((List<Product>?)null).IsNullOrEmpty(); // true
+
+// Get distinct elements by a key selector
+var distinctProducts = products.DistinctBy(p => p.Price);
+
+// Flatten a collection of collections
+var nestedLists = new List<List<int>>
+{
+    new List<int> { 1, 2, 3 },
+    new List<int> { 4, 5 },
+    new List<int> { 6, 7, 8, 9 }
+};
+var flattened = nestedLists.Flatten();
+
+// Batch a collection into groups of 2
+var batches = products.Batch(2);
+foreach (var batch in batches)
+{
+    Console.WriteLine($"Batch: {string.Join(", ", batch.Select(p => p.Name))}");
+}
+
+// Safely access element at index (returns default if out of range)
+var safeElement = products.SafeElementAt(10, new Product { Id = -1, Name = "Default" });
+
+// Chunk a collection into arrays of specified size
+var chunks = products.Chunk(2);
+foreach (var chunk in chunks)
+{
+    Console.WriteLine($"Chunk size: {chunk.Length}");
+}
+```
 
 ## Installation
 
