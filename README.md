@@ -1700,6 +1700,92 @@ foreach (var result in results.Where(r => !r.IsSuccessful))
 }
 ```
 
+## SourceGeneratorService
+
+The `SourceGeneratorService` is the main orchestration service that coordinates the complete source generation workflow. It analyzes .NET projects to discover entities marked with generation attributes, validates project structure, and generates code artifacts including repositories, mappers, validators, and serializers. This service serves as the primary entry point for programmatic code generation workflows.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create required services (in real usage, these would be injected via DI)
+var fileSystemService = new FileSystemService(loggerFactory.CreateLogger<FileSystemService>());
+var entityAnalyzer = new EntityAnalyzer();
+var repositoryGenerator = new RepositoryGeneratorService();
+var mapperGenerator = new MapperGeneratorService();
+var validatorGenerator = new ValidatorGeneratorService();
+var serializerGenerator = new SerializerGeneratorService();
+
+// Create the source generator service
+var sourceGenerator = new SourceGeneratorService(
+    entityAnalyzer,
+    fileSystemService,
+    repositoryGenerator,
+    mapperGenerator,
+    validatorGenerator,
+    serializerGenerator,
+    loggerFactory.CreateLogger<SourceGeneratorService>()
+);
+
+// Analyze a project to discover entities
+var projectPath = "/path/to/your/project";
+var projectInfo = await sourceGenerator.AnalyzeProjectAsync(projectPath);
+
+Console.WriteLine($"Analyzed project: {projectInfo.ProjectName}");
+Console.WriteLine($"Found {projectInfo.Entities.Count} entities");
+
+// Validate the project structure
+var validationResult = await sourceGenerator.ValidateProjectAsync(projectInfo);
+if (!validationResult.IsValid)
+{
+    Console.WriteLine("Project validation failed:");
+    foreach (var error in validationResult.Errors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+    return;
+}
+
+// Generate code for all entities in the project
+var generationResults = await sourceGenerator.GenerateAllAsync(projectInfo);
+
+Console.WriteLine($"Generated {generationResults.Count()} files:");
+foreach (var result in generationResults)
+{
+    Console.WriteLine($" - {result.EntityName} ({result.GeneratorType}): {result.Status}");
+    if (result.IsSuccessful)
+    {
+        Console.WriteLine($"   Output: {result.OutputFilePath}");
+        Console.WriteLine($"   Lines: {result.CodeLineCount}");
+    }
+    else
+    {
+        Console.WriteLine($"   Errors: {string.Join(", ", result.Errors)}");
+    }
+}
+
+// Alternatively, generate code for a specific entity
+var specificEntity = projectInfo.Entities.FirstOrDefault(e => e.Name == "Product");
+if (specificEntity != null)
+{
+    var entityResults = await sourceGenerator.GenerateForEntityAsync(specificEntity, projectInfo);
+    foreach (var result in entityResults)
+    {
+        Console.WriteLine($"Generated for {result.EntityName}: {result.Status}");
+    }
+}
+```
+
 ## API Reference
 
 ### Core Interfaces
