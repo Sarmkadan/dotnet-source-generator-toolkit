@@ -1940,6 +1940,129 @@ collector.RecordOperation("DatabaseQuery", "QueryDuration", 1, 45);
 var snapshot = collector.GetSnapshotAndReset();
 ```
 
+## EcommerceExample
+
+The `EcommerceExample` class demonstrates a complete e-commerce domain model with entities for products, orders, and order items. It showcases how to define domain entities with generation attributes, create DTOs for API responses, and implement service classes that leverage generated repositories, mappers, validators, and serializers.
+
+This example generates repository, mapper, validator, and serializer implementations for a complete e-commerce system including product catalog management, order processing, and inventory tracking.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Examples;
+using DotNetSourceGeneratorToolkit.Services;
+
+// Define your product entity with generation attributes
+[Repository]
+[Mapper]
+[Validator]
+[Serializer(Formats = new[] { "Json", "Xml" })]
+public sealed class Product
+{
+    public int Id { get; set; }
+    public string Sku { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public int StockQuantity { get; set; }
+    public int CategoryId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? ModifiedAt { get; set; }
+    public bool IsActive { get; set; } = true;
+}
+
+// Define your order entity with generation attributes
+[Repository]
+[Mapper]
+[Validator]
+public sealed class Order
+{
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+    public decimal TotalAmount { get; set; }
+    public string Status { get; set; } = "Pending";
+    public string ShippingAddress { get; set; } = string.Empty;
+    public List<OrderItem> Items { get; set; } = [];
+}
+
+// Define your order item entity with generation attributes
+[Mapper]
+[Validator]
+public sealed class OrderItem
+{
+    public int Id { get; set; }
+    public int OrderId { get; set; }
+    public int ProductId { get; set; }
+}
+
+// Define DTOs for API responses
+[Mapper]
+public sealed class ProductDto
+{
+    public int Id { get; set; }
+    public string Sku { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public int StockQuantity { get; set; }
+}
+
+[Mapper]
+public sealed class OrderDto
+{
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    public DateTime OrderDate { get; set; }
+    public decimal TotalAmount { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public List<OrderItemDto> Items { get; set; } = [];
+}
+
+// Use the generated services in your application
+public sealed class OrderService
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IProductRepository _productRepository;
+    private readonly IOrderMapper _orderMapper;
+    private readonly IProductMapper _productMapper;
+    private readonly IOrderValidator _orderValidator;
+
+    public OrderService(
+        IOrderRepository orderRepository,
+        IProductRepository productRepository,
+        IOrderMapper orderMapper,
+        IProductMapper productMapper,
+        IOrderValidator orderValidator)
+    {
+        _orderRepository = orderRepository;
+        _productRepository = productRepository;
+        _orderMapper = orderMapper;
+        _productMapper = productMapper;
+        _orderValidator = orderValidator;
+    }
+
+    public async Task<OrderDto?> GetOrderAsync(int orderId)
+    {
+        var order = await _orderRepository.GetByIdAsync(orderId);
+        if (order is null) return null;
+
+        var validationResult = await _orderValidator.ValidateAsync(order);
+        if (!validationResult.IsValid) throw new InvalidOperationException("Invalid order data");
+
+        return _orderMapper.MapToDto(order);
+    }
+
+    public async Task<OrderDto> CreateOrderAsync(OrderDto orderDto)
+    {
+        var order = _orderMapper.MapFromDto(orderDto);
+        var validationResult = await _orderValidator.ValidateAsync(order);
+        if (!validationResult.IsValid) throw new InvalidOperationException("Order validation failed");
+
+        var createdOrder = await _orderRepository.CreateAsync(order);
+        return _orderMapper.MapToDto(createdOrder);
+    }
+}
+```
 
 ## IWebhookService
 
