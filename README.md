@@ -359,6 +359,69 @@ if (!pipeline.IsSuccessful && pipeline.ErrorMessage != null)
 Console.WriteLine($"📋 Result - Entities: {result.EntitiesFound}, Generated: {result.GeneratedFiles}, Written: {result.FilesWritten}");
 ```
 
+## IConfigurationValidator
+
+The `IConfigurationValidator` interface defines a contract for validating configuration options and providing detailed error messages and warnings. It is used throughout the toolkit to ensure configuration values are valid before generation begins, enabling early detection of issues like missing directories, invalid timeout values, or malformed paths. The validator returns a `ValidationResult` containing both errors (which prevent execution) and warnings (which indicate potential issues that won't stop generation).
+
+### Public Members
+
+- `bool IsValid` - Indicates whether validation passed without errors
+- `List<string> Errors` - Collection of error messages that prevent execution
+- `List<string> Warnings` - Collection of warning messages for potential issues
+- `void AddError(string message)` - Adds an error message to the result
+- `void AddWarning(string message)` - Adds a warning message to the result
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Configuration;
+using Microsoft.Extensions.Logging;
+
+// Create a configuration validator instance
+var validator = new ConfigurationValidator();
+
+// Validate configuration with potential issues
+var validationResult = validator.Validate(new ToolkitOptions
+{
+    OutputDirectory = "./GeneratedCode",
+    TemplateDirectory = "./Templates",
+    MaxDegreeOfParallelism = 4,
+    OperationTimeoutSeconds = 60,
+    CacheExpirationMinutes = 30,
+    CodeFormattingLineLength = 120
+});
+
+// Check overall validity
+if (!validationResult.IsValid)
+{
+    Console.WriteLine("❌ Configuration validation failed!");
+    foreach (var error in validationResult.Errors)
+    {
+        Console.WriteLine($"Error: {error}");
+    }
+}
+else
+{
+    Console.WriteLine("✅ Configuration is valid");
+}
+
+// Access warnings for potential issues
+if (validationResult.Warnings.Any())
+{
+    Console.WriteLine("⚠️ Configuration warnings:");
+    foreach (var warning in validationResult.Warnings)
+    {
+        Console.WriteLine($"Warning: {warning}");
+    }
+}
+
+// Programmatically add custom validation messages
+var customValidator = new ConfigurationValidator();
+var result = customValidator.GetDefaults();
+result.AddError("Custom validation: Output directory must not be empty");
+result.AddWarning("Custom warning: Consider increasing cache expiration for better performance");
+```
+
 ## ConfigurationValidatorTests
 
 The `ConfigurationValidatorTests` class provides unit tests for the `ConfigurationValidator` class, which validates configuration options for the .NET Source Generator Toolkit. These tests ensure that configuration validation works correctly by testing null options, valid options, minimum timeout values, and default configuration values. The test suite also includes mocking scenarios to verify validator behavior.
