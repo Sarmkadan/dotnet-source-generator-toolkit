@@ -6,6 +6,10 @@
 
 **A Roslyn-powered code generation toolkit for generating repositories, mappers, validators, and serializers from attributes.**
 
+> **New here?** This README is the full reference. For a five-minute path from install to your
+> first generated file, read **[GETTING_STARTED.md](GETTING_STARTED.md)**. For copy-paste
+> snippets grouped by task, see the **[Generation Cookbook](docs/cookbook.md)**.
+
 ## Table of Contents
 
 - [Overview](#overview)
