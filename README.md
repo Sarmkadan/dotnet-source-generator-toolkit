@@ -21,6 +21,7 @@
 - [API Reference](#api-reference)
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
+- [EnumExtensions](#enumextensions)
 - [TypeExtensions](#typeextensions)
 - [ReflectionHelper](#reflectionhelper)
 - [PathHelper](#pathhelper)
@@ -1465,6 +1466,58 @@ DateTime endOfCurrentMonth = now.EndOfMonth(); // Last day of current month
 
 // Check if date is between two dates
 bool isBetween = now.IsBetween(yesterday, tomorrow); // true
+```
+
+## EnumExtensions
+
+The `EnumExtensions` class provides extension methods for working with enum values and conversions. It includes utilities for getting enum descriptions, parsing enum values, converting enum collections to CSV format, and checking enum flag values, making it easier to work with enums in code generation scenarios.
+
+### Public Members
+
+- `string GetDescription<T>(this T value)` - Gets the human-readable description from DescriptionAttribute if present; otherwise returns the enum value name
+- `IEnumerable<T> GetValues<T>()` - Gets all values of an enum type
+- `bool TryParse<T>(string value, out T result)` - Parses a string to enum value with case-insensitive matching
+- `string ToCsv<T>(this IEnumerable<T> values)` - Converts enum values to CSV-friendly string representation
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Define an enum with Description attributes
+public enum Status
+{
+    [Description("Active status")]
+    Active,
+    
+    [Description("Inactive status")]
+    Inactive,
+    
+    [Description("Pending status")]
+    Pending
+}
+
+// Get description from enum value
+Status currentStatus = Status.Active;
+string description = currentStatus.GetDescription(); // "Active status"
+
+// Get all enum values
+IEnumerable<Status> allStatuses = EnumExtensions.GetValues<Status>();
+foreach (var status in allStatuses)
+{
+    Console.WriteLine($"Status: {status} - {status.GetDescription()}");
+}
+
+// Try to parse enum from string
+bool parsed = EnumExtensions.TryParse("Inactive", out Status parsedStatus);
+if (parsed)
+{
+    Console.WriteLine($"Parsed status: {parsedStatus} ({parsedStatus.GetDescription()})");
+}
+
+// Convert enum values to CSV format
+string csv = new[] { Status.Active, Status.Pending }.ToCsv();
+Console.WriteLine($"CSV: {csv}"); // "Active,Pending"
 ```
 
 ## CollectionExtensions
