@@ -21,6 +21,7 @@
 - [API Reference](#api-reference)
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
+- [StringValidator](#stringvalidator)
 - [ToolkitOptions](#toolkitoptions)
 - [Configuration](#configuration)
 - [CLI Reference](#cli-reference)
@@ -1615,6 +1616,91 @@ width of 30 characters so it
 demonstrates the wrapping
 functionality properly
 */
+```
+
+## StringValidator
+
+The `StringValidator` class provides utility methods for validating common string patterns used in code generation scenarios. It includes validation for C# identifiers, namespaces, empty strings, maximum length constraints, and file name sanitization, making it easier to ensure valid input for entity names, property names, and file operations.
+
+### Public Members
+
+- `IsValidIdentifier(string? value)` - Validates that a string is a valid C# identifier (starts with letter/underscore, contains only alphanumeric characters and underscores)
+- `IsValidNamespace(string? value)` - Validates that a string is a valid C# namespace (dot-separated identifiers)
+- `IsNotEmpty(string? value)` - Validates that a string is not null, empty, or whitespace
+- `IsMaxLength(string? value, int maxLength)` - Validates that a string matches a maximum length
+- `SanitizeForFileName(string value)` - Sanitizes a string for use in file paths by removing invalid characters
+- `GetIdentifierError(string? value)` - Gets validation error message for invalid identifier
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Validate C# identifiers
+string className = "ProductRepository";
+bool isValidIdentifier = StringValidator.IsValidIdentifier(className); // true
+
+string invalidIdentifier = "123Invalid";
+isValidIdentifier = StringValidator.IsValidIdentifier(invalidIdentifier); // false
+string identifierError = StringValidator.GetIdentifierError(invalidIdentifier);
+Console.WriteLine(identifierError); // "Identifier must start with letter or underscore and contain only alphanumeric characters and underscores"
+
+// Validate C# namespaces
+string validNamespace = "MyApp.Domain.Entities";
+bool isValidNamespace = StringValidator.IsValidNamespace(validNamespace); // true
+
+string invalidNamespace = "123.Invalid.Namespace";
+isValidNamespace = StringValidator.IsValidNamespace(invalidNamespace); // false
+
+// Check for non-empty strings
+string emptyValue = "   ";
+bool isNotEmpty = StringValidator.IsNotEmpty(emptyValue); // false
+bool isNotEmpty2 = StringValidator.IsNotEmpty("Hello"); // true
+
+// Validate maximum length
+string longText = "This is a very long text that exceeds the limit";
+bool isWithinLimit = StringValidator.IsMaxLength(longText, 50); // false
+bool isWithinLimit2 = StringValidator.IsMaxLength("Short", 50); // true
+
+// Sanitize strings for file names
+string unsafeFileName = "My*File?.txt";
+string safeFileName = StringValidator.SanitizeForFileName(unsafeFileName); // "My_File_.txt"
+string nullFileName = StringValidator.SanitizeForFileName(null); // "unnamed"
+
+// Example: Validate entity names before generation
+string entityName = "Product";
+if (StringValidator.IsValidIdentifier(entityName))
+{
+    Console.WriteLine($"✅ Valid entity name: {entityName}");
+}
+else
+{
+    Console.WriteLine($"❌ Invalid entity name: {entityName}");
+    Console.WriteLine(StringValidator.GetIdentifierError(entityName));
+}
+
+// Example: Validate namespace for generated code
+string entityNamespace = "MyApp.Domain.Entities";
+if (StringValidator.IsValidNamespace(entityNamespace))
+{
+    Console.WriteLine($"✅ Valid namespace: {entityNamespace}");
+}
+else
+{
+    Console.WriteLine($"❌ Invalid namespace: {entityNamespace}");
+}
+
+// Example: Validate property names for generated properties
+string propertyName = "ProductName";
+if (StringValidator.IsValidIdentifier(propertyName))
+{
+    Console.WriteLine($"✅ Valid property name: {propertyName}");
+}
+
+// Example: Sanitize file names for generated output files
+string generatedFileName = "ProductRepository.Generated.cs";
+string sanitizedFileName = StringValidator.SanitizeForFileName(generatedFileName);
+Console.WriteLine($"Sanitized filename: {sanitizedFileName}");
 ```
 
 ## Installation
