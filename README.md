@@ -2522,6 +2522,74 @@ if (specificEntity != null)
 
 ## API Reference
 
+### GenerationResultRepository
+
+The `GenerationResultRepository` class provides an in-memory repository implementation for storing and retrieving `GenerationResult` objects. It serves as a central storage mechanism for tracking code generation operations, enabling retrieval by entity name, generator type, status, or unique identifier. This repository is designed for single-session use and is suitable for development and testing scenarios where persistence isn't required.
+
+#### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Repositories;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the repository instance
+var repository = new GenerationResultRepository(
+    loggerFactory.CreateLogger<GenerationResultRepository>()
+);
+
+// Create a sample generation result
+var generationResult = new GenerationResult
+{
+    Id = Guid.NewGuid().ToString(),
+    EntityName = "Product",
+    GeneratorType = GeneratorType.Repository,
+    Status = GenerationStatus.Completed,
+    GeneratedCode = "// Generated repository code...",
+    OutputFilePath = "./Generated/ProductRepository.cs",
+    CodeLineCount = 150,
+    GenerationDurationMs = 250,
+    CreatedAt = DateTime.UtcNow,
+    CompletedAt = DateTime.UtcNow
+};
+
+// Add the result to the repository
+await repository.AddAsync(generationResult);
+
+// Retrieve by ID
+var retrievedResult = await repository.GetByIdAsync(generationResult.Id);
+Console.WriteLine($"Retrieved result for entity: {retrievedResult?.EntityName}");
+
+// Retrieve all results for a specific entity
+var entityResults = await repository.GetByEntityAsync("Product");
+Console.WriteLine($"Found {entityResults.Count()} results for Product entity");
+
+// Retrieve all results for a specific generator type
+var repositoryResults = await repository.GetByGeneratorAsync(GeneratorType.Repository);
+Console.WriteLine($"Found {repositoryResults.Count()} repository generation results");
+
+// Retrieve all results by status
+var completedResults = await repository.GetByStatusAsync(GenerationStatus.Completed);
+Console.WriteLine($"Found {completedResults.Count()} completed generation operations");
+
+// Get all results
+var allResults = await repository.GetAllAsync();
+Console.WriteLine($"Total results in repository: {allResults.Count()}");
+
+// Delete a specific result
+await repository.DeleteAsync(generationResult.Id);
+
+// Clear all results
+await repository.ClearAsync();
+```
+
 ## ToolkitOptions
 
 The `ToolkitOptions` class provides centralized configuration for the code generation toolkit. It controls caching behavior, parallelism, output formatting, logging verbosity, and other generation parameters. This type is typically loaded from configuration files or environment variables and passed to generator services.
