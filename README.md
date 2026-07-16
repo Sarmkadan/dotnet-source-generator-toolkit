@@ -3206,6 +3206,51 @@ sourceFile.Status = SourceFileStatus.Processed;
 sourceFile.ModifiedAt = DateTime.UtcNow;
 ```
 
+## CliOptions
+
+The `CliOptions` class represents command-line options parsed from user input. It encapsulates all configuration needed to execute the .NET Source Generator Toolkit, providing centralized control over project analysis, output generation, and execution behavior.
+
+This type serves as the primary configuration container for the CLI, supporting features like:
+- Project path specification and recursive directory scanning
+- Generator type selection (Repository, Mapper, Validator, Serializer)
+- Output format configuration (JSON, CSV, XML, Text)
+- Namespace overrides and parallel execution control
+- Dry-run and validation-only modes for testing
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.CLI;
+
+// Create CLI options for a project analysis
+var options = new CliOptions
+{
+    ProjectPath = "/path/to/YourProject",
+    OutputPath = "./GeneratedCode",
+    OutputFormat = "Json",
+    Verbose = true,
+    GeneratorTypes = new List<string> { "Repository", "Mapper", "Validator" },
+    NamespaceOverride = "MyApp.Generated",
+    Recursive = true,
+    GenerateDtos = true,
+    DryRun = false,
+    ValidateOnly = false,
+    DegreeOfParallelism = Environment.ProcessorCount
+};
+
+// Use options with the toolkit
+var sourceGenerator = new SourceGeneratorService();
+var projectInfo = await sourceGenerator.AnalyzeProjectAsync(options.ProjectPath);
+
+// Generate code based on CLI options
+var results = await sourceGenerator.GenerateAllAsync(projectInfo);
+
+// Output results in specified format
+var formatter = FormatterFactory.CreateFormatter(options.OutputFormat);
+var output = formatter.Format(results);
+Console.WriteLine(output);
+```
+
 ## Related Projects
 
 - [dotnet-micro-orm](https://github.com/sarmkadan/dotnet-micro-orm) - High-performance micro-ORM for .NET - compiled expressions, batch operations, change tracking, multi-DB support
