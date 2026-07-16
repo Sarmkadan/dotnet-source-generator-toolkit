@@ -23,6 +23,7 @@
 - [CollectionExtensions](#collectionextensions)
 - [TypeExtensions](#typeextensions)
 - [ReflectionHelper](#reflectionhelper)
+- [PathHelper](#pathhelper)
 - [StringValidator](#stringvalidator)
 - [FilePathValidator](#filepathvalidator)
 - [ToolkitOptions](#toolkitoptions)
@@ -1755,6 +1756,63 @@ Console.WriteLine($"Base types: {string.Join(" → ", baseTypes.Select(t => t.Na
 PropertyInfo idProperty = productType.GetProperty("Id")!;
 bool isAutoProperty = ReflectionHelper.IsAutoProperty(idProperty);
 Console.WriteLine($"Id property is auto-implemented: {isAutoProperty}");
+```
+
+## PathHelper
+
+The `PathHelper` class provides utility methods for working with file and directory paths safely across different platforms. It includes utilities for path normalization, validation, conversion between absolute and relative paths, and ensuring consistent path formatting. This class is particularly useful for code generation scenarios where paths need to be processed consistently regardless of the operating system.
+
+### Public Members
+
+- `NormalizePath(string path)` - Normalizes a path for the current platform
+- `ToRelativePath(string absolutePath, string basePath)` - Converts an absolute path to a relative path from a base directory
+- `IsAbsolute(string path)` - Checks if a path is absolute
+- `GetCommonPath(params string[] paths)` - Gets the common parent directory of multiple paths
+- `EnsureTrailingSeparator(string path)` - Ensures a directory path ends with a separator
+- `RemoveTrailingSeparator(string path)` - Removes trailing separator from a path
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Normalize paths for consistent formatting across platforms
+string windowsPath = "C:\\Projects\\MyApp\\src";
+string normalizedPath = PathHelper.NormalizePath(windowsPath);
+Console.WriteLine(normalizedPath); // "C:\\Projects\\MyApp\\src" or "/home/user/Projects/MyApp/src" depending on platform
+
+// Convert absolute paths to relative paths
+string projectRoot = "/home/user/Projects/MyApp";
+string absolutePath = "/home/user/Projects/MyApp/src/Entities/Product.cs";
+string relativePath = PathHelper.ToRelativePath(absolutePath, projectRoot);
+Console.WriteLine(relativePath); // "src/Entities/Product.cs"
+
+// Check if a path is absolute
+string relativePath = "src/Entities/Product.cs";
+bool isAbsolute = PathHelper.IsAbsolute(relativePath); // false
+bool isAbsolute2 = PathHelper.IsAbsolute(projectRoot); // true
+
+// Get the common parent directory of multiple paths
+string path1 = "/home/user/Projects/MyApp/src";
+string path2 = "/home/user/Projects/MyApp/tests";
+string path3 = "/home/user/Projects/MyApp/docs";
+string commonPath = PathHelper.GetCommonPath(path1, path2, path3);
+Console.WriteLine(commonPath); // "/home/user/Projects/MyApp"
+
+// Ensure directory paths end with separator for consistent processing
+string dirPath = "/home/user/Projects/MyApp/src";
+string withSeparator = PathHelper.EnsureTrailingSeparator(dirPath);
+Console.WriteLine(withSeparator); // "/home/user/Projects/MyApp/src/"
+
+// Remove trailing separators when needed
+string pathWithSeparator = "/home/user/Projects/MyApp/src/";
+string withoutSeparator = PathHelper.RemoveTrailingSeparator(pathWithSeparator);
+Console.WriteLine(withoutSeparator); // "/home/user/Projects/MyApp/src"
+
+// Example: Normalize paths before file generation
+string outputDir = PathHelper.NormalizePath("./output/generated");
+string filePath = PathHelper.NormalizePath($"{outputDir}/ProductRepository.cs");
+Console.WriteLine($"Will generate file at: {filePath}");
 ```
 
 ## StringValidator
