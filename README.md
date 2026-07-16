@@ -1830,6 +1830,95 @@ foreach (var result in results.Where(r => !r.IsSuccessful))
 }
 ```
 
+## RepositoryGeneratorService
+
+The `RepositoryGeneratorService` generates repository pattern implementations including interfaces and concrete classes with full CRUD operations and query methods for entities. It creates type-safe repository contracts with async methods for data access, enabling clean separation between business logic and data persistence layers.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the repository generator service
+var repositoryGenerator = new RepositoryGeneratorService(
+    loggerFactory.CreateLogger<RepositoryGeneratorService>(),
+    new ToolkitOptions { DefaultNamespace = "MyApp.Domain" }
+);
+
+// Define a sample entity
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities",
+    TableName = "Products",
+    IsSealed = false,
+    AccessModifier = AccessModifier.Public
+};
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true,
+    IsAutoIncrement = true,
+    IsRequired = true,
+    GetterAccess = AccessModifier.Public,
+    SetterAccess = AccessModifier.Private
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true,
+    MaxLength = 100
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true,
+    MinValue = 0,
+    MaxValue = 10000
+});
+
+// Generate repository for the entity
+var generationResult = await repositoryGenerator.GenerateRepositoryAsync(productEntity);
+
+// Check if generation was successful
+if (generationResult.IsSuccessful)
+{
+    Console.WriteLine("✅ Repository generated successfully!");
+    Console.WriteLine($"📄 Output file: {generationResult.OutputFilePath}");
+    Console.WriteLine($"📊 Lines of code: {generationResult.CodeLineCount}");
+    Console.WriteLine($"💾 Generated code:\n{generationResult.GeneratedCode}");
+}
+else
+{
+    Console.WriteLine("❌ Repository generation failed:");
+    foreach (var error in generationResult.Errors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Generate repositories for multiple entities in batch
+var entities = new List<Entity> { productEntity /* add more entities */ };
+var allResults = await repositoryGenerator.GenerateAllRepositoriesAsync(entities);
+
+Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Length} repositories");
+```
+
 ## SourceGeneratorService
 
 The `SourceGeneratorService` is the main orchestration service that coordinates the complete source generation workflow. It analyzes .NET projects to discover entities marked with generation attributes, validates project structure, and generates code artifacts including repositories, mappers, validators, and serializers. This service serves as the primary entry point for programmatic code generation workflows.
