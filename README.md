@@ -1919,6 +1919,159 @@ var allResults = await repositoryGenerator.GenerateAllRepositoriesAsync(entities
 Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Length} repositories");
 ```
 
+## SerializerGeneratorService
+
+The `SerializerGeneratorService` generates serializer classes for converting entities to/from various formats including JSON, XML, and binary representations. It creates type-safe serializer implementations with methods for serialization and deserialization, supporting multiple output formats with consistent naming conventions.
+
+### Public Members
+
+- `SerializerGeneratorService(ILogger<SerializerGeneratorService> logger)` - Constructor
+- `Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities)` - Generates serializers for all entities
+- `Task<GenerationResult> GenerateSerializerAsync(Entity entity, SerializerFormat format)` - Generates serializer for a specific entity and format
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Services;
+using Microsoft.Extensions.Logging;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Create the serializer generator service
+var serializerGenerator = new SerializerGeneratorService(
+    loggerFactory.CreateLogger<SerializerGeneratorService>()
+);
+
+// Define a sample entity with properties
+var productEntity = new Entity
+{
+    Name = "Product",
+    Namespace = "MyApp.Domain.Entities"
+};
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Id",
+    Type = "int",
+    IsPrimaryKey = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Name",
+    Type = "string",
+    IsRequired = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "Price",
+    Type = "decimal",
+    IsRequired = true
+});
+
+productEntity.AddProperty(new EntityProperty
+{
+    Name = "CreatedDate",
+    Type = "DateTime",
+    IsRequired = false
+});
+
+// Generate JSON serializer for the entity
+var jsonResult = await serializerGenerator.GenerateSerializerAsync(
+    productEntity, 
+    SerializerFormat.Json
+);
+
+if (jsonResult.IsSuccessful)
+{
+    Console.WriteLine("✅ JSON Serializer generated successfully!");
+    Console.WriteLine($"📄 Output file: {jsonResult.OutputFilePath}");
+    Console.WriteLine($"📊 Lines of code: {jsonResult.CodeLineCount}");
+    
+    // Use the generated serializer methods
+    var product = new Product
+    {
+        Id = 1,
+        Name = "Laptop",
+        Price = 999.99m,
+        CreatedDate = DateTime.UtcNow
+    };
+    
+    // Serialize to JSON
+    string json = ProductJsonSerializer.Serialize(product);
+    Console.WriteLine($"📋 JSON output: {json}");
+    
+    // Deserialize from JSON
+    var deserialized = ProductJsonSerializer.Deserialize(json);
+    Console.WriteLine($"🔄 Deserialized: {deserialized.Name} - {deserialized.Price}");
+    
+    // Convert to JsonElement
+    var jsonElement = ProductJsonSerializer.ToJsonElement(product);
+    Console.WriteLine($"📊 JsonElement created: {jsonElement.GetRawText()}");
+}
+else
+{
+    Console.WriteLine("❌ JSON Serializer generation failed:");
+    foreach (var error in jsonResult.Errors)
+    {
+        Console.WriteLine($" - {error}");
+    }
+}
+
+// Generate XML serializer for the same entity
+var xmlResult = await serializerGenerator.GenerateSerializerAsync(
+    productEntity, 
+    SerializerFormat.Xml
+);
+
+if (xmlResult.IsSuccessful)
+{
+    Console.WriteLine("✅ XML Serializer generated successfully!");
+    Console.WriteLine($"📄 Output file: {xmlResult.OutputFilePath}");
+    
+    // Use the generated XML serializer
+    var product = new Product { Id = 1, Name = "Mouse", Price = 29.99m };
+    string xml = ProductXmlSerializer.Serialize(product);
+    Console.WriteLine($"📋 XML output:\n{xml}");
+    
+    var deserialized = ProductXmlSerializer.Deserialize(xml);
+    Console.WriteLine($"🔄 Deserialized: {deserialized.Name} - {deserialized.Price}");
+}
+
+// Generate binary serializer
+var binaryResult = await serializerGenerator.GenerateSerializerAsync(
+    productEntity, 
+    SerializerFormat.Binary
+);
+
+if (binaryResult.IsSuccessful)
+{
+    Console.WriteLine("✅ Binary Serializer generated successfully!");
+    Console.WriteLine($"📄 Output file: {binaryResult.OutputFilePath}");
+    
+    // Use the generated binary serializer
+    var product = new Product { Id = 1, Name = "Keyboard", Price = 79.99m };
+    byte[] binaryData = ProductBinarySerializer.Serialize(product);
+    Console.WriteLine($"📊 Binary size: {ProductBinarySerializer.GetSerializedSize(product)} bytes");
+    
+    var deserialized = ProductBinarySerializer.Deserialize(binaryData);
+    Console.WriteLine($"🔄 Deserialized: {deserialized.Name} - {deserialized.Price}");
+}
+
+// Generate all serializers for multiple entities in batch
+var entities = new List<Entity> { productEntity /* add more entities */ };
+var allResults = await serializerGenerator.GenerateAllSerializersAsync(entities);
+
+Console.WriteLine($"Generated {allResults.Count(r => r.IsSuccessful)}/{allResults.Count()} serializers");
+```
+
 ## SourceGeneratorService
 
 The `SourceGeneratorService` is the main orchestration service that coordinates the complete source generation workflow. It analyzes .NET projects to discover entities marked with generation attributes, validates project structure, and generates code artifacts including repositories, mappers, validators, and serializers. This service serves as the primary entry point for programmatic code generation workflows.
