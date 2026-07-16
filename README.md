@@ -105,6 +105,10 @@ This toolkit uses Roslyn's full semantic analyzer to understand your code struct
 
 ## Architecture
 
+The full write-up - component breakdown, design decisions and their trade-offs,
+data flow, extension points and known limitations - lives in
+[docs/architecture.md](docs/architecture.md). Short version below.
+
 ### High-Level Architecture Diagram
 
 ```
