@@ -17,6 +17,11 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="8.0.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Generators/Snapshots/*.verified.txt" />
   </ItemGroup>
 
   <ItemGroup>
