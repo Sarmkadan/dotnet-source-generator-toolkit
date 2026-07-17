@@ -29,11 +29,8 @@ public static class EnumExtensionsJsonExtensions
     /// <param name="value">The enum value to serialize.</param>
     /// <param name="indented">Whether to format the JSON with indentation.</param>
     /// <returns>A JSON string representation of the enum value.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
     public static string ToJson<T>(this T value, bool indented = false) where T : struct, Enum
     {
-        ArgumentNullException.ThrowIfNull(value);
-
         var options = indented
             ? new JsonSerializerOptions(_jsonOptions) { WriteIndented = true }
             : _jsonOptions;
@@ -48,7 +45,7 @@ public static class EnumExtensionsJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized enum value, or null if the string is null or empty.</returns>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
-    public static T? FromJson<T>(string json) where T : struct, Enum
+    public static T? FromJson<T>(string? json) where T : struct, Enum
     {
         if (string.IsNullOrEmpty(json))
         {
@@ -63,15 +60,15 @@ public static class EnumExtensionsJsonExtensions
     /// </summary>
     /// <typeparam name="T">The enum type to deserialize.</typeparam>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <param name="value">The deserialized enum value, or null if deserialization fails.</param>
+    /// <param name="value">When this method returns, contains the deserialized enum value if successful, or null if deserialization failed.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
-    public static bool TryFromJson<T>(string json, out T? value) where T : struct, Enum
+    public static bool TryFromJson<T>(string? json, out T? value) where T : struct, Enum
     {
-        value = null;
+        value = default;
 
         if (string.IsNullOrEmpty(json))
         {
-            return true;
+            return false;
         }
 
         try
