@@ -5,6 +5,7 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -28,10 +29,10 @@ public static class MiddlewarePipelineJsonExtensions
     /// <summary>
     /// Serializes the <see cref="MiddlewarePipeline"/> to a JSON string.
     /// </summary>
-    /// <param name="value">The middleware pipeline to serialize</param>
-    /// <param name="indented">Whether to format the JSON with indentation</param>
-    /// <returns>A JSON string representation of the pipeline</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null</exception>
+    /// <param name="value">The middleware pipeline to serialize.</param>
+    /// <param name="indented">Whether to format the JSON with indentation.</param>
+    /// <returns>A JSON string representation of the pipeline.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static string ToJson(this MiddlewarePipeline value, bool indented = false)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -46,10 +47,10 @@ public static class MiddlewarePipelineJsonExtensions
     /// <summary>
     /// Deserializes a JSON string to a <see cref="MiddlewarePipeline"/> instance.
     /// </summary>
-    /// <param name="json">The JSON string to deserialize</param>
-    /// <returns>The deserialized middleware pipeline, or null if JSON is empty</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null</exception>
-    /// <exception cref="JsonException">Thrown when JSON is invalid or cannot be deserialized</exception>
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <returns>The deserialized middleware pipeline, or null if JSON is empty.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    /// <exception cref="JsonException">Thrown when JSON is invalid or cannot be deserialized.</exception>
     public static MiddlewarePipeline? FromJson(string json)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -65,11 +66,11 @@ public static class MiddlewarePipelineJsonExtensions
     /// <summary>
     /// Attempts to deserialize a JSON string to a <see cref="MiddlewarePipeline"/> instance.
     /// </summary>
-    /// <param name="json">The JSON string to deserialize</param>
-    /// <param name="value">Receives the deserialized middleware pipeline if successful</param>
-    /// <returns>True if deserialization succeeded; otherwise, false</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null</exception>
-    public static bool TryFromJson(string json, out MiddlewarePipeline? value)
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <param name="value">When this method returns, contains the deserialized middleware pipeline if successful; otherwise, null.</param>
+    /// <returns>True if deserialization succeeded; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    public static bool TryFromJson(string json, [NotNullWhen(true)] out MiddlewarePipeline? value)
     {
         ArgumentNullException.ThrowIfNull(json);
 
