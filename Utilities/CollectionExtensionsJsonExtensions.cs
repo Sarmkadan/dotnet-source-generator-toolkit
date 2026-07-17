@@ -54,12 +54,11 @@ public static class CollectionExtensionsJsonExtensions
     /// <exception cref="JsonException">Thrown when the JSON is malformed or cannot be deserialized.</exception>
     public static T? FromJson<T>(string json)
     {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return default;
-        }
+        ArgumentNullException.ThrowIfNull(json);
 
-        return JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
+        return string.IsNullOrWhiteSpace(json)
+            ? default
+            : JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
     }
 
     /// <summary>
@@ -69,8 +68,11 @@ public static class CollectionExtensionsJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized object if successful.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when json is null.</exception>
     public static bool TryFromJson<T>(string json, out T? value)
     {
+        ArgumentNullException.ThrowIfNull(json);
+
         value = default;
 
         if (string.IsNullOrWhiteSpace(json))
