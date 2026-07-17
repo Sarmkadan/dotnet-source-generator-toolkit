@@ -40,10 +40,8 @@ public static class HttpClientServiceValidation
     /// </summary>
     /// <param name="value">The <see cref="HttpClientService"/> instance to check.</param>
     /// <returns><see langword="true"/> if the instance is valid; otherwise, <see langword="false"/>.</returns>
-    public static bool IsValid(this HttpClientService? value)
-    {
-        return value?.Validate().Count == 0;
-    }
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null.</exception>
+    public static bool IsValid(this HttpClientService? value) => value is not null && value.Validate().Count == 0;
 
     /// <summary>
     /// Ensures that the specified <see cref="HttpClientService"/> instance is valid.
