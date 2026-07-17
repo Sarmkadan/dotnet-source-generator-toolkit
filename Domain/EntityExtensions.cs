@@ -48,30 +48,28 @@ namespace DotNetSourceGeneratorToolkit.Domain
         /// <param name="entity">The entity.</param>
         /// <returns>A read‑only list of validation messages.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="entity"/> is <c>null</c>.</exception>
-        public static IReadOnlyList<string> GetValidationMessages(this Entity entity) =>
-            (entity ?? throw new ArgumentNullException(nameof(entity))).Validate().ToList().AsReadOnly();
+        public static IReadOnlyList<string> GetValidationMessages(this Entity entity)
+        {
+            ArgumentNullException.ThrowIfNull(entity);
+            return entity.Validate().ToList().AsReadOnly();
+        }
 
         /// <summary>
         /// Creates a concise summary string for the entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        /// <returns>A summary string.</returns>
+        /// <returns>A summary string describing the entity's access modifier, type, primary key, and property count.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="entity"/> is <c>null</c>.</exception>
         public static string GetSummary(this Entity entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
+
             var access = entity.AccessModifier.ToString().ToLowerInvariant();
             var modifiers = entity.IsAbstract ? "abstract " : entity.IsSealed ? "sealed " : string.Empty;
-            var primaryKey = entity.GetPrimaryKeyProperty()?.ToString() ?? "none";
+            var primaryKey = entity.GetPrimaryKeyProperty()?.GetClrTypeName() ?? "none";
             var propertyCount = entity.Properties.Count;
-            return string.Format(
-                CultureInfo.InvariantCulture,
-                "{0} {1}{2} (PK: {3}, Props: {4})",
-                access,
-                modifiers,
-                entity.Name,
-                primaryKey,
-                propertyCount);
+
+            return $"{access} {modifiers}{entity.Name} (PK: {primaryKey}, Props: {propertyCount})" ;
         }
     }
 }
