@@ -12,7 +12,7 @@ namespace DotNetSourceGeneratorToolkit.CLI;
 /// <summary>
 /// Provides validation helpers for <see cref="CliOptions"/> instances.
 /// </summary>
-public static class CliOptionsValidation
+internal static class CliOptionsValidation
 {
     /// <summary>
     /// Validates the specified <see cref="CliOptions"/> instance.
@@ -37,39 +37,27 @@ public static class CliOptionsValidation
         }
 
         // Validate OutputPath if specified
-        if (!string.IsNullOrWhiteSpace(value.OutputPath))
+        if (!string.IsNullOrWhiteSpace(value.OutputPath) && !Path.IsPathRooted(value.OutputPath))
         {
-            if (string.IsNullOrWhiteSpace(value.OutputPath))
-            {
-                problems.Add("OutputPath cannot be null or whitespace when specified.");
-            }
-            else if (!Path.IsPathRooted(value.OutputPath) && !Path.GetPathRoot(value.OutputPath)?.StartsWith("\\", StringComparison.Ordinal) != true)
-            {
-                problems.Add($"OutputPath '{value.OutputPath}' is not a valid absolute path.");
-            }
+            problems.Add($"OutputPath '{value.OutputPath}' is not a valid absolute path.");
         }
 
         // Validate GeneratorTypes
-        if (value.GeneratorTypes is null)
-        {
-            problems.Add("GeneratorTypes cannot be null.");
-        }
-        else
-        {
-            foreach (var generatorType in value.GeneratorTypes)
-            {
-                if (string.IsNullOrWhiteSpace(generatorType))
-                {
-                    problems.Add("GeneratorTypes cannot contain null or whitespace entries.");
-                    break;
-                }
+        ArgumentNullException.ThrowIfNull(value.GeneratorTypes);
 
-                var validTypes = new[] { "Repository", "Mapper", "Validator", "Serializer" };
-                if (!validTypes.Contains(generatorType, StringComparer.OrdinalIgnoreCase))
-                {
-                    problems.Add($"GeneratorType '{generatorType}' is not valid. Valid types are: Repository, Mapper, Validator, Serializer.");
-                    break;
-                }
+        foreach (var generatorType in value.GeneratorTypes)
+        {
+            if (string.IsNullOrWhiteSpace(generatorType))
+            {
+                problems.Add("GeneratorTypes cannot contain null or whitespace entries.");
+                break;
+            }
+
+            var validTypes = new[] { "Repository", "Mapper", "Validator", "Serializer" };
+            if (!validTypes.Contains(generatorType, StringComparer.OrdinalIgnoreCase))
+            {
+                problems.Add($"GeneratorType '{generatorType}' is not valid. Valid types are: Repository, Mapper, Validator, Serializer.");
+                break;
             }
         }
 
@@ -98,26 +86,18 @@ public static class CliOptionsValidation
         }
 
         // Validate NamespaceOverride if specified
-        if (!string.IsNullOrWhiteSpace(value.NamespaceOverride))
+        if (!string.IsNullOrWhiteSpace(value.NamespaceOverride) &&
+            (value.NamespaceOverride.Contains(" ", StringComparison.Ordinal) ||
+             value.NamespaceOverride.Contains("\t", StringComparison.Ordinal)))
         {
-            if (string.IsNullOrWhiteSpace(value.NamespaceOverride))
-            {
-                problems.Add("NamespaceOverride cannot be null or whitespace when specified.");
-            }
-            else if (value.NamespaceOverride.Contains(" ", StringComparison.Ordinal) || value.NamespaceOverride.Contains("\t", StringComparison.Ordinal))
-            {
-                problems.Add("NamespaceOverride cannot contain whitespace characters.");
-            }
+            problems.Add("NamespaceOverride cannot contain whitespace characters.");
         }
 
         // Validate ConfigFile if specified
         if (!string.IsNullOrWhiteSpace(value.ConfigFile))
         {
-            if (string.IsNullOrWhiteSpace(value.ConfigFile))
-            {
-                problems.Add("ConfigFile cannot be null or whitespace when specified.");
-            }
-            else if (!File.Exists(value.ConfigFile))
+            ArgumentException.ThrowIfNullOrEmpty(value.ConfigFile);
+            if (!File.Exists(value.ConfigFile))
             {
                 problems.Add($"ConfigFile '{value.ConfigFile}' does not exist.");
             }
@@ -134,6 +114,7 @@ public static class CliOptionsValidation
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null.</exception>
     public static bool IsValid(this CliOptions value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         return value.Validate().Count == 0;
     }
 
