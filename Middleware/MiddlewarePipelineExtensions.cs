@@ -35,6 +35,6 @@ public static class MiddlewarePipelineExtensions
         ArgumentNullException.ThrowIfNull(pipeline);
         ArgumentNullException.ThrowIfNull(context);
 
-        await pipeline.ExecuteAsync(context);
+        await pipeline.ExecuteAsync(context).ConfigureAwait(false);
     }
 }
