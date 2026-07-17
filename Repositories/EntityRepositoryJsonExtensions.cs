@@ -46,40 +46,45 @@ public static class EntityRepositoryJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized EntityRepository instance, or null if the JSON is empty or whitespace.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
     public static EntityRepository? FromJson(string json)
     {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return null;
-        }
+        ArgumentNullException.ThrowIfNull(json);
 
-        return JsonSerializer.Deserialize<EntityRepository>(json, _jsonOptions);
+        return string.IsNullOrWhiteSpace(json)
+            ? null
+            : JsonSerializer.Deserialize<EntityRepository>(json, _jsonOptions);
     }
 
     /// <summary>
     /// Attempts to deserialize a JSON string into an EntityRepository instance.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <param name="value">Receives the deserialized EntityRepository instance if successful.</param>
+    /// <param name="result">Receives the deserialized EntityRepository instance if successful.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
-    public static bool TryFromJson(string json, out EntityRepository? value)
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    public static bool TryFromJson(string json, out EntityRepository? result)
     {
-        value = null;
+        ArgumentNullException.ThrowIfNull(json);
 
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return false;
-        }
+        result = null;
 
-        try
+        return !string.IsNullOrWhiteSpace(json)
+            && TryDeserialize(json, out result);
+
+        static bool TryDeserialize(string json, out EntityRepository? result)
         {
-            value = JsonSerializer.Deserialize<EntityRepository>(json, _jsonOptions);
-            return true;
-        }
-        catch (JsonException)
-        {
-            return false;
+            try
+            {
+                result = JsonSerializer.Deserialize<EntityRepository>(json, _jsonOptions);
+                return true;
+            }
+            catch (JsonException)
+            {
+                result = null;
+                return false;
+            }
         }
     }
 }
