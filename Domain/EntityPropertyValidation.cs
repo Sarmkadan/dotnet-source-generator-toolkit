@@ -27,7 +27,7 @@ public static class EntityPropertyValidation
 
         var errors = new List<string>();
 
-        // Validate string properties
+        // Validate string properties using pattern matching
         if (value.IsRequired && string.IsNullOrWhiteSpace(value.Name))
         {
             errors.Add("Property name is required.");
@@ -39,12 +39,9 @@ public static class EntityPropertyValidation
         }
 
         // Validate string length constraints
-        if (value.MinLength.HasValue && value.MaxLength.HasValue)
+        if (value.MinLength.HasValue && value.MaxLength.HasValue && value.MinLength > value.MaxLength)
         {
-            if (value.MinLength > value.MaxLength)
-            {
-                errors.Add("MinLength cannot be greater than MaxLength.");
-            }
+            errors.Add("MinLength cannot be greater than MaxLength.");
         }
 
         if (value.MaxLength.HasValue && value.MaxLength < 0)
@@ -58,32 +55,33 @@ public static class EntityPropertyValidation
         }
 
         // Validate numeric range constraints
-        if (value.MinValue.HasValue && value.MaxValue.HasValue)
+        if (value.MinValue.HasValue && value.MaxValue.HasValue && value.MinValue > value.MaxValue)
         {
-            if (value.MinValue > value.MaxValue)
-            {
-                errors.Add("MinValue cannot be greater than MaxValue.");
-            }
+            errors.Add("MinValue cannot be greater than MaxValue.");
         }
 
         // Validate primary key constraints
-        if (value.IsPrimaryKey && value.IsNullable)
+        if (value.IsPrimaryKey)
         {
-            errors.Add("Primary key property cannot be nullable.");
-        }
+            if (value.IsNullable)
+            {
+                errors.Add("Primary key property cannot be nullable.");
+            }
 
-        if (value.IsPrimaryKey && string.IsNullOrWhiteSpace(value.Name))
-        {
-            errors.Add("Primary key property must have a name.");
+            if (string.IsNullOrWhiteSpace(value.Name))
+            {
+                errors.Add("Primary key property must have a name.");
+            }
         }
 
         // Validate default value format for numeric types
         if (!string.IsNullOrEmpty(value.DefaultValue))
         {
-            var isNumericType = value.Type?.Equals("decimal", StringComparison.OrdinalIgnoreCase) == true ||
-                               value.Type?.Equals("double", StringComparison.OrdinalIgnoreCase) == true ||
-                               value.Type?.Equals("float", StringComparison.OrdinalIgnoreCase) == true ||
-                               value.Type?.Equals("int", StringComparison.OrdinalIgnoreCase) == true;
+            bool isNumericType = value.Type is not null &&
+                (value.Type.Equals("decimal", StringComparison.OrdinalIgnoreCase) ||
+                 value.Type.Equals("double", StringComparison.OrdinalIgnoreCase) ||
+                 value.Type.Equals("float", StringComparison.OrdinalIgnoreCase) ||
+                 value.Type.Equals("int", StringComparison.OrdinalIgnoreCase));
 
             if (isNumericType && !decimal.TryParse(value.DefaultValue, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             {
@@ -91,12 +89,11 @@ public static class EntityPropertyValidation
             }
         }
 
-        // Validate regex pattern
+        // Validate regex pattern with proper exception handling
         if (!string.IsNullOrEmpty(value.RegexPattern))
         {
             try
             {
-                // Validate regex pattern is valid
                 _ = System.Text.RegularExpressions.Regex.IsMatch("test", value.RegexPattern);
             }
             catch (System.Text.RegularExpressions.RegexParseException)
