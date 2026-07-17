@@ -71,37 +71,32 @@ public static class AdvancedExampleValidation
         }
 
         // Validate Tags
-        if (value.Tags is null)
+        ArgumentNullException.ThrowIfNull(value.Tags);
+
+        if (value.Tags.Count > 50)
         {
-            errors.Add("Tags collection cannot be null.");
+            errors.Add("Tags collection cannot exceed 50 items.");
         }
-        else
+
+        foreach (var tag in value.Tags)
         {
-            if (value.Tags.Count > 50)
+            if (string.IsNullOrWhiteSpace(tag))
             {
-                errors.Add("Tags collection cannot exceed 50 items.");
+                errors.Add("Tags cannot contain null or whitespace values.");
+                continue;
             }
 
-            foreach (var tag in value.Tags)
+            if (tag.Length > 50)
             {
-                if (string.IsNullOrWhiteSpace(tag))
-                {
-                    errors.Add("Tags cannot contain null or whitespace values.");
-                    break;
-                }
+                errors.Add("Individual tags cannot exceed 50 characters.");
+                continue;
+            }
 
-                if (tag.Length > 50)
-                {
-                    errors.Add("Individual tags cannot exceed 50 characters.");
-                    break;
-                }
-
-                // Check for invalid characters in tag
-                if (tag.IndexOfAny([';', ',', '|', '\n', '\r']) >= 0)
-                {
-                    errors.Add("Tags cannot contain special characters (;, ,, |, newlines).");
-                    break;
-                }
+            // Check for invalid characters in tag
+            if (tag.IndexOfAny([';', ',', '|', '\n', '\r']) >= 0)
+            {
+                errors.Add("Tags cannot contain special characters (;, ,, |, newlines).");
+                continue;
             }
         }
 
@@ -122,7 +117,7 @@ public static class AdvancedExampleValidation
     /// <exception cref="ArgumentNullException">Thrown if value is null</exception>
     public static bool IsValid(this AdvancedExample.BlogPost? value)
     {
-        return Validate(value).Count == 0;
+        return value is null ? throw new ArgumentNullException(nameof(value)) : Validate(value).Count == 0;
     }
 
     /// <summary>
@@ -139,8 +134,7 @@ public static class AdvancedExampleValidation
         if (errors.Count > 0)
         {
             throw new ArgumentException(
-                "BlogPost validation failed. " +
-                string.Join(" ", errors),
+                $"BlogPost validation failed. {string.Join(" ", errors)}",
                 nameof(value));
         }
     }
