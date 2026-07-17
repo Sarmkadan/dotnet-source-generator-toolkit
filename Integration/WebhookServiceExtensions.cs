@@ -63,7 +63,8 @@ public static class WebhookServiceExtensions
     /// </summary>
     /// <param name="service">The <see cref="WebhookService"/> instance.</param>
     /// <param name="name">The name to filter by.</param>
-    /// <returns>A task that represents the asynchronous operation, containing a read-only list of matching <see cref="WebhookRegistration"/>s.</returns>
+    /// <returns>A task that represents the asynchronous operation, containing a list of matching <see cref="WebhookRegistration"/>s.
+ /// The list is never null and contains zero or more elements.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is null or empty.</exception>
     public static async Task<IReadOnlyList<WebhookRegistration>> GetWebhooksByNameAsync(
@@ -74,6 +75,8 @@ public static class WebhookServiceExtensions
         ArgumentException.ThrowIfNullOrEmpty(name);
 
         var webhooks = await service.GetWebhooksAsync();
-        return webhooks.Where(w => string.Equals(w.Name, name, StringComparison.OrdinalIgnoreCase)).ToList().AsReadOnly();
+        return webhooks
+ .Where(w => string.Equals(w.Name, name, StringComparison.OrdinalIgnoreCase))
+ .ToList();
     }
 }
