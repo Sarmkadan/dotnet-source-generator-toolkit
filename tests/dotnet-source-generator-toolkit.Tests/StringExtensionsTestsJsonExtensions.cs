@@ -39,10 +39,7 @@ public static class StringExtensionsTestsJsonExtensions
         ArgumentNullException.ThrowIfNull(value);
 
         var options = indented
-            ? new JsonSerializerOptions(_jsonSerializerOptions)
-            {
-                WriteIndented = true,
-            }
+            ? new JsonSerializerOptions(_jsonSerializerOptions) { WriteIndented = true }
             : _jsonSerializerOptions;
 
         return JsonSerializer.Serialize(value, options);
@@ -52,13 +49,17 @@ public static class StringExtensionsTestsJsonExtensions
     /// Deserializes a JSON string to a <see cref="StringExtensionsTests"/> instance.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <returns>The deserialized <see cref="StringExtensionsTests"/> instance, or null if the JSON is null or empty.</returns>
+    /// <returns>The deserialized <see cref="StringExtensionsTests"/> instance.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is empty or whitespace.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is malformed or cannot be deserialized.</exception>
     public static StringExtensionsTests? FromJson(string json)
     {
-        if (string.IsNullOrEmpty(json))
+        ArgumentNullException.ThrowIfNull(json);
+
+        if (string.IsNullOrWhiteSpace(json))
         {
-            return null;
+            throw new ArgumentException("JSON string cannot be empty or whitespace.", nameof(json));
         }
 
         return JsonSerializer.Deserialize<StringExtensionsTests>(json, _jsonSerializerOptions);
