@@ -26,7 +26,8 @@ public static class FilePathValidatorJsonExtensions
     /// <param name="path">The file path to validate and serialize.</param>
     /// <param name="indented">Whether to indent the JSON for readability.</param>
     /// <returns>A JSON string containing the validation result.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is empty or consists only of whitespace.</exception>
     public static string ToJson(this string path, bool indented = false)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -49,7 +50,8 @@ public static class FilePathValidatorJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>A validation result containing the path and its validity.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="json"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="json"/> is empty or consists only of whitespace.</exception>
     public static FilePathValidationResult? FromJson(string json)
     {
         ArgumentException.ThrowIfNullOrEmpty(json);
@@ -63,7 +65,8 @@ public static class FilePathValidatorJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized validation result if successful.</param>
     /// <returns>True if deserialization succeeds; otherwise, false.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="json"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="json"/> is empty or consists only of whitespace.</exception>
     public static bool TryFromJson(string json, out FilePathValidationResult? value)
     {
         ArgumentException.ThrowIfNullOrEmpty(json);
@@ -83,7 +86,6 @@ public static class FilePathValidatorJsonExtensions
     /// <summary>
     /// Represents a file path validation result for serialization.
     /// </summary>
-    [Serializable]
     public sealed class FilePathValidationResult
     {
         /// <summary>
