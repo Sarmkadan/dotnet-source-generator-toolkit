@@ -49,8 +49,9 @@ public static class BasicExampleJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized User entity, or null if the JSON is null or empty.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
-    public static BasicExample.User? FromJson(string json)
+    public static BasicExample.User? FromJson(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))
         {
@@ -66,7 +67,7 @@ public static class BasicExampleJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized User entity if successful.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
-    public static bool TryFromJson(string json, out BasicExample.User? value)
+    public static bool TryFromJson(string? json, out BasicExample.User? value)
     {
         value = null;
 
@@ -109,8 +110,9 @@ public static class BasicExampleJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized UserDto, or null if the JSON is null or empty.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
-    public static BasicExample.UserDto? FromJson(string json)
+    public static BasicExample.UserDto? FromJson(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))
         {
@@ -126,7 +128,7 @@ public static class BasicExampleJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized UserDto if successful.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
-    public static bool TryFromJson(string json, out BasicExample.UserDto? value)
+    public static bool TryFromJson(string? json, out BasicExample.UserDto? value)
     {
         value = null;
 
