@@ -14,7 +14,7 @@ namespace DotNetSourceGeneratorToolkit.Examples.V2BasicUsage
         /// </summary>
         /// <param name="value">The product to validate.</param>
         /// <returns>A read-only list of validation problems, or empty if the product is valid.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
         public static IReadOnlyList<string> Validate(this Product value)
         {
             ArgumentNullException.ThrowIfNull(value);
@@ -44,7 +44,7 @@ namespace DotNetSourceGeneratorToolkit.Examples.V2BasicUsage
             }
 
             // Validate CreatedDate
-            if (value.CreatedDate == default)
+            if (value.CreatedDate == default || value.CreatedDate == DateTime.MinValue)
             {
                 problems.Add("Product CreatedDate cannot be the default DateTime value.");
             }
@@ -63,18 +63,15 @@ namespace DotNetSourceGeneratorToolkit.Examples.V2BasicUsage
         /// </summary>
         /// <param name="value">The product to check.</param>
         /// <returns>True if the product is valid; otherwise, false.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
-        public static bool IsValid(this Product value)
-        {
-            return value.Validate().Count == 0;
-        }
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+public static bool IsValid(this Product value) => value.Validate().Count == 0;
 
         /// <summary>
         /// Ensures that a <see cref="Product"/> instance is valid, throwing an <see cref="ArgumentException"/>
         /// with a detailed message listing all validation problems if it is not.
         /// </summary>
         /// <param name="value">The product to validate.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when the product has validation problems.</exception>
         public static void EnsureValid(this Product value)
         {
