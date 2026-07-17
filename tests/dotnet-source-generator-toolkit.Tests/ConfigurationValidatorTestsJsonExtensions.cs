@@ -30,12 +30,7 @@ public static class ConfigurationValidatorTestsJsonExtensions
     public static string ToJson(this ConfigurationValidatorTests value, bool indented = false)
     {
         ArgumentNullException.ThrowIfNull(value);
-
-        var options = new JsonSerializerOptions(_jsonSerializerOptions)
-        {
-            WriteIndented = indented,
-        };
-
+        var options = new JsonSerializerOptions(_jsonSerializerOptions) { WriteIndented = indented };
         return JsonSerializer.Serialize(value, options);
     }
 
@@ -43,11 +38,12 @@ public static class ConfigurationValidatorTestsJsonExtensions
     /// Deserializes a JSON string to a <see cref="ConfigurationValidatorTests"/> instance.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <returns>The deserialized <see cref="ConfigurationValidatorTests"/> instance, or null if the JSON is empty.</returns>
+    /// <returns>The deserialized <see cref="ConfigurationValidatorTests"/> instance, or null if the JSON is empty or whitespace.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is null, empty, or whitespace.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
     public static ConfigurationValidatorTests? FromJson(string json)
     {
-        ArgumentException.ThrowIfNullOrEmpty(json);
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         return JsonSerializer.Deserialize<ConfigurationValidatorTests>(json, _jsonSerializerOptions);
     }
@@ -58,9 +54,10 @@ public static class ConfigurationValidatorTestsJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized value if successful.</param>
     /// <returns>True if deserialization succeeded; otherwise, false.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is null, empty, or whitespace.</exception>
     public static bool TryFromJson(string json, out ConfigurationValidatorTests? value)
     {
-        ArgumentException.ThrowIfNullOrEmpty(json);
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
         try
         {
