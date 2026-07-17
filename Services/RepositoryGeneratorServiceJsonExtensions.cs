@@ -37,6 +37,15 @@ public static class RepositoryGeneratorServiceJsonExtensions
     }
 
     /// <summary>
+    /// Serializes the <see cref="RepositoryGeneratorService"/> instance to a JSON string with indentation.
+    /// </summary>
+    /// <param name="value">The service instance to serialize.</param>
+    /// <returns>A JSON string representation of the service instance with indentation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+    public static string ToJsonIndented(this RepositoryGeneratorService value)
+        => ToJson(value, indented: true);
+
+    /// <summary>
     /// Deserializes a JSON string to a <see cref="RepositoryGeneratorService"/> instance.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
