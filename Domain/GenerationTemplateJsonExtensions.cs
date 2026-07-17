@@ -45,9 +45,12 @@ public static class GenerationTemplateJsonExtensions
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized template, or null if the JSON is null or empty.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
     public static GenerationTemplate? FromJson(string json)
     {
+        ArgumentNullException.ThrowIfNull(json);
+
         if (string.IsNullOrWhiteSpace(json))
         {
             return null;
@@ -62,23 +65,9 @@ public static class GenerationTemplateJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">The deserialized template, or null if deserialization fails.</param>
     /// <returns>True if deserialization succeeds; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
     public static bool TryFromJson(string json, out GenerationTemplate? value)
-    {
-        value = null;
-
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return false;
-        }
-
-        try
-        {
-            value = JsonSerializer.Deserialize<GenerationTemplate>(json, _jsonSerializerOptions);
-            return true;
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
-    }
+        => JsonSerializer.Deserialize<GenerationTemplate>(json, _jsonSerializerOptions) is { } result
+            ? (value = result, true).Item2
+            : (value = null, false).Item2;
 }
