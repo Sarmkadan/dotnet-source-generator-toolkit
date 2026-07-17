@@ -1413,6 +1413,70 @@ var validResult = GeneratorTestHarness.Run(new AutoImplementGenerator(), validSo
 validResult.Diagnostics.Should().BeEmpty();
 ```
 
+## AutoImplementGeneratorSnapshotTests
+
+The `AutoImplementGeneratorSnapshotTests` class contains snapshot tests that assert the exact source code emitted by the `AutoImplementGenerator`. These tests ensure that any changes to the generated text are deliberate decisions and require updating the test expectations accordingly.
+
+
+
+The class tests the following public members:
+
+- **Properties**: `Id` (int), `Name` (string), `Price` (decimal)
+- **Generated Methods**: `PostInitialization_EmitsMarkerAttributes`, `GenerateToString_ProducesExactSource`, `GenerateEquals_ProducesExactSource`, `GenerateToString_ForGlobalNamespaceType_OmitsNamespaceBlock`
+- **Override Methods**: `ToString()`, `Equals(object?)`, `GetHashCode()`
+- **Generated Code Properties**: `Code` (the generated source text)
+
+
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Generators;
+using Xunit;
+
+// Define a product entity with generation attributes
+[GenerateToString]
+[GenerateEquals]
+public partial class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+}
+
+// The AutoImplementGenerator will automatically generate:
+// 1. Marker attributes in AutoImplementAttributes.g.cs
+// 2. ToString() override in Product.ToString.g.cs  
+// 3. Equals() and GetHashCode() overrides in Product.Equals.g.cs
+
+// Example generated ToString() implementation:
+public override string ToString() => 
+    $"Product {{ Id = {Id}, Name = {Name}, Price = {Price} }}";
+
+// Example generated Equals() implementation:
+public bool Equals(Product? other)
+{
+    if (other is null) return false;
+    if (ReferenceEquals(this, other)) return true;
+    return EqualityComparer<object?>.Default.Equals(this.Id, other.Id)
+        && EqualityComparer<object?>.Default.Equals(this.Name, other.Name)
+        && EqualityComparer<object?>.Default.Equals(this.Price, other.Price);
+}
+
+// Example generated GetHashCode() implementation:
+public override int GetHashCode()
+{
+    var hash = new HashCode();
+    hash.Add(this.Id);
+    hash.Add(this.Name);
+    hash.Add(this.Price);
+    return hash.ToHashCode();
+}
+
+// Example generated Equals(object) override:
+public override bool Equals(object? obj) => Equals(obj as Product);
+```
+
 ### Design Patterns Used
 
 | Pattern | Components | Purpose |
