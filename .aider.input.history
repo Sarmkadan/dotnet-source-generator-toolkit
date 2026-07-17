@@ -11926,3 +11926,131 @@
 +- refactor: polish EntityRepositoryJsonExtensions
 +- nits
 +- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
+
+# 2026-07-19 01:53:43.972813
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `BasicExampleJsonExtensions` (defined in `examples/BasicExampleJsonExtensions.cs`).
++
++Add a "## BasicExampleJsonExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string ToJson
++public static BasicExample.User? FromJson
++public static bool TryFromJson
++public static string ToJson
++public static BasicExample.UserDto? FromJson
++public static bool TryFromJson
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme: README usage
++- readme tweaks
++- Explain .aider.chat.history in readme
++- Readme tweaks
++- docs: readme: .aider.chat.history usage
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
+
+# 2026-07-19 01:53:43.972886
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `BasicExampleJsonExtensions` (defined in `examples/BasicExampleJsonExtensions.cs`).
++
++Add a "## BasicExampleJsonExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string ToJson
++public static BasicExample.User? FromJson
++public static bool TryFromJson
++public static string ToJson
++public static BasicExample.UserDto? FromJson
++public static bool TryFromJson
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme: README usage
++- readme tweaks
++- Explain .aider.chat.history in readme
++- Readme tweaks
++- docs: readme: .aider.chat.history usage
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
+
+# 2026-07-19 01:53:51.690777
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `BasicExampleJsonExtensions` (defined in `examples/BasicExampleJsonExtensions.cs`).
++
++Add a "## BasicExampleJsonExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string ToJson
++public static BasicExample.User? FromJson
++public static bool TryFromJson
++public static string ToJson
++public static BasicExample.UserDto? FromJson
++public static bool TryFromJson
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme: README usage
++- readme tweaks
++- Explain .aider.chat.history in readme
++- Readme tweaks
++- docs: readme: .aider.chat.history usage
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
+
+# 2026-07-19 01:53:51.690838
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `BasicExampleJsonExtensions` (defined in `examples/BasicExampleJsonExtensions.cs`).
++
++Add a "## BasicExampleJsonExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static string ToJson
++public static BasicExample.User? FromJson
++public static bool TryFromJson
++public static string ToJson
++public static BasicExample.UserDto? FromJson
++public static bool TryFromJson
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- docs: readme: README usage
++- readme tweaks
++- Explain .aider.chat.history in readme
++- Readme tweaks
++- docs: readme: .aider.chat.history usage
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.

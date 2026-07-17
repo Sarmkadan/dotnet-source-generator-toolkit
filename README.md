@@ -19,6 +19,7 @@
 - [Quick Start](#quick-start)
 - [Usage Examples](#usage-examples)
 - [API Reference](#api-reference)
+- [BasicExampleJsonExtensions](#basicexamplejsonextensions)
 - [EcommerceExampleValidation](#ecommerceexamplevalidation)
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
@@ -1505,6 +1506,80 @@ public override bool Equals(object? obj) => Equals(obj as Product);
 - `ConfigurationManager`: Loads and manages configuration
 - `FileSystemService`: Handles file I/O operations
 - `GenerationResultRepository`: Persists generation results
+
+## BasicExampleJsonExtensions
+
+The `BasicExampleJsonExtensions` class provides JSON serialization and deserialization extension methods for the `BasicExample.User` and `BasicExample.UserDto` types. It uses `System.Text.Json` with camelCase property naming policy, making it ideal for API contracts, configuration files, and data transfer scenarios where consistent JSON formatting is required.
+
+### Public Members
+
+- `string ToJson(this BasicExample.User value, bool indented = false)` - Serializes a User entity to a JSON string with optional indentation
+- `BasicExample.User? FromJson(string? json)` - Deserializes a JSON string to a User entity
+- `bool TryFromJson(string? json, out BasicExample.User? value)` - Attempts to deserialize a JSON string to a User entity
+- `string ToJson(this BasicExample.UserDto value, bool indented = false)` - Serializes a UserDto to a JSON string with optional indentation
+- `BasicExample.UserDto? FromJson(string? json)` - Deserializes a JSON string to a UserDto
+- `bool TryFromJson(string? json, out BasicExample.UserDto? value)` - Attempts to deserialize a JSON string to a UserDto
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Examples;
+
+// Create a User entity
+var user = new BasicExample.User
+{
+    Id = 42,
+    Name = "John Doe",
+    Email = "john.doe@example.com",
+    CreatedDate = DateTime.UtcNow
+};
+
+// Serialize to JSON (compact format by default)
+string jsonCompact = user.ToJson();
+Console.WriteLine(jsonCompact);
+// Output: {"id":42,"name":"John Doe","email":"john.doe@example.com","createdDate":"2025-07-19T14:30:45.123Z"}
+
+// Serialize to JSON with indentation for readability
+string jsonIndented = user.ToJson(indented: true);
+Console.WriteLine(jsonIndented);
+/* Output:
+{
+  "id": 42,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "createdDate": "2025-07-19T14:30:45.123Z"
+}
+*/
+
+// Deserialize from JSON
+string jsonData = "{\"id\":1,\"name\":\"Jane Smith\",\"email\":\"jane.smith@example.com\",\"createdDate\":\"2025-01-15T10:00:00Z\"}";
+var deserializedUser = BasicExampleJsonExtensions.FromJson(jsonData);
+Console.WriteLine(deserializedUser?.Name); // Output: Jane Smith
+
+// Try to deserialize with error handling
+string invalidJson = "{\"id\":\"not-a-number\"}";
+bool success = BasicExampleJsonExtensions.TryFromJson(invalidJson, out var parsedUser);
+Console.WriteLine(success); // Output: false
+
+// Create and serialize a UserDto
+var userDto = new BasicExample.UserDto
+{
+    Id = 1,
+    Name = "Alice Johnson",
+    Email = "alice@example.com",
+    CreatedDateString = "2025-01-20T09:15:00Z",
+    IsActive = true
+};
+
+string dtoJson = userDto.ToJson();
+Console.WriteLine(dtoJson);
+// Output: {"id":1,"name":"Alice Johnson","email":"alice@example.com","createdDateString":"2025-01-20T09:15:00Z","isActive":true}
+
+// Deserialize UserDto from JSON
+string userDtoJson = "{\"id\":2,\"name\":\"Bob Brown\",\"email\":\"bob@example.com\",\"createdDateString\":\"2025-02-28T14:25:00Z\",\"isActive\":false}";
+var userDtoResult = BasicExampleJsonExtensions.FromJson(userDtoJson);
+Console.WriteLine(userDtoResult?.Name); // Output: Bob Brown
+```
 
 ## ConfigurationManager
 
