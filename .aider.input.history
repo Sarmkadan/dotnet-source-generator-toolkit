@@ -11216,3 +11216,225 @@
 +- Program now reuses AddSourceGeneratorToolkit instead of duplicating registrations - the two lists had already drifted (lifetimes, template engine missing in Main)
 +- don't blow up on null ToolkitOptions in AddSourceGeneratorToolkit
 +- rewrite architecture doc to match the actual code
+
+# 2026-07-18 20:55:21.947725
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix
+
+# 2026-07-18 20:55:21.948134
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix
+
+# 2026-07-18 20:55:30.148561
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix
+
+# 2026-07-18 20:55:30.148615
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix
+
+# 2026-07-18 20:56:39.281760
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix
+
+# 2026-07-18 20:56:39.281837
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, extend README.md with a documentation section for the type `FileSystemServiceExtensions` (defined in `Infrastructure/FileSystemServiceExtensions.cs`).
++
++Add a "## FileSystemServiceExtensions" section: 2-3 sentences on what it does and a realistic, compiling C# usage example based on its REAL public members:
++```
++public static async Task<IReadOnlyList<string>> ReadAllLinesAsync
++public static async Task WriteAllLinesAsync
++public static bool DirectoryExists
++public static async Task<bool> SafeDeleteFileAsync
++public static async Task<bool> SafeDeleteDirectoryAsync
++public static async Task<string> ReadAllTextAsync
++public static string GetFileName
++public static string GetFileNameWithoutExtension
++public static string GetFileExtension
++public static string GetRelativePath
++public static string GetFullPath
++```
++Only edit README.md. Do not invent members that are not listed.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except the one named above.
++- Do NOT write tests. Do NOT add NuGet packages. No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- Dedupe some logic in XmlOutputFormatterJsonExtensions
++- polish CollectionExtensionsJsonExtensoins
++- polish EnumExtensionsJsonExtensions.
++- tighten guard clauses in FilePathValidatorJsonExtensions
++- Tighten guard clauses in StringValidatorJsonExtensions.
++- refactor: polish EntityRepositoryJsonExtensions
++- nits
++- refactor: dedupe some logic in RepositoryGeneratorServiceJsonExtensions
++- Polish SourceGeneratorServiceJsonExtensions
++- Fix

@@ -1999,6 +1999,26 @@ string sanitizedFileName = StringValidator.SanitizeForFileName(generatedFileName
 Console.WriteLine($"Sanitized filename: {sanitizedFileName}");
 ```
 
+## FileSystemServiceExtensions
+
+The `FileSystemServiceExtensions` class provides extension methods for the `IFileSystemService` interface, enhancing its capabilities with additional file system operations. These extensions include methods for reading and writing files, checking directory existence, safely deleting files and directories, and retrieving file names and extensions.
+
+### Public Members
+
+- `ReadAllLinesAsync(string filePath)` - Reads all lines from a file asynchronously.
+- `WriteAllLinesAsync(string filePath, IEnumerable<string> lines)` - Writes multiple lines to a file asynchronously.
+- `DirectoryExists(string dirPath)` - Checks if a directory exists.
+- `SafeDeleteFileAsync(string filePath)` - Deletes a file if it exists, returning true if successful or did not exist, false if deletion failed.
+- `SafeDeleteDirectoryAsync(string dirPath, bool recursive = true)` - Deletes a directory if it exists, returning true if successful or did not exist, false if deletion failed.
+- `ReadAllTextAsync(string filePath)` - Reads all text from a file asynchronously.
+- `GetFileName(string filePath)` - Gets the file name from a file path.
+- `GetFileNameWithoutExtension(string filePath)` - Gets the file name without extension from a file path.
+- `GetFileExtension(string filePath)` - Gets the file extension from a file path.
+- `GetRelativePath(string basePath, string targetPath)` - Gets the relative path from a base directory to a target path.
+- `GetFullPath(string path)` - Gets the absolute path from a relative path.
+
+These extensions simplify common file system operations and provide a more comprehensive set of tools for working with files and directories in .NET applications.
+
 ## FilePathValidator
 
 The `FilePathValidator` class provides utility methods for validating and manipulating file system paths in a secure and safe manner. It includes methods for validating path safety, ensuring directory existence, computing relative paths, safely combining path segments, and extracting directory information. This class is essential for preventing path traversal attacks and ensuring file operations are performed within expected directory boundaries.
