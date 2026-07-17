@@ -5338,6 +5338,110 @@ cd tests/dotnet-source-generator-toolkit.Tests
 dotnet test --configuration Release
 ```
 
+## AutoImplementGeneratorCachingTests
+
+The `AutoImplementGeneratorCachingTests` class verifies that the `AutoImplementGenerator` behaves correctly as an incremental Roslyn source generator. These tests ensure that when compilation changes are unrelated to the generator's inputs, cached outputs are reused instead of recomputing, which is essential for maintaining IDE responsiveness during typing. The tests validate both caching behavior (when unrelated changes occur) and recomputation behavior (when relevant changes occur).
+
+### Public Members
+
+- `Id` (int) - Primary identifier for the test class
+- `Customer` (string) - Customer name property
+- `A` (int) - Property in unrelated class version 1
+- `A` (int) - Property in unrelated class version 2  
+- `B` (int) - Additional property in unrelated class version 2
+- `UnrelatedChange_DoesNotReRunGenerationStep()` - Verifies that unrelated compilation changes don't trigger recomputation
+- `RelatedChange_ReRunsAndProducesNewOutput()` - Verifies that relevant compilation changes trigger recomputation and produce updated output
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Generators;
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
+using Xunit;
+
+public sealed class OrderGeneratorTests
+{
+    private const string TargetSource = """
+    using DotNetSourceGeneratorToolkit.Generated;
+    namespace Shop
+    {
+        [GenerateToString]
+        public partial class Order
+        {
+            public int Id { get; set; }
+            public string Customer { get; set; }
+        }
+    }
+    """;
+
+    private const string UnrelatedSourceV1 = """
+    namespace Shop
+    {
+        public class Unrelated
+        {
+            public int A { get; set; }
+        }
+    }
+    """;
+
+    [Fact]
+    public void UnrelatedChange_DoesNotReRunGenerationStep()
+    {
+        var generator = new AutoImplementGenerator();
+        var driver = GeneratorTestHarness.CreateDriver(generator);
+
+        var compilation1 = GeneratorTestHarness.CreateCompilation(TargetSource, UnrelatedSourceV1);
+        driver = driver.RunGenerators(compilation1);
+
+        // Replace only the unrelated syntax tree with an edited version
+        var oldTree = compilation1.SyntaxTrees.Single(t => t.ToString().Contains("class Unrelated"));
+        var newTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(
+            UnrelatedSourceV1.Replace("public int A { get; set; }", 
+                                     "public int A { get; set; }\npublic int B { get; set; }\npublic string Note = \"changed\"));
+        var compilation2 = compilation1.ReplaceSyntaxTree(oldTree, newTree);
+
+        driver = driver.RunGenerators(compilation2);
+
+        var steps = driver.GetRunResult().Results
+            .SelectMany(r => r.TrackedOutputSteps)
+            .SelectMany(kvp => kvp.Value)
+            .SelectMany(step => step.Outputs);
+
+        // All outputs should come from cache, not recomputation
+        steps.Should().OnlyContain(o => 
+            o.Reason == IncrementalStepRunReason.Cached || 
+            o.Reason == IncrementalStepRunReason.Unchanged);
+    }
+
+    [Fact]
+    public void RelatedChange_ReRunsAndProducesNewOutput()
+    {
+        var generator = new AutoImplementGenerator();
+        var driver = GeneratorTestHarness.CreateDriver(generator);
+
+        var compilation1 = GeneratorTestHarness.CreateCompilation(TargetSource, UnrelatedSourceV1);
+        driver = driver.RunGenerators(compilation1);
+
+        // Add a property to the annotated type - this is a relevant change
+        var editedTarget = TargetSource.Replace(
+            "public string Customer { get; set; }",
+            "public string Customer { get; set; }\npublic decimal Total { get; set; }");
+
+        var oldTree = compilation1.SyntaxTrees.Single(t => t.ToString().Contains("class Order"));
+        var newTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(editedTarget);
+        var compilation2 = compilation1.ReplaceSyntaxTree(oldTree, newTree);
+
+        driver = driver.RunGenerators(compilation2);
+
+        var after = GeneratorTestHarness.GetGeneratedText(driver.GetRunResult(), "Order.ToString.g.cs");
+        
+        // Should contain the new Total property in generated output
+        after.Should().Contain("Total = {Total}");
+    }
+}
+```
+
 ## SourceFile
 
 The `SourceFile` class represents a C# source file with its metadata, content, and processing state. It serves as the primary data structure for analyzing existing files, tracking generated artifacts, and managing the source file lifecycle throughout the code generation pipeline. The class provides comprehensive metadata extraction, content manipulation, and validation capabilities for working with C# source files.
