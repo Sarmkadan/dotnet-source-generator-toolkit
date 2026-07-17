@@ -2301,6 +2301,48 @@ string repositoryPath = FilePathValidator.CombineSafePath(baseOutputPath, "Repos
 Console.WriteLine($"Generated repository will be written to: {repositoryPath}");
 ```
 
+## FilePathValidatorJsonExtensions
+
+The `FilePathValidatorJsonExtensions` class provides System.Text.Json serialization support for `FilePathValidator` operations. It enables converting file path validation results to and from JSON format, making it ideal for configuration files, API responses, and data transfer scenarios where structured serialization of path validation results is required.
+
+### Public Members
+
+- `ToJson(this string path, bool indented = false)` - Serializes a file path to a JSON string with validation result
+- `FromJson(string json)` - Deserializes a JSON string to a `FilePathValidationResult`
+- `TryFromJson(string json, out FilePathValidationResult? value)` - Attempts to deserialize a JSON string to a `FilePathValidationResult`
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Utilities;
+
+// Validate a file path and serialize to JSON
+string filePath = "./src/Entities/Product.cs";
+string jsonCompact = filePath.ToJson();
+Console.WriteLine(jsonCompact);
+// Output: {"path":"./src/Entities/Product.cs","isValid":true}
+
+// Serialize with indentation for readability
+string jsonIndented = filePath.ToJson(indented: true);
+Console.WriteLine(jsonIndented);
+/* Output:
+{
+  "path": "./src/Entities/Product.cs",
+  "isValid": true
+}
+*/
+
+// Deserialize from JSON
+string jsonData = "{\\"path\\":\\"./output/Repository.cs\\",\\"isValid\\":true}";
+var validationResult = FilePathValidatorJsonExtensions.FromJson(jsonData);
+Console.WriteLine(validationResult?.Path); // Output: ./output/Repository.cs
+
+// Try to deserialize with error handling
+string invalidJson = "{\\"invalid\\":\\"json\\"}";
+bool success = FilePathValidatorJsonExtensions.TryFromJson(invalidJson, out var parsedResult);
+Console.WriteLine(success); // Output: false
+```
+
 ## Installation
 
 ### Prerequisites
