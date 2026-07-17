@@ -1,3 +1,7 @@
+#nullable enable
+
+using System.Globalization;
+
 /// <summary>
 /// Provides extension methods for the <see cref="Product"/> class.
 /// </summary>
@@ -24,7 +28,7 @@ public static class ProductExtensions
     public static string FormatProductDetails(this Product product)
     {
         ArgumentNullException.ThrowIfNull(product);
-        return $"Id: {product.Id}, Name: {product.Name}, Price: {product.Price}, Created Date: {product.CreatedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}";
+        return $"Id: {product.Id}, Name: {product.Name}, Price: {product.Price}, Created Date: {product.CreatedDate:yyyy-MM-dd}";
     }
 
     /// <summary>
@@ -39,11 +43,11 @@ public static class ProductExtensions
     public static bool IsPriceWithinRange(this Product product, decimal minPrice, decimal maxPrice)
     {
         ArgumentNullException.ThrowIfNull(product);
-        if (minPrice > maxPrice)
-        {
-            throw new ArgumentException("Minimum price cannot be greater than maximum price", nameof(minPrice));
-        }
-        return product.Price >= minPrice && product.Price <= maxPrice;
+return (minPrice, maxPrice) switch
+{
+(var min, var max) when min > max => throw new ArgumentException("Minimum price cannot be greater than maximum price", nameof(minPrice)),
+_ => product.Price >= minPrice && product.Price <= maxPrice
+};
     }
 
     /// <summary>
