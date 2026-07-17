@@ -37,10 +37,12 @@ public static class MapperGeneratorServiceJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <returns>The deserialized service instance, or null if the JSON is empty or whitespace.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is empty or consists only of whitespace.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
     public static MapperGeneratorService? FromJson(string json)
     {
         ArgumentNullException.ThrowIfNull(json);
+        ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
 
         return json.IsNullOrWhiteSpace()
             ? null
@@ -57,6 +59,7 @@ public static class MapperGeneratorServiceJsonExtensions
     public static bool TryFromJson(string json, out MapperGeneratorService? value)
     {
         ArgumentNullException.ThrowIfNull(json);
+        ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
 
         value = null;
 
