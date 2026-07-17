@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace DotNetSourceGeneratorToolkit.Domain
 {
@@ -16,6 +17,7 @@ namespace DotNetSourceGeneratorToolkit.Domain
         public static bool HasValidationConstraints(this EntityProperty property)
         {
             ArgumentNullException.ThrowIfNull(property);
+
             return property.IsRequired
                 || !string.IsNullOrEmpty(property.RegexPattern)
                 || property.MinValue is not null
@@ -34,9 +36,10 @@ namespace DotNetSourceGeneratorToolkit.Domain
         public static string GetDisplayName(this EntityProperty property)
         {
             ArgumentNullException.ThrowIfNull(property);
+
             return string.IsNullOrEmpty(property.Description)
                 ? property.Name
-                : $"{property.Description} ({property.Name})";
+                : string.Format(CultureInfo.InvariantCulture, "{0} ({1})", property.Description, property.Name);
         }
 
         /// <summary>
@@ -48,6 +51,7 @@ namespace DotNetSourceGeneratorToolkit.Domain
         public static bool IsStringWithLengthConstraints(this EntityProperty property)
         {
             ArgumentNullException.ThrowIfNull(property);
+
             return property.Type == "string"
                 && (property.MaxLength.HasValue || property.MinLength.HasValue);
         }
