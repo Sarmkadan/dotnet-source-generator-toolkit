@@ -1330,6 +1330,89 @@ attributes.Should().Contain("[Required]");
 attributes.Should().Contain("[MaxLength(256)]");
 ```
 
+## AutoImplementGeneratorDiagnosticTests
+
+The `AutoImplementGeneratorDiagnosticTests` class verifies that the `AutoImplementGenerator` reports the expected compiler diagnostics with correct IDs and severities for invalid inputs, and stays silent for valid ones. This test suite ensures that the auto-implementation generator properly validates its inputs and provides meaningful diagnostic messages to developers.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Generators;
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
+using Xunit;
+
+// Test 1: Non-partial class should report SGTK001 as error
+var nonPartialSource = """
+using DotNetSourceGeneratorToolkit.Generated;
+namespace Acme
+{
+    [GenerateToString]
+    public class NotPartial
+    {
+        public int Id { get; set; }
+    }
+}
+""";
+
+var nonPartialResult = GeneratorTestHarness.Run(new AutoImplementGenerator(), nonPartialSource);
+var diagnostic = nonPartialResult.Diagnostics.Should().ContainSingle().Subject;
+diagnostic.Id.Should().Be("SGTK001");
+diagnostic.Severity.Should().Be(DiagnosticSeverity.Error);
+diagnostic.GetMessage().Should().Contain("NotPartial");
+
+// Test 2: Partial class with no public properties should report SGTK002 as warning
+var emptyPartialSource = """
+using DotNetSourceGeneratorToolkit.Generated;
+namespace Acme
+{
+    [GenerateToString]
+    public partial class Empty
+    {
+        private int _hidden;
+    }
+}
+""";
+
+var emptyResult = GeneratorTestHarness.Run(new AutoImplementGenerator(), emptyPartialSource);
+var warningDiagnostic = emptyResult.Diagnostics.Should().ContainSingle().Subject;
+warningDiagnostic.Id.Should().Be("SGTK002");
+warningDiagnostic.Severity.Should().Be(DiagnosticSeverity.Warning);
+
+// Test 3: Static class should report SGTK003 as error
+var staticSource = """
+using DotNetSourceGeneratorToolkit.Generated;
+namespace Acme
+{
+    [GenerateToString]
+    public static partial class Helpers
+    {
+        public static int Value { get; set; }
+    }
+}
+""";
+
+var staticResult = GeneratorTestHarness.Run(new AutoImplementGenerator(), staticSource);
+staticResult.Diagnostics.Select(d => d.Id).Should().Contain("SGTK003");
+staticResult.Diagnostics.Single(d => d.Id == "SGTK003").Severity.Should().Be(DiagnosticSeverity.Error);
+
+// Test 4: Valid partial class should report no diagnostics
+var validSource = """
+using DotNetSourceGeneratorToolkit.Generated;
+namespace Acme
+{
+    [GenerateToString]
+    public partial class ValidClass
+    {
+        public int Id { get; set; }
+    }
+}
+""";
+
+var validResult = GeneratorTestHarness.Run(new AutoImplementGenerator(), validSource);
+validResult.Diagnostics.Should().BeEmpty();
+```
+
 ### Design Patterns Used
 
 | Pattern | Components | Purpose |
