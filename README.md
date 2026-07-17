@@ -19,6 +19,7 @@
 - [Quick Start](#quick-start)
 - [Usage Examples](#usage-examples)
 - [API Reference](#api-reference)
+- [EcommerceExampleValidation](#ecommerceexamplevalidation)
 - [DateTimeExtensions](#datetimeextensions)
 - [CollectionExtensions](#collectionextensions)
 - [EnumExtensions](#enumextensions)
@@ -3398,6 +3399,98 @@ if (specificEntity != null)
 }
 ```
 
+
+## EcommerceExampleValidation
+
+The `EcommerceExampleValidation` class provides validation helpers for e-commerce domain types (`Product`, `Order`, `OrderItem`). It offers methods to validate domain entities and ensure business rules are enforced, returning detailed error messages or throwing exceptions when validation fails.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Examples;
+
+// Create a valid product
+var product = new Product
+{
+    Id = 1,
+    Sku = "PROD-001",
+    Name = "Premium Wireless Headphones",
+    Description = "High-quality wireless headphones with noise cancellation",
+    Price = 299.99m,
+    StockQuantity = 50,
+    CategoryId = 5,
+    CreatedAt = DateTime.UtcNow.AddMinutes(-2)
+};
+
+// Validate the product - returns list of error messages
+var validationErrors = product.Validate();
+if (validationErrors.Count > 0)
+{
+    Console.WriteLine("Product validation failed:");
+    foreach (var error in validationErrors)
+    {
+        Console.WriteLine($"- {error}");
+    }
+}
+else
+{
+    Console.WriteLine("✅ Product is valid!");
+}
+
+// Quick validation check
+bool isValid = product.IsValid();
+Console.WriteLine($"Product is valid: {isValid}");
+
+// Create an order with items
+var order = new Order
+{
+    Id = 101,
+    CustomerId = 42,
+    OrderDate = DateTime.UtcNow.AddHours(-1),
+    TotalAmount = 599.98m,
+    Status = "Processing",
+    ShippingAddress = "123 Main St, Anytown, USA 12345",
+    Items = new List<OrderItem>
+    {
+        new OrderItem
+        {
+            Id = 1,
+            OrderId = 101,
+            ProductId = 1,
+            Quantity = 2,
+            UnitPrice = 299.99m,
+            LineTotal = 599.98m
+        }
+    }
+};
+
+// Validate the order
+var orderErrors = order.Validate();
+if (orderErrors.Count > 0)
+{
+    Console.WriteLine("Order validation failed:");
+    foreach (var error in orderErrors)
+    {
+        Console.WriteLine($"- {error}");
+    }
+}
+else
+{
+    Console.WriteLine("✅ Order is valid!");
+}
+
+// Ensure validation - throws ArgumentException if invalid
+try
+{
+    product.EnsureValid();
+    order.EnsureValid();
+    Console.WriteLine("All validations passed!");
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Validation failed: {ex.Message}");
+}
+```
 ## API Reference
 
 ### GenerationResultRepository
