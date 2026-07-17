@@ -5,22 +5,20 @@
 // CTO & Software Architect
 // =============================================================================
 
-using System.Globalization;
-
 namespace DotNetSourceGeneratorToolkit.Pipeline;
 
 /// <summary>
 /// Provides validation helpers for <see cref="GenerationPipeline"/> instances.
 /// Validates pipeline state including execution results, error messages, and timestamps.
 /// </summary>
-public static class GenerationPipelineValidation
+internal static class GenerationPipelineValidation
 {
     /// <summary>
     /// Validates the generation pipeline instance for common issues and edge cases.
     /// </summary>
     /// <param name="value">The pipeline instance to validate</param>
     /// <returns>A list of human-readable validation problems; empty if valid</returns>
-    /// <exception cref="ArgumentNullException">Thrown if value is null</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null</exception>
     public static IReadOnlyList<string> Validate(this GenerationPipeline value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -87,7 +85,10 @@ public static class GenerationPipelineValidation
                 errors.Add("ErrorMessage exceeds maximum length of 1000 characters.");
             }
 
-            if (value.ErrorMessage.Contains("\r\n") && value.ErrorMessage.Contains('\n') && !value.ErrorMessage.Contains("\r\n"))
+            // Check for inconsistent line endings (either \r\n or \n, but not both)
+            var hasCrLf = value.ErrorMessage.Contains("\r\n");
+            var hasLfOnly = value.ErrorMessage.Contains("\n") && !value.ErrorMessage.Contains("\r\n");
+            if (hasCrLf && hasLfOnly)
             {
                 errors.Add("ErrorMessage contains inconsistent line endings.");
             }
@@ -101,8 +102,10 @@ public static class GenerationPipelineValidation
     /// </summary>
     /// <param name="value">The pipeline instance to check</param>
     /// <returns>True if the pipeline is valid; otherwise false</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null</exception>
     public static bool IsValid(this GenerationPipeline value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         return Validate(value).Count == 0;
     }
 
@@ -111,7 +114,7 @@ public static class GenerationPipelineValidation
     /// Throws an <see cref="ArgumentException"/> if validation fails, listing all problems.
     /// </summary>
     /// <param name="value">The pipeline instance to validate</param>
-    /// <exception cref="ArgumentNullException">Thrown if value is null</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null</exception>
     /// <exception cref="ArgumentException">Thrown if validation fails, containing all error messages</exception>
     public static void EnsureValid(this GenerationPipeline value)
     {
