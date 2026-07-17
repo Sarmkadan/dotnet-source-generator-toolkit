@@ -6,10 +6,11 @@ namespace DotNetSourceGeneratorToolkit.Domain;
 public static class SourceFileExtensions
 {
     /// <summary>
-    /// Determines whether the source file has any usings.
+    /// Determines whether the source file has any using directives.
     /// </summary>
-    /// <param name="sourceFile">The source file.</param>
-    /// <returns><c>true</c> if the source file has any usings; otherwise, <c>false</c>.</returns>
+    /// <param name="sourceFile">The source file to check.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <returns><see langword="true"/> if the source file has any using directives; otherwise, <see langword="false"/>.</returns>
     public static bool HasUsings(this SourceFile sourceFile)
     {
         ArgumentNullException.ThrowIfNull(sourceFile);
@@ -17,10 +18,11 @@ public static class SourceFileExtensions
     }
 
     /// <summary>
-    /// Determines whether the source file has any namespaces.
+    /// Determines whether the source file declares any namespaces.
     /// </summary>
-    /// <param name="sourceFile">The source file.</param>
-    /// <returns><c>true</c> if the source file has any namespaces; otherwise, <c>false</c>.</returns>
+    /// <param name="sourceFile">The source file to check.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <returns><see langword="true"/> if the source file declares any namespaces; otherwise, <see langword="false"/>.</returns>
     public static bool HasNamespaces(this SourceFile sourceFile)
     {
         ArgumentNullException.ThrowIfNull(sourceFile);
@@ -28,10 +30,11 @@ public static class SourceFileExtensions
     }
 
     /// <summary>
-    /// Gets the total number of types, attributes, and usings in the source file.
+    /// Gets the total number of metadata elements (types, attributes, and usings) in the source file.
     /// </summary>
-    /// <param name="sourceFile">The source file.</param>
-    /// <returns>The total number of types, attributes, and usings.</returns>
+    /// <param name="sourceFile">The source file to analyze.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <returns>The sum of type names, attribute names, and using directives in the file.</returns>
     public static int GetMetadataCount(this SourceFile sourceFile)
     {
         ArgumentNullException.ThrowIfNull(sourceFile);
@@ -39,10 +42,11 @@ public static class SourceFileExtensions
     }
 
     /// <summary>
-    /// Determines whether the source file is a large file (more than 1000 lines).
+    /// Determines whether the source file exceeds the large file threshold (> 1000 lines).
     /// </summary>
-    /// <param name="sourceFile">The source file.</param>
-    /// <returns><c>true</c> if the source file is a large file; otherwise, <c>false</c>.</returns>
+    /// <param name="sourceFile">The source file to evaluate.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <returns><see langword="true"/> if the file has more than 1000 lines; otherwise, <see langword="false"/>.</returns>
     public static bool IsLargeFile(this SourceFile sourceFile)
     {
         ArgumentNullException.ThrowIfNull(sourceFile);
