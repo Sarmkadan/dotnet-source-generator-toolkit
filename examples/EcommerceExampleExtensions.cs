@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
+namespace DotNetSourceGeneratorToolkit.Examples;
+
 public static class EcommerceExampleExtensions
 {
     /// <summary>
@@ -11,7 +13,7 @@ public static class EcommerceExampleExtensions
     /// <param name="order">The order to format.</param>
     /// <returns>A formatted string representing the order details.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="order"/> is null.</exception>
-    public static string FormatOrderDetails(this EcommerceExample order)
+    public static string FormatOrderDetails(this Order order)
     {
         ArgumentNullException.ThrowIfNull(order);
         return $"Order {order.Id} - {order.OrderDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)} - {order.TotalAmount.ToString("C", CultureInfo.InvariantCulture)}";
@@ -23,10 +25,11 @@ public static class EcommerceExampleExtensions
     /// <param name="order">The order to retrieve the total quantity from.</param>
     /// <returns>The total quantity of all items in the order.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="order"/> is null.</exception>
-    public static int GetTotalQuantity(this EcommerceExample order)
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="order.Items"/> is null.</exception>
+    public static int GetTotalQuantity(this Order order)
     {
         ArgumentNullException.ThrowIfNull(order);
-        return order.Items.Sum(item => item.Quantity);
+        return order.Items?.Sum(item => item.Quantity) ?? 0;
     }
 
     /// <summary>
@@ -35,10 +38,10 @@ public static class EcommerceExampleExtensions
     /// <param name="order">The order to check.</param>
     /// <returns>True if the order is recent; otherwise, false.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="order"/> is null.</exception>
-    public static bool IsRecentOrder(this EcommerceExample order)
+    public static bool IsRecentOrder(this Order order)
     {
         ArgumentNullException.ThrowIfNull(order);
-        return order.OrderDate >= DateTime.Now.AddDays(-30);
+        return order.OrderDate >= DateTime.UtcNow.AddDays(-30);
     }
 
     /// <summary>
@@ -47,7 +50,7 @@ public static class EcommerceExampleExtensions
     /// <param name="order">The order to retrieve the most expensive item from.</param>
     /// <returns>The most expensive item in the order, or null if the order has no items.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="order"/> is null.</exception>
-    public static OrderItem? GetMostExpensiveItem(this EcommerceExample order)
+    public static OrderItem? GetMostExpensiveItem(this Order order)
     {
         ArgumentNullException.ThrowIfNull(order);
         return order.Items?.OrderByDescending(item => item.UnitPrice).FirstOrDefault();
