@@ -15,7 +15,7 @@ public static class ValidationResultExtensions
     {
         ArgumentNullException.ThrowIfNull(validationResult);
 
-        return validationResult.Errors.Count > 0 || validationResult.Warnings.Count > 0;
+        return validationResult.HasIssues;
     }
 
     /// <summary>
@@ -38,9 +38,7 @@ public static class ValidationResultExtensions
     /// <returns><c>true</c> if the validation result is valid and has no warnings; otherwise, <c>false</c>.</returns>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="validationResult"/> is <c>null</c>.</exception>
     public static bool IsValidAndClean(this ValidationResult validationResult)
-    {
-        ArgumentNullException.ThrowIfNull(validationResult);
-
-        return validationResult.IsValid && !validationResult.HasMessages();
-    }
+        => validationResult is null
+            ? throw new ArgumentNullException(nameof(validationResult))
+            : validationResult.IsValid && !validationResult.HasMessages();
 }
