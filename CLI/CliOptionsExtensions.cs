@@ -23,7 +23,7 @@ public static class CliOptionsExtensions
     public static IReadOnlyList<string> GetGeneratorTypes(this CliOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        return options.GeneratorTypes.AsReadOnly();
+        return options.GeneratorTypes ??= new List<string>();
     }
 
     /// <summary>
