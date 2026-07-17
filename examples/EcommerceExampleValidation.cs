@@ -14,14 +14,14 @@ namespace DotNetSourceGeneratorToolkit.Examples;
 /// <summary>
 /// Provides validation helpers for e-commerce domain types (Product, Order, OrderItem).
 /// </summary>
-public static class EcommerceExampleValidation
+public sealed class EcommerceExampleValidation
 {
     /// <summary>
     /// Validates a Product instance and returns a list of human-readable validation errors.
     /// </summary>
     /// <param name="value">The Product instance to validate.</param>
-    /// <returns>An empty list if valid, otherwise a list of validation error messages.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>An empty list if valid; otherwise, a list of validation error messages.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static IReadOnlyList<string> Validate(this Product? value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -113,8 +113,8 @@ public static class EcommerceExampleValidation
     /// Validates an Order instance and returns a list of human-readable validation errors.
     /// </summary>
     /// <param name="value">The Order instance to validate.</param>
-    /// <returns>An empty list if valid, otherwise a list of validation error messages.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>An empty list if valid; otherwise, a list of validation error messages.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static IReadOnlyList<string> Validate(this Order? value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -206,8 +206,8 @@ public static class EcommerceExampleValidation
     /// Validates an OrderItem instance and returns a list of human-readable validation errors.
     /// </summary>
     /// <param name="value">The OrderItem instance to validate.</param>
-    /// <returns>An empty list if valid, otherwise a list of validation error messages.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>An empty list if valid; otherwise, a list of validation error messages.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static IReadOnlyList<string> Validate(this OrderItem? value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -269,31 +269,31 @@ public static class EcommerceExampleValidation
     /// Checks if a Product instance is valid.
     /// </summary>
     /// <param name="value">The Product instance to check.</param>
-    /// <returns>True if valid, otherwise false.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>True if valid; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static bool IsValid(this Product? value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Checks if an Order instance is valid.
     /// </summary>
     /// <param name="value">The Order instance to check.</param>
-    /// <returns>True if valid, otherwise false.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>True if valid; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static bool IsValid(this Order? value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Checks if an OrderItem instance is valid.
     /// </summary>
     /// <param name="value">The OrderItem instance to check.</param>
-    /// <returns>True if valid, otherwise false.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <returns>True if valid; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static bool IsValid(this OrderItem? value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Ensures that a Product instance is valid, throwing an ArgumentException if not.
     /// </summary>
     /// <param name="value">The Product instance to validate.</param>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails, containing error messages.</exception>
     public static void EnsureValid(this Product? value)
     {
@@ -302,7 +302,7 @@ public static class EcommerceExampleValidation
         var errors = Validate(value);
         if (errors.Count > 0)
         {
-            throw new ArgumentException("Product validation failed: " + string.Join(" ", errors));
+            throw new ArgumentException("Product validation failed: " + string.Join("; ", errors));
         }
     }
 
@@ -310,7 +310,7 @@ public static class EcommerceExampleValidation
     /// Ensures that an Order instance is valid, throwing an ArgumentException if not.
     /// </summary>
     /// <param name="value">The Order instance to validate.</param>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails, containing error messages.</exception>
     public static void EnsureValid(this Order? value)
     {
@@ -319,7 +319,7 @@ public static class EcommerceExampleValidation
         var errors = Validate(value);
         if (errors.Count > 0)
         {
-            throw new ArgumentException("Order validation failed: " + string.Join(" ", errors));
+            throw new ArgumentException("Order validation failed: " + string.Join("; ", errors));
         }
     }
 
@@ -327,7 +327,7 @@ public static class EcommerceExampleValidation
     /// Ensures that an OrderItem instance is valid, throwing an ArgumentException if not.
     /// </summary>
     /// <param name="value">The OrderItem instance to validate.</param>
-    /// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails, containing error messages.</exception>
     public static void EnsureValid(this OrderItem? value)
     {
@@ -336,7 +336,7 @@ public static class EcommerceExampleValidation
         var errors = Validate(value);
         if (errors.Count > 0)
         {
-            throw new ArgumentException("OrderItem validation failed: " + string.Join(" ", errors));
+            throw new ArgumentException("OrderItem validation failed: " + string.Join("; ", errors));
         }
     }
 
