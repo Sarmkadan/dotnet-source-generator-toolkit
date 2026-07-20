@@ -1,4 +1,10 @@
 #nullable enable
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace DotNetSourceGeneratorToolkit
@@ -8,6 +14,9 @@ namespace DotNetSourceGeneratorToolkit
     /// </summary>
     public sealed class HealthCheckEndpoint
     {
+        // Stopwatch to track uptime since the process started.
+        private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HealthCheckEndpoint"/> class.
         /// </summary>
@@ -21,10 +30,18 @@ namespace DotNetSourceGeneratorToolkit
         /// <param name="context">The health check context.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A health check result.</returns>
-        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            // Implement health check logic here
-            return HealthCheckResult.Healthy();
+            // Gather health data
+            var data = new Dictionary<string, object>
+            {
+                ["assemblyVersion"] = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown",
+                ["uptime"] = _stopwatch.Elapsed.ToString(),
+                ["timestamp"] = DateTime.UtcNow
+            };
+
+            // Return a healthy result with the data payload
+            return Task.FromResult(HealthCheckResult.Healthy("Healthy", data));
         }
     }
 }
