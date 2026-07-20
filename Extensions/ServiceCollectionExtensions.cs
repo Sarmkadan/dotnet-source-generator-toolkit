@@ -50,6 +50,9 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IFileSystemService, FileSystemService>();
         services.TryAddSingleton<IConfigurationManager, ConfigurationManager>();
 
+        // CLI services
+        services.TryAddSingleton<CLI.ICliArgumentParser, CLI.CliArgumentParser>();
+
         // Analysers
         services.TryAddScoped<IAttributeAnalyzer, AttributeAnalyzer>();
         services.TryAddScoped<IEntityAnalyzer, EntityAnalyzer>();

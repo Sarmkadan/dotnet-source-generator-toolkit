@@ -17,10 +17,25 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 public sealed class FileSystemService : IFileSystemService
 {
     private readonly ILogger<FileSystemService> _logger;
+    private bool _dryRun;
 
     public FileSystemService(ILogger<FileSystemService> logger)
     {
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Sets the dry-run mode for this service instance.
+    /// When enabled, write operations will be skipped and logged instead.
+    /// </summary>
+    /// <param name="dryRun">True to enable dry-run mode, false to disable.</param>
+    public void SetDryRun(bool dryRun)
+    {
+        _dryRun = dryRun;
+        if (_dryRun)
+        {
+            _logger.LogInformation("Dry-run mode enabled: file writes will be simulated only");
+        }
     }
 
     public async Task<string> ReadFileAsync(string filePath)
@@ -57,13 +72,28 @@ public sealed class FileSystemService : IFileSystemService
             var directory = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
-                Directory.CreateDirectory(directory);
-                _logger.LogInformation("Created directory: {Directory}", directory);
+                if (_dryRun)
+                {
+                    _logger.LogInformation("[DRY-RUN] Would create directory: {Directory}", directory);
+                }
+                else
+                {
+                    Directory.CreateDirectory(directory);
+                    _logger.LogInformation("Created directory: {Directory}", directory);
+                }
             }
 
-            _logger.LogInformation("Writing file: {FilePath}", filePath);
-            await File.WriteAllTextAsync(filePath, content);
-            _logger.LogInformation("Successfully wrote file: {FilePath} ({Bytes} bytes)", filePath, content?.Length ?? 0);
+            if (_dryRun)
+            {
+                _logger.LogInformation("[DRY-RUN] Would write file: {FilePath} ({Bytes} bytes)\n{Content}",
+                    filePath, content?.Length ?? 0, content);
+            }
+            else
+            {
+                _logger.LogInformation("Writing file: {FilePath}", filePath);
+                await File.WriteAllTextAsync(filePath, content);
+                _logger.LogInformation("Successfully wrote file: {FilePath} ({Bytes} bytes)", filePath, content?.Length ?? 0);
+            }
         }
         catch (Exception ex)
         {
@@ -79,9 +109,16 @@ public sealed class FileSystemService : IFileSystemService
 
         try
         {
-            _logger.LogInformation("Appending to file: {FilePath}", filePath);
-            await File.AppendAllTextAsync(filePath, content);
-            _logger.LogInformation("Successfully appended to file: {FilePath}", filePath);
+            if (_dryRun)
+            {
+                _logger.LogInformation("[DRY-RUN] Would append to file: {FilePath}\n{Content}", filePath, content);
+            }
+            else
+            {
+                _logger.LogInformation("Appending to file: {FilePath}", filePath);
+                await File.AppendAllTextAsync(filePath, content);
+                _logger.LogInformation("Successfully appended to file: {FilePath}", filePath);
+            }
         }
         catch (Exception ex)
         {
@@ -107,8 +144,19 @@ public sealed class FileSystemService : IFileSystemService
         {
             if (File.Exists(filePath))
             {
-                File.Delete(filePath);
-                _logger.LogInformation("Deleted file: {FilePath}", filePath);
+                if (_dryRun)
+                {
+                    _logger.LogInformation("[DRY-RUN] Would delete file: {FilePath}", filePath);
+                }
+                else
+                {
+                    File.Delete(filePath);
+                    _logger.LogInformation("Deleted file: {FilePath}", filePath);
+                }
+            }
+            else if (_dryRun)
+            {
+                _logger.LogInformation("[DRY-RUN] Would delete file (does not exist): {FilePath}", filePath);
             }
 
             await Task.CompletedTask;
@@ -129,8 +177,19 @@ public sealed class FileSystemService : IFileSystemService
         {
             if (!Directory.Exists(dirPath))
             {
-                Directory.CreateDirectory(dirPath);
-                _logger.LogInformation("Created directory: {DirectoryPath}", dirPath);
+                if (_dryRun)
+                {
+                    _logger.LogInformation("[DRY-RUN] Would create directory: {DirectoryPath}", dirPath);
+                }
+                else
+                {
+                    Directory.CreateDirectory(dirPath);
+                    _logger.LogInformation("Created directory: {DirectoryPath}", dirPath);
+                }
+            }
+            else if (_dryRun)
+            {
+                _logger.LogInformation("[DRY-RUN] Directory already exists: {DirectoryPath}", dirPath);
             }
 
             await Task.CompletedTask;
