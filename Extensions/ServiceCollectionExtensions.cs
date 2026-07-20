@@ -7,6 +7,7 @@
 
 using DotNetSourceGeneratorToolkit.Caching;
 using DotNetSourceGeneratorToolkit.Configuration;
+using DotNetSourceGeneratorToolkit.Events;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using DotNetSourceGeneratorToolkit.Repositories;
 using DotNetSourceGeneratorToolkit.Services;
@@ -70,6 +71,10 @@ public static class ServiceCollectionExtensions
 
         // Incremental generation support
         services.TryAddScoped<IIncrementalGeneratorService, IncrementalGeneratorService>();
+
+        // Event handlers
+        services.TryAddScoped<IEventHandler<GenerationStartedEvent>, GenerationMetricsCollector>();
+        services.TryAddScoped<IEventHandler<GenerationCompletedEvent>, GenerationMetricsCollector>();
 
         return services;
     }
