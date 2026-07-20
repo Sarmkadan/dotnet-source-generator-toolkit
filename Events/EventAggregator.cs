@@ -42,13 +42,14 @@ public sealed class EventAggregator : IEventPublisher
         try
         {
             // Resolve all handlers for this event type
-            var handlersMethod = typeof(ServiceProviderServiceExtensions)
-                .GetMethod("GetServices")!
-                .MakeGenericMethod(handlerType);
+            var getServicesMethod = typeof(ServiceProviderServiceExtensions)
+                .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .First(m => m.Name == "GetServices" && m.GetParameters().Length == 1 && m.IsGenericMethod);
+            var handlersMethod = getServicesMethod.MakeGenericMethod(handlerType);
 
             var handlers = handlersMethod.Invoke(null, new object[] { _serviceProvider }) as System.Collections.IEnumerable;
 
-            if (handlers is null)
+            if (handlers is null || !handlers.GetEnumerator().MoveNext())
             {
                 _logger.LogWarning(
                     "[{RequestId}] No handlers found for event {EventType}",
