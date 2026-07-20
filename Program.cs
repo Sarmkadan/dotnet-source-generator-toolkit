@@ -1,11 +1,11 @@
 #nullable enable
-
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
 // =====================================================================
 
 using DotNetSourceGeneratorToolkit.Batch;
+using DotNetSourceGeneratorToolkit.CLI;
 using DotNetSourceGeneratorToolkit.Caching;
 using DotNetSourceGeneratorToolkit.Events;
 using DotNetSourceGeneratorToolkit.Extensions;
@@ -32,43 +32,79 @@ class Program
         try
         {
             _logger = provider.GetRequiredService<ILogger<Program>>();
-            var generatorService = provider.GetRequiredService<ISourceGeneratorService>();
-            var projectPath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
+
+            // Parse CLI arguments
+            var argumentParser = provider.GetRequiredService<ICliArgumentParser>();
+            var cliOptions = argumentParser.Parse(args);
+
+            // Handle help and version flags
+            if (cliOptions.ShowHelp)
+            {
+                Console.WriteLine(argumentParser.GetHelpMessage());
+                return;
+            }
+
+            if (cliOptions.ShowVersion)
+            {
+                Console.WriteLine(argumentParser.GetVersionInfo());
+                return;
+            }
+
+            // Validate options
+            var validationErrors = argumentParser.Validate(cliOptions).ToList();
+            if (validationErrors.Count > 0)
+            {
+                foreach (var error in validationErrors)
+                {
+                    Console.Error.WriteLine($"Error: {error}");
+                }
+                Environment.Exit(1);
+            }
+
+            // Set dry-run flag on FileSystemService if enabled
+            var fileSystemService = provider.GetRequiredService<IFileSystemService>() as FileSystemService;
+            if (fileSystemService != null && cliOptions.DryRun)
+            {
+                fileSystemService.SetDryRun(true);
+            }
+
+            // Create middleware context with CLI options
+            var context = new MiddlewareContext
+            {
+                CliOptions = cliOptions,
+                RequestId = Guid.NewGuid().ToString(),
+                StartTime = DateTime.UtcNow
+            };
 
             _logger.LogInformation("╔════════════════════════════════════════════════╗");
             _logger.LogInformation("║ .NET Source Generator Toolkit ║");
             _logger.LogInformation("║ Roslyn-powered code generation from attributes║");
             _logger.LogInformation("╚════════════════════════════════════════════════╝");
             _logger.LogInformation("Starting source generation toolkit...");
-            _logger.LogInformation("Analyzing project: {ProjectPath}", projectPath);
+            _logger.LogInformation("Analyzing project: {ProjectPath}", cliOptions.ProjectPath);
 
-            var projectInfo = await generatorService.AnalyzeProjectAsync(projectPath);
-
-            if (projectInfo.Entities.Count == 0)
+            if (cliOptions.DryRun)
             {
-                _logger.LogWarning("No entities found for generation.");
-                return;
+                _logger.LogInformation("🔍 Dry-run mode enabled - no files will be written");
             }
 
-            _logger.LogInformation("Found {EntityCount} entities to process.", projectInfo.Entities.Count);
+            var middlewarePipeline = provider.GetRequiredService<IMiddlewarePipeline>();
 
-            // Generate repositories
-            var repoGenerator = provider.GetRequiredService<IRepositoryGeneratorService>();
-            foreach (var entity in projectInfo.Entities)
+            await middlewarePipeline.ExecuteAsync(context);
+
+            if (context.Errors.Count > 0)
             {
-                var repository = await repoGenerator.GenerateRepositoryAsync(entity);
-                _logger.LogInformation("✓ Generated repository for: {EntityName}", repository.EntityName);
+                foreach (var error in context.Errors)
+                {
+                    Console.Error.WriteLine($"Error: {error}");
+                }
+                Environment.Exit(1);
             }
 
-            // Generate mappers
-            var mapperGenerator = provider.GetRequiredService<IMapperGeneratorService>();
-            var mappers = await mapperGenerator.GenerateAllMappersAsync(projectInfo.Entities);
-            _logger.LogInformation("✓ Generated {MapperCount} mapper(s)", mappers.Count());
-
-            // Generate validators
-            var validatorGenerator = provider.GetRequiredService<IValidatorGeneratorService>();
-            var validators = await validatorGenerator.GenerateAllValidatorsAsync(projectInfo.Entities);
-            _logger.LogInformation("✓ Generated {ValidatorCount} validator(s)", validators.Count());
+            if (context.GenerationResults.Count == 0 && !cliOptions.DryRun)
+            {
+                _logger.LogWarning("No generation results produced");
+            }
 
             _logger.LogInformation("Generation completed successfully!");
         }
@@ -101,6 +137,9 @@ class Program
         services.AddScoped<IWebhookService, WebhookService>();
         services.AddScoped<IMiddlewarePipeline, MiddlewarePipeline>();
         services.AddScoped(typeof(IBatchProcessor<>), typeof(BatchProcessor<>));
+
+        // Register CLI services
+        services.AddSingleton<ICliArgumentParser, CliArgumentParser>();
 
         return services;
     }
