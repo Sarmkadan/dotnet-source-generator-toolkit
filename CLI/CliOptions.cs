@@ -80,6 +80,11 @@ public sealed class CliOptions
     public bool ValidateOnly { get; set; }
 
     /// <summary>
+    /// Display statistics about entities, properties, and generation metrics.
+    /// </summary>
+    public bool Stats { get; set; }
+
+    /// <summary>
     /// Parallel execution degree of freedom. Default is environment processor count.
     /// </summary>
     public int DegreeOfParallelism { get; set; } = Environment.ProcessorCount;
