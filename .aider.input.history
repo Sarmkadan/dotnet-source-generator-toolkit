@@ -12412,3 +12412,43 @@
 +- Tweak GenerationMetricsCollector
 +- docs: document .aider.chat.history in the readme
 +- Readme tweaks
+
+# 2026-07-21 05:16:13.678791
++In Services/GenerationResultAggregatorService.cs add a diff summary: compare newly generated SourceFile contents against existing files on disk and report added/changed/unchanged counts.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
++- feat: extend health endpoint with assembly version, uptime, and timestamp
++- cleaunp
++- test: add FileSystemService unit tests
++- docs: write up GenerationMetricsCollector docs
++- Tweak GenerationMetricsCollector
++- docs: document .aider.chat.history in the readme
+
+# 2026-07-21 05:16:13.678865
++In Services/GenerationResultAggregatorService.cs add a diff summary: compare newly generated SourceFile contents against existing files on disk and report added/changed/unchanged counts.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
++- feat: extend health endpoint with assembly version, uptime, and timestamp
++- cleaunp
++- test: add FileSystemService unit tests
++- docs: write up GenerationMetricsCollector docs
++- Tweak GenerationMetricsCollector
++- docs: document .aider.chat.history in the readme

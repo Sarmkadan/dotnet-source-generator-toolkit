@@ -3,9 +3,10 @@
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
-// =============================================================================
+// ===========================================================================
 
 using DotNetSourceGeneratorToolkit.Domain;
+using DotNetSourceGeneratorToolkit.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit.Services;
@@ -19,6 +20,9 @@ public interface IGenerationResultAggregatorService
     /// <summary>Analyzes a collection of generation results.</summary>
     GenerationReport Analyze(IEnumerable<GenerationResult> results);
 
+    /// <summary>Analyzes a collection of generation results and includes file diff summary.</summary>
+    Task<GenerationReport> AnalyzeWithFileDiffAsync(IEnumerable<GenerationResult> results);
+
     /// <summary>Generates a detailed report as formatted text.</summary>
     string GenerateReport(GenerationReport report);
 
@@ -27,6 +31,9 @@ public interface IGenerationResultAggregatorService
 
     /// <summary>Exports results to JSON format.</summary>
     Task<string> ExportToJsonAsync(GenerationReport report);
+
+    /// <summary>Compares generated SourceFile contents against existing files on disk and returns diff summary.</summary>
+    Task<FileDiffSummary> GenerateFileDiffSummaryAsync(IEnumerable<GenerationResult> generatedResults);
 }
 
 /// <summary>
@@ -47,6 +54,26 @@ public sealed class GenerationReport
     public List<GenerationResult> FailedResults { get; } = [];
     public double SuccessRate { get; set; }
     public TimeSpan AverageDuration { get; set; }
+
+    /// <summary>
+    /// Count of files that were added (didn't exist before)
+    /// </summary>
+    public int FilesAdded { get; set; }
+
+    /// <summary>
+    /// Count of files that were changed (content was different)
+    /// </summary>
+    public int FilesChanged { get; set; }
+
+    /// <summary>
+    /// Count of files that were unchanged (content was identical)
+    /// </summary>
+    public int FilesUnchanged { get; set; }
+
+    /// <summary>
+    /// Total count of files compared against disk
+    /// </summary>
+    public int FilesCompared { get; set; }
 }
 
 /// <summary>
@@ -68,15 +95,34 @@ public sealed class GenerationStatistics
 }
 
 /// <summary>
+/// Contains summary of file changes after comparing generated content with existing files on disk.
+/// </summary>
+public sealed class FileDiffSummary
+{
+    public int FilesAdded { get; set; }
+    public int FilesChanged { get; set; }
+    public int FilesUnchanged { get; set; }
+    public int TotalFiles => FilesAdded + FilesChanged + FilesUnchanged;
+    public int FilesCompared { get; set; }
+
+    public bool HasChanges => FilesAdded > 0 || FilesChanged > 0;
+    public bool IsEmpty => TotalFiles == 0;
+}
+
+/// <summary>
 /// Analyzes and reports on code generation results and performance metrics.
 /// </summary>
 public sealed class GenerationResultAggregatorService : IGenerationResultAggregatorService
 {
     private readonly ILogger<GenerationResultAggregatorService> _logger;
+    private readonly IFileSystemService _fileSystemService;
 
-    public GenerationResultAggregatorService(ILogger<GenerationResultAggregatorService> logger)
+    public GenerationResultAggregatorService(
+        ILogger<GenerationResultAggregatorService> logger,
+        IFileSystemService fileSystemService)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _fileSystemService = fileSystemService ?? throw new ArgumentNullException(nameof(fileSystemService));
     }
 
     public GenerationReport Analyze(IEnumerable<GenerationResult> results)
@@ -124,6 +170,32 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
         return report;
     }
 
+    /// <summary>
+    /// Analyzes a collection of generation results and includes file diff summary.
+    /// </summary>
+    /// <param name="results">Collection of generation results to analyze</param>
+    /// <returns>GenerationReport with file diff summary included</returns>
+    public async Task<GenerationReport> AnalyzeWithFileDiffAsync(IEnumerable<GenerationResult> results)
+    {
+        if (results is null)
+            throw new ArgumentNullException(nameof(results));
+
+        var report = Analyze(results);
+
+        // Generate file diff summary for completed results with output paths
+        var fileDiffSummary = await GenerateFileDiffSummaryAsync(results);
+
+        report.FilesAdded = fileDiffSummary.FilesAdded;
+        report.FilesChanged = fileDiffSummary.FilesChanged;
+        report.FilesUnchanged = fileDiffSummary.FilesUnchanged;
+        report.FilesCompared = fileDiffSummary.FilesCompared;
+
+        _logger.LogInformation("Enhanced analysis complete with file diff: {Added} added, {Changed} changed, {Unchanged} unchanged",
+            report.FilesAdded, report.FilesChanged, report.FilesUnchanged);
+
+        return report;
+    }
+
     public string GenerateReport(GenerationReport report)
     {
         if (report is null)
@@ -132,26 +204,26 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
         var sb = new System.Text.StringBuilder();
 
         sb.AppendLine("╔═══════════════════════════════════════════════════════════╗");
-        sb.AppendLine("║          CODE GENERATION REPORT                          ║");
+        sb.AppendLine("║ CODE GENERATION REPORT ║");
         sb.AppendLine("╚═══════════════════════════════════════════════════════════╝");
         sb.AppendLine();
 
         // Summary section
         sb.AppendLine("SUMMARY");
         sb.AppendLine("─────────────────────────────────────────────────────────");
-        sb.AppendLine($"Total Results:        {report.TotalResults}");
-        sb.AppendLine($"Successful:           {report.SuccessCount}");
-        sb.AppendLine($"Failed:               {report.FailureCount}");
-        sb.AppendLine($"Skipped:              {report.SkippedCount}");
-        sb.AppendLine($"Success Rate:         {report.SuccessRate:F2}%");
+        sb.AppendLine($"Total Results: {report.TotalResults}");
+        sb.AppendLine($"Successful: {report.SuccessCount}");
+        sb.AppendLine($"Failed: {report.FailureCount}");
+        sb.AppendLine($"Skipped: {report.SkippedCount}");
+        sb.AppendLine($"Success Rate: {report.SuccessRate:F2}%");
         sb.AppendLine();
 
         // Performance section
         sb.AppendLine("PERFORMANCE");
         sb.AppendLine("─────────────────────────────────────────────────────────");
-        sb.AppendLine($"Total Duration:       {report.TotalDurationMs}ms");
-        sb.AppendLine($"Average Duration:     {report.AverageDuration.TotalMilliseconds:F2}ms");
-        sb.AppendLine($"Total Code Lines:     {report.TotalLinesGenerated:N0}");
+        sb.AppendLine($"Total Duration: {report.TotalDurationMs}ms");
+        sb.AppendLine($"Average Duration: {report.AverageDuration.TotalMilliseconds:F2}ms");
+        sb.AppendLine($"Total Code Lines: {report.TotalLinesGenerated:N0}");
         sb.AppendLine();
 
         // Results by type
@@ -166,11 +238,28 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
             sb.AppendLine();
         }
 
+        // File diff summary section
+        if (report.FilesCompared > 0)
+        {
+            sb.AppendLine("FILE DIFF SUMMARY");
+            sb.AppendLine("─────────────────────────────────────────────────────────");
+            sb.AppendLine($"Files Compared: {report.FilesCompared}");
+            sb.AppendLine($"Files Added: {report.FilesAdded}");
+            sb.AppendLine($"Files Changed: {report.FilesChanged}");
+            sb.AppendLine($"Files Unchanged: {report.FilesUnchanged}");
+
+            var changePercentage = report.FilesCompared > 0
+                ? ((double)(report.FilesAdded + report.FilesChanged) / report.FilesCompared * 100)
+                : 0;
+            sb.AppendLine($"Change Rate: {changePercentage:F1}%");
+            sb.AppendLine();
+        }
+
         // Issues section
         sb.AppendLine("ISSUES");
         sb.AppendLine("─────────────────────────────────────────────────────────");
-        sb.AppendLine($"Total Warnings:       {report.TotalWarnings}");
-        sb.AppendLine($"Total Errors:         {report.TotalErrors}");
+        sb.AppendLine($"Total Warnings: {report.TotalWarnings}");
+        sb.AppendLine($"Total Errors: {report.TotalErrors}");
 
         if (report.FailedResults.Count > 0)
         {
@@ -178,11 +267,11 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
             sb.AppendLine("Failed Entities:");
             foreach (var result in report.FailedResults)
             {
-                sb.AppendLine($"  • {result.EntityName} ({result.GeneratorType})");
+                sb.AppendLine($" • {result.EntityName} ({result.GeneratorType})");
                 foreach (var error in result.Errors.Take(2))
-                    sb.AppendLine($"    - {error}");
+                    sb.AppendLine($" - {error}");
                 if (result.Errors.Count > 2)
-                    sb.AppendLine($"    ... and {result.Errors.Count - 2} more errors");
+                    sb.AppendLine($" ... and {result.Errors.Count - 2} more errors");
             }
         }
 
@@ -257,6 +346,79 @@ public sealed class GenerationResultAggregatorService : IGenerationResultAggrega
         });
 
         return await Task.FromResult(json);
+    }
+
+    /// <summary>
+    /// Compares generated SourceFile contents against existing files on disk and returns diff summary.
+    /// </summary>
+    /// <param name="generatedResults">Collection of generation results to analyze</param>
+    /// <returns>Diff summary with added/changed/unchanged file counts</returns>
+    public async Task<FileDiffSummary> GenerateFileDiffSummaryAsync(IEnumerable<GenerationResult> generatedResults)
+    {
+        if (generatedResults is null)
+            throw new ArgumentNullException(nameof(generatedResults));
+
+        var resultsList = generatedResults.Where(r => r.Status == GenerationStatus.Completed && !string.IsNullOrEmpty(r.OutputFilePath)).ToList();
+
+        if (resultsList.Count == 0)
+        {
+            _logger.LogInformation("No completed generation results with output file paths to compare");
+            return new FileDiffSummary();
+        }
+
+        _logger.LogInformation("Generating file diff summary for {Count} completed results", resultsList.Count);
+
+        int filesAdded = 0;
+        int filesChanged = 0;
+        int filesUnchanged = 0;
+
+        foreach (var result in resultsList)
+        {
+            var filePath = result.OutputFilePath;
+            var generatedContent = result.GeneratedCode;
+
+            if (!_fileSystemService.FileExists(filePath))
+            {
+                filesAdded++;
+                _logger.LogDebug("File would be added: {FilePath}", filePath);
+            }
+            else
+            {
+                try
+                {
+                    var existingContent = await _fileSystemService.ReadFileAsync(filePath);
+
+                    if (string.Equals(existingContent, generatedContent, StringComparison.Ordinal))
+                    {
+                        filesUnchanged++;
+                        _logger.LogDebug("File unchanged: {FilePath}", filePath);
+                    }
+                    else
+                    {
+                        filesChanged++;
+                        _logger.LogDebug("File changed: {FilePath}", filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error reading existing file for comparison: {FilePath}", filePath);
+                    filesAdded++; // Treat as would-be-added if we can't read existing
+                }
+            }
+        }
+
+        var summary = new FileDiffSummary
+        {
+            FilesAdded = filesAdded,
+            FilesChanged = filesChanged,
+            FilesUnchanged = filesUnchanged,
+            FilesCompared = resultsList.Count
+        };
+
+        _logger.LogInformation("File diff summary generated: {Added} added, {Changed} changed, {Unchanged} unchanged out of {Total} files",
+            summary.FilesAdded, summary.FilesChanged, summary.FilesUnchanged, summary.TotalFiles);
+
+        return summary;
     }
 
     private string ExtractErrorType(string error)
