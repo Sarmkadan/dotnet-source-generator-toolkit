@@ -45,6 +45,10 @@ public sealed class CliArgumentParser : ICliArgumentParser
             {
                 options.ValidateOnly = true;
             }
+            else if (arg == "--stats")
+            {
+                options.Stats = true;
+            }
             else if (arg == "--generate-dtos")
             {
                 options.GenerateDtos = true;
@@ -125,6 +129,7 @@ OPTIONS:
     --verbose                   Enable verbose logging output
     --dry-run                   Analyze without writing files
     --validate-only             Validate configuration without generation
+		--stats Display statistics about entities, properties, and generation metrics
     --generate-dtos             Generate DTOs alongside other artifacts
     --no-recursive              Don't search subdirectories
 
