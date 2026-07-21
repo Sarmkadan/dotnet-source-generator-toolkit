@@ -12372,3 +12372,43 @@
 +- Readme tweaks
 +- docs: readme: README usage
 +- readme tweaks
+
+# 2026-07-21 04:24:52.070616
++Add .env-style key=value config file support to Configuration/ConfigurationLoader.cs (parse into ToolkitOptions overrides) with tests for comments and blank lines. Do not add packages.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
++- feat: extend health endpoint with assembly version, uptime, and timestamp
++- cleaunp
++- test: add FileSystemService unit tests
++- docs: write up GenerationMetricsCollector docs
++- Tweak GenerationMetricsCollector
++- docs: document .aider.chat.history in the readme
++- Readme tweaks
+
+# 2026-07-21 04:24:52.070667
++Add .env-style key=value config file support to Configuration/ConfigurationLoader.cs (parse into ToolkitOptions overrides) with tests for comments and blank lines. Do not add packages.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
++- feat: extend health endpoint with assembly version, uptime, and timestamp
++- cleaunp
++- test: add FileSystemService unit tests
++- docs: write up GenerationMetricsCollector docs
++- Tweak GenerationMetricsCollector
++- docs: document .aider.chat.history in the readme
++- Readme tweaks
