@@ -12876,3 +12876,59 @@
 +- ServiceCollectionExtensions.cs
 +- Update EventAggregator
 +- chore: .aider.chat.history.md
+
+# 2026-07-22 02:17:53.152024
++Add unit tests for Middleware/MiddlewarePipeline.cs: execution order, short-circuit behavior, exception propagation through ErrorHandlingMiddleware.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- SerializerGeneratorServiceTests changes.
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
+
+# 2026-07-22 02:17:53.152156
++Add unit tests for Middleware/MiddlewarePipeline.cs: execution order, short-circuit behavior, exception propagation through ErrorHandlingMiddleware.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- SerializerGeneratorServiceTests changes.
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
