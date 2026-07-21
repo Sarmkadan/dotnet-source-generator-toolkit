@@ -12764,3 +12764,115 @@
 +- Update EventAggregator
 +- chore: .aider.chat.history.md
 +- feat: extend health endpoint with assembly version, uptime, and timestamp
+
+# 2026-07-21 23:49:58.346484
++Add unit tests for Services/SerializerGeneratorService.cs for each SerializerFormat value and invalid format handling.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
+
+# 2026-07-21 23:49:58.355722
++Add unit tests for Services/SerializerGeneratorService.cs for each SerializerFormat value and invalid format handling.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
+
+# 2026-07-21 23:50:07.358815
++Add unit tests for Services/SerializerGeneratorService.cs for each SerializerFormat value and invalid format handling.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
+
+# 2026-07-21 23:50:07.358876
++Add unit tests for Services/SerializerGeneratorService.cs for each SerializerFormat value and invalid format handling.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++EXPLICIT STEPS:
++1. Check which test framework the project uses: look at existing test .csproj for xUnit/NUnit/MSTest PackageReference.
++2. Match that framework exactly. Do NOT use a different one.
++3. Create the test file in the path specified above.
++4. Write 4-8 real test methods - read the source class to understand actual behavior.
++5. Run: dotnet test. ALL tests must pass. If they fail, fix them.
++6. If the test project does not exist or has no test framework reference, STOP - do not create it.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore(dotnet-source-generator-toolkit.tests): update AttributeAnalyzerTe
++- feat: add stats CLI command to display entity counts, property counts, and generation metrics
++- Update CodeEmitter
++- tweak TemplateEngineService
++- GenerationResultAggregatorService changes
++- .aider.chat.history.md
++- ServiceCollectionExtensions.cs
++- Update EventAggregator
++- chore: .aider.chat.history.md
