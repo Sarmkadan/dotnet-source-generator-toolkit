@@ -76,6 +76,9 @@ public sealed class TemplateEngineService : ITemplateEngineService
             // Process filters
             result = ProcessFilters(result, context);
 
+            // Process special case transforms: {{snake_case}} and {{camelCase}}
+            result = ProcessSpecialCaseTransforms(result);
+
             _logger.LogInformation("Template rendered successfully ({Length} characters)", new { Length = result.Length });
             return await Task.FromResult(result);
         }
@@ -320,6 +323,84 @@ public sealed class TemplateEngineService : ITemplateEngineService
             _logger.LogWarning(ex, "Error processing variables in template");
             return template;
         }
+    }
+
+    private string ProcessSpecialCaseTransforms(string template)
+    {
+        try
+        {
+            // Process {{snake_case}} transform
+            var snakeCasePattern = @">{{\s*snake_case\s*}}";
+            template = System.Text.RegularExpressions.Regex.Replace(
+                template,
+                snakeCasePattern,
+                match => ToSnakeCase(match.Value.Replace("{{snake_case}}", "").Trim()),
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            // Process {{camelCase}} transform
+            var camelCasePattern = @">{{\s*camelCase\s*}}";
+            template = System.Text.RegularExpressions.Regex.Replace(
+                template,
+                camelCasePattern,
+                match => ToCamelCase(match.Value.Replace("{{camelCase}}", "").Trim()),
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            return template;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error processing special case transforms in template");
+            return template;
+        }
+    }
+
+    private string ToSnakeCase(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        var result = new StringBuilder();
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (char.IsUpper(input[i]) && i > 0 && !char.IsUpper(input[i - 1]))
+            {
+                result.Append('_');
+            }
+            result.Append(char.ToLowerInvariant(input[i]));
+        }
+        return result.ToString();
+    }
+
+    private string ToCamelCase(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        var result = new StringBuilder();
+        bool firstChar = true;
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (firstChar)
+            {
+                result.Append(char.ToLowerInvariant(input[i]));
+                firstChar = false;
+            }
+            else if (input[i] == '_')
+            {
+                if (i + 1 < input.Length)
+                {
+                    result.Append(char.ToUpperInvariant(input[i + 1]));
+                    i++;
+                }
+            }
+            else
+            {
+                result.Append(input[i]);
+            }
+        }
+        return result.ToString();
     }
 
     private bool IsTruthy(object value)
