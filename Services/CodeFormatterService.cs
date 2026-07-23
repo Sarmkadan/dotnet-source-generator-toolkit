@@ -6,6 +6,7 @@
 // =============================================================================
 
 using System.Text;
+using DotNetSourceGeneratorToolkit.Domain;
 using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit.Services;
@@ -21,6 +22,14 @@ public interface ICodeFormatterService
 
     /// <summary>Adds header comments to generated code.</summary>
     string AddFileHeader(string code, string generatorType, string entityName);
+
+    /// <summary>Adds header comments to generated code using GenerationOptions.</summary>
+    /// <param name="code">The code to add header to.</param>
+    /// <param name="generatorType">Type of generator.</param>
+    /// <param name="entityName">Name of the entity.</param>
+    /// <param name="options">Generation options to use.</param>
+    /// <returns>Code with header added.</returns>
+    string AddFileHeader(string code, string generatorType, string entityName, GenerationOptions options);
 
     /// <summary>Removes trailing whitespace from code.</summary>
     string TrimWhitespace(string code);
@@ -96,22 +105,23 @@ public sealed class CodeFormatterService : ICodeFormatterService
 
     public string AddFileHeader(string code, string generatorType, string entityName)
     {
+        return AddFileHeader(code, generatorType, entityName, GenerationOptions.Default);
+    }
+
+    public string AddFileHeader(string code, string generatorType, string entityName, GenerationOptions options)
+    {
         if (string.IsNullOrEmpty(code))
             return code;
 
-        var header = new StringBuilder();
-        header.AppendLine("// =============================================================================");
-        header.AppendLine("// Author: Vladyslav Zaiets | https://sarmkadan.com");
-        header.AppendLine("// CTO & Software Architect");
-        header.AppendLine("// =============================================================================");
-        header.AppendLine();
-        header.AppendLine($"// Generated {generatorType} for entity: {entityName}");
-        header.AppendLine($"// Generation timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}");
-        header.AppendLine();
+        ArgumentNullException.ThrowIfNull(options);
+
+        var header = options.GetHeaderComment(
+            "Vladyslav Zaiets | https://sarmkadan.com",
+            $"Generated {generatorType} for entity: {entityName}");
 
         _logger.LogInformation("Added file header for {GeneratorType} - {EntityName}", generatorType, entityName);
 
-        return header.ToString() + code;
+        return header + code;
     }
 
     public string TrimWhitespace(string code)
