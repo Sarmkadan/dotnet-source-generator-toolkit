@@ -251,4 +251,67 @@ public sealed class StatsData
 
         return sb.ToString();
     }
+
+    /// <summary>
+    /// Formats the statistics as JSON for CI ingestion and machine-readable output.
+    /// </summary>
+    /// <returns>JSON string representation of the statistics</returns>
+    public string ToJson()
+    {
+        var cacheHealth = GenerationMetrics != null
+            ? CacheHealthDiagnostics.FromMetrics(GenerationMetrics)
+            : null;
+
+        var stats = new
+        {
+            timestamp = Timestamp.ToString("yyyy-MM-dd HH:mm:ss"),
+            projectPath = ProjectPath,
+            entityCounts = new
+            {
+                entities = EntityCount,
+                properties = PropertyCount
+            },
+            projectStatistics = ProjectStatistics != null ? new
+            {
+                totalEntities = ProjectStatistics.TotalEntities,
+                totalProperties = ProjectStatistics.TotalProperties,
+                totalGenerated = ProjectStatistics.TotalGenerated,
+                totalFailed = ProjectStatistics.TotalFailed,
+                successRate = ProjectStatistics.SuccessRate,
+                totalCodeLines = ProjectStatistics.TotalCodeLines,
+                totalGenerationTimeMs = ProjectStatistics.TotalGenerationTime
+            } : null,
+            generationMetrics = GenerationMetrics != null ? new
+            {
+                totalGenerations = GenerationMetrics.TotalGenerations,
+                successfulGenerations = GenerationMetrics.SuccessfulGenerations,
+                failedGenerations = GenerationMetrics.FailedGenerations,
+                successRate = GenerationMetrics.SuccessRate,
+                totalDurationMs = GenerationMetrics.TotalDurationMs,
+                averageDurationMs = GenerationMetrics.AverageDurationMs,
+                firstGenerationStart = GenerationMetrics.FirstGenerationStart?.ToString("yyyy-MM-dd HH:mm:ss"),
+                lastGenerationEnd = GenerationMetrics.LastGenerationEnd.ToString("yyyy-MM-dd HH:mm:ss"),
+                generationRatePerHour = GenerationMetrics.GenerationRatePerHour,
+                forcedRegenerations = GenerationMetrics.ForcedRegenerations,
+                generatorRegenerationCounts = GenerationMetrics.GeneratorRegenerationCounts,
+                nonEquatableModelViolations = GenerationMetrics.NonEquatableModelViolations,
+                generatorStageDurations = GenerationMetrics.GeneratorStageDurations
+            } : null,
+            cacheHealth = cacheHealth != null ? new
+            {
+                isHealthy = cacheHealth.IsCacheHealthy,
+                healthSummary = cacheHealth.HealthSummary,
+                forcedRegenerations = cacheHealth.ForcedRegenerations,
+                forcedRegenerationRate = cacheHealth.ForcedRegenerationRate,
+                nonEquatableModelViolations = cacheHealth.NonEquatableModelViolations,
+                generatorStageDurations = cacheHealth.GeneratorStageDurations
+            } : null
+        };
+
+        return System.Text.Json.JsonSerializer.Serialize(stats, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        });
+    }
 }
