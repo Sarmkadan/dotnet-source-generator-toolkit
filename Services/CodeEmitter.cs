@@ -8,6 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
@@ -78,10 +81,10 @@ internal static class CodeEmitter
         var indent = GetIndent(indentLevel);
         var closeIndent = GetIndent(indentLevel);
 
-        return $@"{indent}namespace {ns}
-{indent}{{
-{code}
-{closeIndent}}}";
+        return indent + "namespace " + ns + Environment.NewLine +
+               indent + "{" + Environment.NewLine +
+               code + Environment.NewLine +
+               closeIndent + "}";
     }
 
     /// <summary>
@@ -112,14 +115,16 @@ internal static class CodeEmitter
             lines.Add(indent + "/// </summary>");
         }
 
-        var declaration = $"{indent}{modifiers} class {className}";
+        var escapedClassName = EscapeIdentifier(className);
+        var declaration = indent + modifiers + " class " + escapedClassName;
 
         if (baseTypes != null && baseTypes.Length > 0)
         {
-            declaration += " : " + string.Join(", ", baseTypes);
+            var formattedBaseTypes = baseTypes.Select(FormatTypeName).ToArray();
+            declaration += " : " + string.Join(", ", formattedBaseTypes);
         }
 
-        lines.Add(indent + declaration);
+        lines.Add(declaration);
         lines.Add(indent + "{");
 
         if (!string.IsNullOrWhiteSpace(body))
@@ -162,8 +167,10 @@ internal static class CodeEmitter
             lines.Add(indent + "/// </summary>");
         }
 
-        var declaration = $"{indent}{modifiers} {returnType} {methodName}({parameters})";
-        lines.Add(indent + declaration);
+        var escapedMethodName = EscapeIdentifier(methodName);
+        var formattedReturnType = FormatTypeName(returnType);
+        var declaration = indent + modifiers + " " + formattedReturnType + " " + escapedMethodName + "(" + parameters + ")";
+        lines.Add(declaration);
         lines.Add(indent + "{");
 
         if (!string.IsNullOrWhiteSpace(body))
@@ -214,7 +221,9 @@ internal static class CodeEmitter
             lines.Add(indent + "/// </summary>");
         }
 
-        var declaration = $"{indent}{modifiers} {propertyType} {propertyName} {{ {accessors} }}";
+        var escapedPropertyName = EscapeIdentifier(propertyName);
+        var formattedPropertyType = FormatTypeName(propertyType);
+        var declaration = indent + modifiers + " " + formattedPropertyType + " " + escapedPropertyName + " { " + accessors + " }";
         lines.Add(declaration);
 
         return string.Join(Environment.NewLine, lines);
@@ -237,7 +246,9 @@ internal static class CodeEmitter
         int indentLevel = 1)
     {
         var indent = GetIndent(indentLevel);
-        var declaration = $"{indent}{modifiers} {fieldType} {fieldName}";
+        var escapedFieldName = EscapeIdentifier(fieldName);
+        var formattedFieldType = FormatTypeName(fieldType);
+        var declaration = indent + modifiers + " " + formattedFieldType + " " + escapedFieldName;
 
         if (!string.IsNullOrWhiteSpace(initializer))
         {
@@ -266,7 +277,9 @@ internal static class CodeEmitter
         int indentLevel = 1)
     {
         var indent = GetIndent(indentLevel);
-        return $"{indent}{variableType} {variableName} = {initializer};";
+        var escapedVariableName = EscapeIdentifier(variableName);
+        var formattedVariableType = FormatTypeName(variableType);
+        return indent + formattedVariableType + " " + escapedVariableName + " = " + initializer + ";";
     }
 
     /// <summary>
@@ -291,5 +304,200 @@ internal static class CodeEmitter
     {
         var indent = GetIndent(indentLevel);
         return string.Join(Environment.NewLine, content.Select(line => indent + line));
+    }
+
+    /// <summary>
+    /// Escapes a C# identifier if it's a keyword or contains invalid characters.
+    /// </summary>
+    /// <param name="identifier">The identifier to escape.</param>
+    /// <returns>The escaped identifier, prefixed with '@' if needed.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when identifier is null.</exception>
+    public static string EscapeIdentifier(string identifier)
+    {
+        ArgumentNullException.ThrowIfNull(identifier);
+
+        var keywords = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+            "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum",
+            "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto",
+            "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+            "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public",
+            "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string",
+            "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked",
+            "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"
+        };
+
+        if (keywords.Contains(identifier))
+        {
+            return "@" + identifier;
+        }
+
+        if (identifier.Length > 0 && char.IsDigit(identifier[0]))
+        {
+            return "@" + identifier;
+        }
+
+        if (identifier.Length == 0 ||
+            (!char.IsLetter(identifier[0]) && identifier[0] != '_'))
+        {
+            return "@" + identifier;
+        }
+
+        foreach (var c in identifier)
+        {
+            if (!char.IsLetterOrDigit(c) && c != '_')
+            {
+                return "@" + identifier;
+            }
+        }
+
+        return identifier;
+    }
+
+    /// <summary>
+    /// Formats a type name using Roslyn's SymbolDisplayFormat for proper
+    /// handling of generics, nested types, and global namespace types.
+    /// </summary>
+    /// <param name="typeName">The type name to format.</param>
+    /// <returns>Properly formatted type name.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when typeName is null.</exception>
+    public static string FormatTypeName(string typeName)
+    {
+        ArgumentNullException.ThrowIfNull(typeName);
+
+        var normalizedType = typeName.Trim();
+
+        var typeAliasMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "int", "int" },
+            { "long", "long" },
+            { "decimal", "decimal" },
+            { "double", "double" },
+            { "float", "float" },
+            { "bool", "bool" },
+            { "string", "string" },
+            { "object", "object" },
+            { "void", "void" },
+            { "byte", "byte" },
+            { "sbyte", "sbyte" },
+            { "short", "short" },
+            { "ushort", "ushort" },
+            { "uint", "uint" },
+            { "ulong", "ulong" },
+            { "char", "char" },
+            { "nint", "nint" },
+            { "nuint", "nuint" }
+        };
+
+        if (typeAliasMap.TryGetValue(normalizedType, out var fullName))
+        {
+            return fullName;
+        }
+
+        try
+        {
+            var typeSyntax = SyntaxFactory.ParseTypeName(normalizedType);
+            var formattedTypeName = typeSyntax.ToFullString();
+            return CleanRoslynFormattedTypeName(formattedTypeName);
+        }
+        catch
+        {
+            return FormatTypeNameFallback(normalizedType);
+        }
+    }
+
+    /// <summary>
+    /// Fallback method for formatting type names when Roslyn parsing fails.
+    /// </summary>
+    /// <param name="typeName">The type name to format.</param>
+    /// <returns>Properly formatted type name.</returns>
+    private static string FormatTypeNameFallback(string typeName)
+    {
+        var normalizedType = typeName.Trim();
+
+        if (normalizedType.Contains('`'))
+        {
+            var parts = normalizedType.Split('`');
+            if (parts.Length == 2 && int.TryParse(parts[1], out var arity))
+            {
+                var genericParams = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"T{i}"));
+                return parts[0] + "<" + genericParams + ">";
+            }
+        }
+
+        if (normalizedType.Contains('+'))
+        {
+            return normalizedType.Replace('+', '.');
+        }
+
+        if (normalizedType.StartsWith("::", StringComparison.Ordinal))
+        {
+            return "global" + normalizedType;
+        }
+
+        return normalizedType;
+    }
+
+    /// <summary>
+    /// Cleans up type names formatted by Roslyn's ToFullString() method.
+    /// </summary>
+    /// <param name="formattedTypeName">The type name formatted by Roslyn.</param>
+    /// <returns>Cleaned up type name.</returns>
+    private static string CleanRoslynFormattedTypeName(string formattedTypeName)
+    {
+        var cleaned = formattedTypeName
+            .Replace("  ", " ")
+            .Trim();
+
+        if (cleaned.EndsWith(";", StringComparison.Ordinal))
+        {
+            cleaned = cleaned.Substring(0, cleaned.Length - 1).Trim();
+        }
+
+        return cleaned;
+    }
+
+    /// <summary>
+    /// Formats a type name with proper escaping for use as an identifier.
+    /// </summary>
+    /// <param name="typeName">The type name to format.</param>
+    /// <returns>Properly formatted and escaped type name.</returns>
+    public static string FormatTypeNameForIdentifier(string typeName)
+    {
+        ArgumentNullException.ThrowIfNull(typeName);
+        var formatted = FormatTypeName(typeName);
+        return EscapeIdentifier(formatted);
+    }
+
+    /// <summary>
+    /// Escapes all identifiers in a type name string.
+    /// </summary>
+    /// <param name="typeName">The type name to process.</param>
+    /// <returns>Type name with identifiers properly escaped.</returns>
+    public static string EscapeTypeNameIdentifiers(string typeName)
+    {
+        ArgumentNullException.ThrowIfNull(typeName);
+
+        var result = typeName;
+        var openBracket = result.IndexOf('<');
+        var closeBracket = result.LastIndexOf('>');
+
+        if (openBracket >= 0 && closeBracket > openBracket)
+        {
+            var genericPart = result.Substring(openBracket + 1, closeBracket - openBracket - 1);
+            var parts = genericPart.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var part = parts[i].Trim();
+                parts[i] = EscapeIdentifier(part);
+            }
+
+            var innerGeneric = string.Join(", ", parts);
+            result = result.Substring(0, openBracket + 1) + innerGeneric + result.Substring(closeBracket);
+        }
+
+        return result;
     }
 }
