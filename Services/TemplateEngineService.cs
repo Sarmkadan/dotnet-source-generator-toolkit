@@ -22,8 +22,22 @@ public interface ITemplateEngineService
     /// <summary>Renders a template with the provided context variables.</summary>
     Task<string> RenderAsync(string template, Dictionary<string, object> context);
 
+    /// <summary>Renders a template with the provided context variables and generation options.</summary>
+    /// <param name="template">Template to render.</param>
+    /// <param name="context">Context variables.</param>
+    /// <param name="options">Generation options to apply.</param>
+    /// <returns>Rendered template with generation options applied.</returns>
+    Task<string> RenderAsync(string template, Dictionary<string, object> context, GenerationOptions options);
+
     /// <summary>Loads a template from file and renders it.</summary>
     Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context);
+
+    /// <summary>Loads a template from file and renders it with generation options.</summary>
+    /// <param name="templatePath">Path to template file.</param>
+    /// <param name="context">Context variables.</param>
+    /// <param name="options">Generation options to apply.</param>
+    /// <returns>Rendered template with generation options applied.</returns>
+    Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context, GenerationOptions options);
 
     /// <summary>Validates template syntax.</summary>
     bool ValidateTemplate(string template);
@@ -46,6 +60,11 @@ public sealed class TemplateEngineService : ITemplateEngineService
     }
 
     public async Task<string> RenderAsync(string template, Dictionary<string, object> context)
+    {
+        return await RenderAsync(template, context, GenerationOptions.Default);
+    }
+
+    public async Task<string> RenderAsync(string template, Dictionary<string, object> context, GenerationOptions options)
     {
         if (string.IsNullOrEmpty(template))
             return template;
@@ -79,6 +98,9 @@ public sealed class TemplateEngineService : ITemplateEngineService
             // Process special case transforms: {{snake_case}} and {{camelCase}}
             result = ProcessSpecialCaseTransforms(result);
 
+            // Apply generation options to the result
+            result = ApplyGenerationOptions(result, options);
+
             _logger.LogInformation("Template rendered successfully ({Length} characters)", new { Length = result.Length });
             return await Task.FromResult(result);
         }
@@ -91,6 +113,11 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
     public async Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context)
     {
+        return await RenderFromFileAsync(templatePath, context, GenerationOptions.Default);
+    }
+
+    public async Task<string> RenderFromFileAsync(string templatePath, Dictionary<string, object> context, GenerationOptions options)
+    {
         if (string.IsNullOrWhiteSpace(templatePath))
             throw new ArgumentNullException(nameof(templatePath));
 
@@ -99,7 +126,7 @@ public sealed class TemplateEngineService : ITemplateEngineService
         try
         {
             var template = await _fileSystemService.ReadFileAsync(templatePath);
-            return await RenderAsync(template, context);
+            return await RenderAsync(template, context, options);
         }
         catch (FileSystemException ex)
         {
@@ -414,6 +441,52 @@ public sealed class TemplateEngineService : ITemplateEngineService
             long l => l != 0,
             _ => true,
         };
+    }
+
+    /// <summary>
+    /// Applies generation options to the rendered template to produce a complete source file.
+    /// </summary>
+    /// <param name="renderedTemplate">The rendered template content.</param>
+    /// <param name="options">Generation options to apply.</param>
+    /// <returns>Complete source file with all generation options applied.</returns>
+    private string ApplyGenerationOptions(string renderedTemplate, GenerationOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        var lines = new List<string>();
+
+        // Add language version directive if specified
+        var langVersionDirective = options.GetLangVersionDirective();
+        if (!string.IsNullOrEmpty(langVersionDirective))
+        {
+            lines.Add(langVersionDirective);
+        }
+
+        // Add nullable directive
+        var nullableDirective = options.GetNullableDirective();
+        if (!string.IsNullOrEmpty(nullableDirective))
+        {
+            lines.Add(nullableDirective);
+        }
+
+        // Add header comment
+        var header = options.GetHeaderComment();
+        if (!string.IsNullOrEmpty(header))
+        {
+            lines.Add(header);
+        }
+
+        // Add [GeneratedCode] attribute if enabled
+        var generatedCodeAttribute = options.GetGeneratedCodeAttribute("TemplateEngine", "1.0.0");
+        if (!string.IsNullOrEmpty(generatedCodeAttribute))
+        {
+            lines.Add(generatedCodeAttribute);
+        }
+
+        // Add the rendered template content
+        lines.Add(renderedTemplate);
+
+        return string.Join(Environment.NewLine, lines);
     }
 
     private int CountOccurrences(string text, string search)

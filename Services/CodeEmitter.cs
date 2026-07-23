@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using DotNetSourceGeneratorToolkit.Domain;
 
 namespace DotNetSourceGeneratorToolkit.Services;
 
@@ -44,6 +45,20 @@ internal static class CodeEmitter
         }
 
         return string.Join(Environment.NewLine, lines);
+    }
+
+    /// <summary>
+    /// Generates the standard file header with author information and copyright using GenerationOptions.
+    /// </summary>
+    /// <param name="options">Generation options controlling header format.</param>
+    /// <param name="author">The author name and website.</param>
+    /// <param name="description">Optional description of the generated file.</param>
+    /// <returns>Formatted file header as a string.</returns>
+    public static string GenerateFileHeader(GenerationOptions options, string author = "Vladyslav Zaiets | https://sarmkadan.com", string description = null)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        return options.GetHeaderComment(author, description);
     }
 
     /// <summary>
@@ -85,6 +100,33 @@ internal static class CodeEmitter
                indent + "{" + Environment.NewLine +
                code + Environment.NewLine +
                closeIndent + "}";
+    }
+
+    /// <summary>
+    /// Wraps generated code in a namespace declaration using GenerationOptions.
+    /// </summary>
+    /// <param name="options">Generation options controlling namespace style.</param>
+    /// <param name="namespace">The target namespace.</param>
+    /// <param name="code">The code to wrap.</param>
+    /// <param name="indentLevel">Optional indentation level (default: 0).</param>
+    /// <returns>Code wrapped in namespace declaration.</returns>
+    public static string WrapInNamespace(GenerationOptions options, string ns, string code, int indentLevel = 0)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrEmpty(ns);
+
+        var indent = GetIndent(indentLevel);
+        var namespaceDecl = options.GetNamespaceDeclaration(ns);
+        var closingBrace = options.GetNamespaceClosingBrace();
+
+        if (string.IsNullOrEmpty(closingBrace))
+        {
+            return namespaceDecl + code;
+        }
+
+        return namespaceDecl + indent + "{" + Environment.NewLine +
+               code + Environment.NewLine +
+               indent + closingBrace;
     }
 
     /// <summary>
@@ -499,5 +541,72 @@ internal static class CodeEmitter
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Generates a complete source file with all generation options applied.
+    /// </summary>
+    /// <param name="options">Generation options controlling file format.</param>
+    /// <param name="namespace">The target namespace.</param>
+    /// <param name="code">The main code content.</param>
+    /// <param name="additionalUsings">Additional using directives.</param>
+    /// <param name="author">Author information.</param>
+    /// <param name="description">File description.</param>
+    /// <param name="generatorName">Name of the generator producing the code.</param>
+    /// <param name="generatorVersion">Version of the generator.</param>
+    /// <returns>Complete formatted source file.</returns>
+    public static string GenerateSourceFile(
+        GenerationOptions options,
+        string @namespace,
+        string code,
+        string[] additionalUsings = null,
+        string author = "Vladyslav Zaiets | https://sarmkadan.com",
+        string description = null,
+        string generatorName = "DotNetSourceGeneratorToolkit",
+        string generatorVersion = "1.0.0")
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrEmpty(@namespace);
+
+        var lines = new List<string>();
+
+        // Add language version directive if specified
+        var langVersionDirective = options.GetLangVersionDirective();
+        if (!string.IsNullOrEmpty(langVersionDirective))
+        {
+            lines.Add(langVersionDirective);
+        }
+
+        // Add nullable directive
+        var nullableDirective = options.GetNullableDirective();
+        if (!string.IsNullOrEmpty(nullableDirective))
+        {
+            lines.Add(nullableDirective);
+        }
+
+        // Add header comment
+        var header = options.GetHeaderComment(author, description);
+        if (!string.IsNullOrEmpty(header))
+        {
+            lines.Add(header);
+        }
+
+        // Add [GeneratedCode] attribute if enabled
+        var generatedCodeAttribute = options.GetGeneratedCodeAttribute(generatorName, generatorVersion);
+        if (!string.IsNullOrEmpty(generatedCodeAttribute))
+        {
+            lines.Add(generatedCodeAttribute);
+        }
+
+        // Add usings
+        var usings = GenerateUsings(additionalUsings);
+        lines.Add(usings);
+        lines.Add(string.Empty);
+
+        // Add namespace wrapper
+        var namespacedCode = WrapInNamespace(options, @namespace, code);
+        lines.Add(namespacedCode);
+
+        return string.Join(Environment.NewLine, lines);
     }
 }
