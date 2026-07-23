@@ -3,7 +3,7 @@
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
-// =============================================================================
+// =====================================================================
 
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
@@ -38,16 +38,23 @@ public sealed class AttributeAnalyzer : IAttributeAnalyzer
 
         foreach (Match match in matches)
         {
-            var attributeName = match.Groups[1].Value;
-            var parametersText = match.Groups[2].Value;
-
-            var attributeInfo = new AttributeInfo
+            try
             {
-                Name = attributeName,
-                Parameters = ParseParameters(parametersText),
-            };
+                var attributeName = match.Groups[1].Value;
+                var parametersText = match.Groups[2].Value;
 
-            attributes.Add(attributeInfo);
+                var attributeInfo = new AttributeInfo
+                {
+                    Name = attributeName,
+                    Parameters = ParseParameters(parametersText),
+                };
+
+                attributes.Add(attributeInfo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to parse attribute at position {Position}", match.Index);
+            }
         }
 
         _logger.LogDebug("Found {Count} attributes in source code", attributes.Count);
@@ -74,7 +81,7 @@ public sealed class AttributeAnalyzer : IAttributeAnalyzer
         return attribute?.Parameters;
     }
 
-    private static Dictionary<string, string> ParseParameters(string parametersText)
+    private Dictionary<string, string> ParseParameters(string parametersText)
     {
         var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -89,9 +96,17 @@ public sealed class AttributeAnalyzer : IAttributeAnalyzer
         {
             if (match.Groups.Count >= 3)
             {
-                var key = match.Groups[1].Value.Trim();
-                var value = match.Groups[2].Value.Trim();
-                parameters[key] = value;
+                try
+                {
+                    var key = match.Groups[1].Value.Trim();
+                    var value = match.Groups[2].Value.Trim();
+                    parameters[key] = value;
+                }
+                catch (Exception ex)
+                {
+                    // Continue processing other parameters even if one fails
+                    _logger.LogError(ex, "Failed to parse parameter at position {Position}", match.Index);
+                }
             }
         }
 
