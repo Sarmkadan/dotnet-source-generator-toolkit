@@ -75,6 +75,9 @@ public static class ServiceCollectionExtensions
         // Incremental generation support
         services.TryAddScoped<IIncrementalGeneratorService, IncrementalGeneratorService>();
 
+        // Hint name aggregation support
+        services.TryAddScoped<IHintNameAggregatorService, HintNameAggregatorService>();
+
         // Event handlers
         services.TryAddScoped<IEventHandler<GenerationStartedEvent>, GenerationMetricsCollector>();
         services.TryAddScoped<IEventHandler<GenerationCompletedEvent>, GenerationMetricsCollector>();
