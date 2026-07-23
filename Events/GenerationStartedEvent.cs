@@ -1,9 +1,11 @@
 #nullable enable
 
-// =============================================================================
+// =====================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
-// =============================================================================
+// =====================================================================
+
+using DotNetSourceGeneratorToolkit.Domain;
 
 namespace DotNetSourceGeneratorToolkit.Events;
 
@@ -13,22 +15,27 @@ namespace DotNetSourceGeneratorToolkit.Events;
 /// </summary>
 public sealed class GenerationStartedEvent : IDomainEvent
 {
-    public string EventId { get; } = Guid.NewGuid().ToString();
-    public DateTime OccurredAt { get; } = DateTime.UtcNow;
-    public string RequestId { get; set; } = string.Empty;
+public string EventId { get; } = Guid.NewGuid().ToString();
+public DateTime OccurredAt { get; } = DateTime.UtcNow;
+public string RequestId { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Path to the project being analyzed.
-    /// </summary>
-    public string ProjectPath { get; set; } = string.Empty;
+/// <summary>
+/// Path to the project being analyzed.
+/// </summary>
+public string ProjectPath { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Number of entities discovered that will be processed.
-    /// </summary>
-    public int EntityCount { get; set; }
+/// <summary>
+/// Number of entities discovered that will be processed.
+/// </summary>
+public int EntityCount { get; set; }
 
-    /// <summary>
-    /// Types of generators that will execute.
-    /// </summary>
-    public List<string> GeneratorTypes { get; set; } = new();
+/// <summary>
+/// Types of generators that will execute.
+/// </summary>
+public List<string> GeneratorTypes { get; set; } = new();
+
+/// <summary>
+/// Cache diagnostics for tracking incremental generation cacheability.
+/// </summary>
+public CacheDiagnostics CacheDiagnostics { get; } = CacheDiagnostics.Create();
 }
