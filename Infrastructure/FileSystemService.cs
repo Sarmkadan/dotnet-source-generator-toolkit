@@ -17,11 +17,13 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure;
 public sealed class FileSystemService : IFileSystemService
 {
     private readonly ILogger<FileSystemService> _logger;
+    private readonly IRetryPolicy _retryPolicy;
     private bool _dryRun;
 
-    public FileSystemService(ILogger<FileSystemService> logger)
+    public FileSystemService(ILogger<FileSystemService> logger, IRetryPolicy? retryPolicy = null)
     {
         _logger = logger;
+        _retryPolicy = retryPolicy ?? new RetryPolicy();
     }
 
     /// <summary>
@@ -91,11 +93,14 @@ public sealed class FileSystemService : IFileSystemService
             else
             {
                 _logger.LogInformation("Writing file: {FilePath}", filePath);
-                await File.WriteAllTextAsync(filePath, content);
-                _logger.LogInformation("Successfully wrote file: {FilePath} ({Bytes} bytes)", filePath, content?.Length ?? 0);
+                await _retryPolicy.ExecuteAsync(async () =>
+                {
+                    await File.WriteAllTextAsync(filePath, content);
+                    _logger.LogInformation("Successfully wrote file: {FilePath} ({Bytes} bytes)", filePath, content?.Length ?? 0);
+                }, filePath);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error writing file: {FilePath}", filePath);
             throw new FileSystemException($"Error writing file {filePath}: {ex.Message}", ex);
@@ -116,11 +121,14 @@ public sealed class FileSystemService : IFileSystemService
             else
             {
                 _logger.LogInformation("Appending to file: {FilePath}", filePath);
-                await File.AppendAllTextAsync(filePath, content);
-                _logger.LogInformation("Successfully appended to file: {FilePath}", filePath);
+                await _retryPolicy.ExecuteAsync(async () =>
+                {
+                    await File.AppendAllTextAsync(filePath, content);
+                    _logger.LogInformation("Successfully appended to file: {FilePath}", filePath);
+                }, filePath);
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error appending to file: {FilePath}", filePath);
             throw new FileSystemException($"Error appending to file {filePath}: {ex.Message}", ex);
@@ -150,8 +158,11 @@ public sealed class FileSystemService : IFileSystemService
                 }
                 else
                 {
-                    File.Delete(filePath);
-                    _logger.LogInformation("Deleted file: {FilePath}", filePath);
+                    await _retryPolicy.ExecuteAsync(async () =>
+                    {
+                        File.Delete(filePath);
+                        _logger.LogInformation("Deleted file: {FilePath}", filePath);
+                    }, filePath);
                 }
             }
             else if (_dryRun)
@@ -161,7 +172,7 @@ public sealed class FileSystemService : IFileSystemService
 
             await Task.CompletedTask;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
             throw new FileSystemException($"Error deleting file {filePath}: {ex.Message}", ex);
@@ -183,8 +194,11 @@ public sealed class FileSystemService : IFileSystemService
                 }
                 else
                 {
-                    Directory.CreateDirectory(dirPath);
-                    _logger.LogInformation("Created directory: {DirectoryPath}", dirPath);
+                    await _retryPolicy.ExecuteAsync(async () =>
+                    {
+                        Directory.CreateDirectory(dirPath);
+                        _logger.LogInformation("Created directory: {DirectoryPath}", dirPath);
+                    }, dirPath);
                 }
             }
             else if (_dryRun)
@@ -194,7 +208,7 @@ public sealed class FileSystemService : IFileSystemService
 
             await Task.CompletedTask;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error creating directory: {DirectoryPath}", dirPath);
             throw new FileSystemException($"Error creating directory {dirPath}: {ex.Message}", ex);
