@@ -5,13 +5,92 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Collections.Concurrent;
 using System.Text;
+using System.Text.RegularExpressions;
 using DotNetSourceGeneratorToolkit.Domain;
 using DotNetSourceGeneratorToolkit.Exceptions;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using Microsoft.Extensions.Logging;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("dotnet-source-generator-toolkit.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DotNetSourceGeneratorToolkit.Benchmarks")]
+
 namespace DotNetSourceGeneratorToolkit.Services;
+
+/// <summary>
+/// Represents a single <c>{{#if}}</c>/<c>{{#else}}</c>/<c>{{/if}}</c> block extracted from a
+/// raw template during compilation, together with the literal text that precedes it.
+/// </summary>
+/// <param name="LiteralBefore">Literal text found between the previous block (or start of template) and this block.</param>
+/// <param name="Variable">Name of the context variable that controls the branch selected at render time.</param>
+/// <param name="TrueContent">Content emitted when <see cref="Variable"/> resolves to a truthy value.</param>
+/// <param name="FalseContent">Content emitted when <see cref="Variable"/> resolves to a falsy value (or is absent).</param>
+internal readonly record struct ConditionalNode(string LiteralBefore, string Variable, string TrueContent, string FalseContent);
+
+/// <summary>
+/// Immutable, pre-parsed representation of a template's conditional structure.
+/// Building one requires scanning the raw template text with a regular expression; once built it
+/// can be reused across an unlimited number of <see cref="TemplateEngineService.RenderAsync(string, Dictionary{string, object}, GenerationOptions)"/>
+/// calls for the same template text without repeating that scan.
+/// </summary>
+internal sealed class CompiledTemplate
+{
+    /// <summary>Initializes a new compiled template.</summary>
+    /// <param name="rawTemplate">The original, unmodified template text this instance was compiled from.</param>
+    /// <param name="conditionalNodes">The ordered list of conditional blocks found in <paramref name="rawTemplate"/>.</param>
+    /// <param name="trailingLiteral">Literal text following the last conditional block, if any.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="rawTemplate"/>, <paramref name="conditionalNodes"/> or <paramref name="trailingLiteral"/> is <see langword="null"/>.</exception>
+    public CompiledTemplate(string rawTemplate, IReadOnlyList<ConditionalNode> conditionalNodes, string trailingLiteral)
+    {
+        ArgumentNullException.ThrowIfNull(rawTemplate);
+        ArgumentNullException.ThrowIfNull(conditionalNodes);
+        ArgumentNullException.ThrowIfNull(trailingLiteral);
+
+        RawTemplate = rawTemplate;
+        ConditionalNodes = conditionalNodes;
+        TrailingLiteral = trailingLiteral;
+    }
+
+    /// <summary>The original, unmodified template text this instance was compiled from.</summary>
+    public string RawTemplate { get; }
+
+    /// <summary>The ordered list of conditional blocks found in the raw template.</summary>
+    public IReadOnlyList<ConditionalNode> ConditionalNodes { get; }
+
+    /// <summary>Literal text following the last conditional block, if any.</summary>
+    public string TrailingLiteral { get; }
+}
+
+/// <summary>
+/// Lightweight pool of reusable <see cref="StringBuilder"/> instances used to avoid repeated
+/// large-object allocations while rendering templates. Rented builders must be returned via
+/// <see cref="Return(StringBuilder)"/> once they are no longer needed.
+/// </summary>
+internal static class StringBuilderPool
+{
+    private const int MaxPooledCapacity = 8192;
+
+    private static readonly ConcurrentBag<StringBuilder> Pool = [];
+
+    /// <summary>Rents a cleared <see cref="StringBuilder"/> from the pool, creating a new one if the pool is empty.</summary>
+    /// <returns>An empty <see cref="StringBuilder"/> ready for use.</returns>
+    public static StringBuilder Rent() => Pool.TryTake(out var builder) ? builder : new StringBuilder(256);
+
+    /// <summary>Returns a <see cref="StringBuilder"/> to the pool for reuse.</summary>
+    /// <param name="builder">The builder to return.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
+    public static void Return(StringBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (builder.Capacity > MaxPooledCapacity)
+            return;
+
+        builder.Clear();
+        Pool.Add(builder);
+    }
+}
 
 /// <summary>
 /// Provides template processing and rendering functionality for code generation.
@@ -48,9 +127,37 @@ public interface ITemplateEngineService
 
 public sealed class TemplateEngineService : ITemplateEngineService
 {
+    private static readonly Regex ConditionalsRegex = new(
+        @"{{#if\s+(\w+)}}(.*?)(?:{{#else}}(.*?))?{{/if}}",
+        RegexOptions.Singleline | RegexOptions.Compiled);
+
+    private static readonly Regex LoopsRegex = new(
+        @"{{#for\s+(\w+)\s+in\s+(\w+)}}(.*?){{/for}}",
+        RegexOptions.Singleline | RegexOptions.Compiled);
+
+    private static readonly Regex FiltersRegex = new(
+        @"{{\s*(\w+)\s*|\s*(\w+)\s*}}",
+        RegexOptions.Compiled);
+
+    private static readonly Regex SnakeCasePattern = new(
+        @">{{\s*snake_case\s*}}",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex CamelCasePattern = new(
+        @">{{\s*camelCase\s*}}",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<TemplateEngineService> _logger;
     private readonly Dictionary<string, Func<object, string>> _filters = [];
+
+    /// <summary>
+    /// Cache of parsed template structures keyed by the raw template text. Since source generators
+    /// re-render the same templates repeatedly (often once per keystroke in the IDE), this avoids
+    /// re-scanning a template's conditional structure with a regular expression on every render.
+    /// Entries live for the lifetime of this service instance (typically one compilation).
+    /// </summary>
+    internal readonly ConcurrentDictionary<string, CompiledTemplate> TemplateCache = new();
 
     public TemplateEngineService(IFileSystemService fileSystemService, ILogger<TemplateEngineService> logger)
     {
@@ -76,18 +183,14 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
         try
         {
-            var result = template;
+            // Parse (or fetch from cache) the template's conditional structure. Parsing happens
+            // once per distinct template text for the lifetime of this service instance; variable
+            // substitution and conditional branch selection - which are context-dependent - still
+            // run on every call.
+            var compiled = TemplateCache.GetOrAdd(template, CompileTemplate);
 
-            // Process variable substitutions
-            foreach (var kvp in context)
-            {
-                var placeholder = "{{" + kvp.Key + "}}";
-                var value = kvp.Value?.ToString() ?? string.Empty;
-                result = result.Replace(placeholder, value, StringComparison.OrdinalIgnoreCase);
-            }
-
-            // Process conditional blocks
-            result = ProcessConditionals(result, context);
+            // Process variable substitutions and conditional blocks together
+            var result = RenderConditionals(compiled, context);
 
             // Process loops
             result = ProcessLoops(result, context);
@@ -241,30 +344,68 @@ public sealed class TemplateEngineService : ITemplateEngineService
         }
     }
 
-    private string ProcessConditionals(string template, Dictionary<string, object> context)
+    /// <summary>
+    /// Parses the conditional (<c>{{#if}}</c>/<c>{{#else}}</c>/<c>{{/if}}</c>) structure out of a raw
+    /// template exactly once. The result is cached in <see cref="TemplateCache"/> so subsequent renders
+    /// of the same template text reuse the parse instead of re-running the regular expression.
+    /// </summary>
+    /// <param name="rawTemplate">The raw, unmodified template text.</param>
+    /// <returns>A <see cref="CompiledTemplate"/> describing the template's conditional structure.</returns>
+    private CompiledTemplate CompileTemplate(string rawTemplate)
     {
+        var nodes = new List<ConditionalNode>();
+        var lastIndex = 0;
+
+        foreach (Match match in ConditionalsRegex.Matches(rawTemplate))
+        {
+            var literalBefore = rawTemplate[lastIndex..match.Index];
+            var variable = match.Groups[1].Value;
+            var trueContent = match.Groups[2].Value;
+            var falseContent = match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
+
+            nodes.Add(new ConditionalNode(literalBefore, variable, trueContent, falseContent));
+            lastIndex = match.Index + match.Length;
+        }
+
+        var trailingLiteral = rawTemplate[lastIndex..];
+        return new CompiledTemplate(rawTemplate, nodes, trailingLiteral);
+    }
+
+    /// <summary>
+    /// Reassembles the rendered text from a <see cref="CompiledTemplate"/>: applies variable
+    /// substitution to each literal segment and picks the true/false branch of every conditional
+    /// block based on <paramref name="context"/>. This replaces re-scanning the raw template for
+    /// conditional tags on every render.
+    /// </summary>
+    /// <param name="compiled">The pre-parsed template structure.</param>
+    /// <param name="context">Context variables used for substitution and branch selection.</param>
+    /// <returns>The template text with variables substituted and conditionals resolved.</returns>
+    private string RenderConditionals(CompiledTemplate compiled, Dictionary<string, object> context)
+    {
+        var builder = StringBuilderPool.Rent();
         try
         {
-            // Match {{#if var}}...{{#else}}...{{/if}} or {{#if var}}...{{/if}}
-            var pattern = @"{{#if\s+(\w+)}}(.*?)(?:{{#else}}(.*?))?{{/if}}";
-            var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
-
-            return regex.Replace(template, match =>
+            foreach (var node in compiled.ConditionalNodes)
             {
-                var variable = match.Groups[1].Value;
-                var trueContent = match.Groups[2].Value;
-                var falseContent = match.Groups[3].Success ? match.Groups[3].Value : string.Empty;
+                builder.Append(ProcessVariables(node.LiteralBefore, context));
 
-                if (context.TryGetValue(variable, out var value) && IsTruthy(value))
-                    return trueContent;
+                var branch = context.TryGetValue(node.Variable, out var value) && IsTruthy(value)
+                    ? node.TrueContent
+                    : node.FalseContent;
+                builder.Append(ProcessVariables(branch, context));
+            }
 
-                return falseContent;
-            });
+            builder.Append(ProcessVariables(compiled.TrailingLiteral, context));
+            return builder.ToString();
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error processing conditional blocks in template");
-            return template;
+            return compiled.RawTemplate;
+        }
+        finally
+        {
+            StringBuilderPool.Return(builder);
         }
     }
 
@@ -272,10 +413,7 @@ public sealed class TemplateEngineService : ITemplateEngineService
     {
         try
         {
-            var pattern = @"{{#for\s+(\w+)\s+in\s+(\w+)}}(.*?){{/for}}";
-            var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.Singleline);
-
-            return regex.Replace(template, match =>
+            return LoopsRegex.Replace(template, match =>
             {
                 var itemVar = match.Groups[1].Value;
                 var collectionVar = match.Groups[2].Value;
@@ -287,14 +425,21 @@ public sealed class TemplateEngineService : ITemplateEngineService
                 if (collection is not IEnumerable<object> enumerable)
                     return string.Empty;
 
-                var result = new StringBuilder();
-                foreach (var item in enumerable)
+                var result = StringBuilderPool.Rent();
+                try
                 {
-                    var itemContext = new Dictionary<string, object>(context) { [itemVar] = item };
-                    result.Append(ProcessVariables(content, itemContext));
-                }
+                    foreach (var item in enumerable)
+                    {
+                        var itemContext = new Dictionary<string, object>(context) { [itemVar] = item };
+                        result.Append(ProcessVariables(content, itemContext));
+                    }
 
-                return result.ToString();
+                    return result.ToString();
+                }
+                finally
+                {
+                    StringBuilderPool.Return(result);
+                }
             });
         }
         catch (Exception ex)
@@ -308,10 +453,7 @@ public sealed class TemplateEngineService : ITemplateEngineService
     {
         try
         {
-            var pattern = @"{{\s*(\w+)\s*|\s*(\w+)\s*}}";
-            var regex = new System.Text.RegularExpressions.Regex(pattern);
-
-            return regex.Replace(template, match =>
+            return FiltersRegex.Replace(template, match =>
             {
                 var variable = match.Groups[1].Value;
                 var filterName = match.Groups[2].Value;
@@ -357,21 +499,15 @@ public sealed class TemplateEngineService : ITemplateEngineService
         try
         {
             // Process {{snake_case}} transform
-            var snakeCasePattern = @">{{\s*snake_case\s*}}";
-            template = System.Text.RegularExpressions.Regex.Replace(
+            template = SnakeCasePattern.Replace(
                 template,
-                snakeCasePattern,
-                match => ToSnakeCase(match.Value.Replace("{{snake_case}}", "").Trim()),
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                match => ToSnakeCase(match.Value.Replace("{{snake_case}}", "").Trim())
             );
 
             // Process {{camelCase}} transform
-            var camelCasePattern = @">{{\s*camelCase\s*}}";
-            template = System.Text.RegularExpressions.Regex.Replace(
+            template = CamelCasePattern.Replace(
                 template,
-                camelCasePattern,
-                match => ToCamelCase(match.Value.Replace("{{camelCase}}", "").Trim()),
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                match => ToCamelCase(match.Value.Replace("{{camelCase}}", "").Trim())
             );
 
             return template;
@@ -388,16 +524,23 @@ public sealed class TemplateEngineService : ITemplateEngineService
         if (string.IsNullOrEmpty(input))
             return input;
 
-        var result = new StringBuilder();
-        for (int i = 0; i < input.Length; i++)
+        var result = StringBuilderPool.Rent();
+        try
         {
-            if (char.IsUpper(input[i]) && i > 0 && !char.IsUpper(input[i - 1]))
+            for (int i = 0; i < input.Length; i++)
             {
-                result.Append('_');
+                if (char.IsUpper(input[i]) && i > 0 && !char.IsUpper(input[i - 1]))
+                {
+                    result.Append('_');
+                }
+                result.Append(char.ToLowerInvariant(input[i]));
             }
-            result.Append(char.ToLowerInvariant(input[i]));
+            return result.ToString();
         }
-        return result.ToString();
+        finally
+        {
+            StringBuilderPool.Return(result);
+        }
     }
 
     private string ToCamelCase(string input)
@@ -405,29 +548,36 @@ public sealed class TemplateEngineService : ITemplateEngineService
         if (string.IsNullOrEmpty(input))
             return input;
 
-        var result = new StringBuilder();
-        bool firstChar = true;
-        for (int i = 0; i < input.Length; i++)
+        var result = StringBuilderPool.Rent();
+        try
         {
-            if (firstChar)
+            bool firstChar = true;
+            for (int i = 0; i < input.Length; i++)
             {
-                result.Append(char.ToLowerInvariant(input[i]));
-                firstChar = false;
-            }
-            else if (input[i] == '_')
-            {
-                if (i + 1 < input.Length)
+                if (firstChar)
                 {
-                    result.Append(char.ToUpperInvariant(input[i + 1]));
-                    i++;
+                    result.Append(char.ToLowerInvariant(input[i]));
+                    firstChar = false;
+                }
+                else if (input[i] == '_')
+                {
+                    if (i + 1 < input.Length)
+                    {
+                        result.Append(char.ToUpperInvariant(input[i + 1]));
+                        i++;
+                    }
+                }
+                else
+                {
+                    result.Append(input[i]);
                 }
             }
-            else
-            {
-                result.Append(input[i]);
-            }
+            return result.ToString();
         }
-        return result.ToString();
+        finally
+        {
+            StringBuilderPool.Return(result);
+        }
     }
 
     private bool IsTruthy(object value)
