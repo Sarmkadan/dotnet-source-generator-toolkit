@@ -14,13 +14,22 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates mapper classes for transforming entities to/from DTOs
 /// and between different entity types with property mapping logic.
 /// </summary>
-public sealed class MapperGeneratorService : IMapperGeneratorService
+public sealed class MapperGeneratorService : GeneratorServiceBase, IMapperGeneratorService
 {
     private readonly ILogger<MapperGeneratorService> _logger;
 
+    /// <inheritdoc />
+    protected override GeneratorType GeneratorKind => GeneratorType.Mapper;
+
+    /// <summary>
+    /// Initializes the mapper generator service.
+    /// </summary>
+    /// <param name="logger">The logger to use for generation diagnostics.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> is null.</exception>
     public MapperGeneratorService(ILogger<MapperGeneratorService> logger)
+        : base(logger)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger;
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllMappersAsync(List<Entity> entities)
@@ -61,11 +70,17 @@ public sealed class MapperGeneratorService : IMapperGeneratorService
             Status = GenerationStatus.InProgress,
         };
 
+        if (!ValidateOrReport(sourceEntity, result))
+        {
+            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            return result;
+        }
+
         try
         {
             var code = GenerateMapperCode(sourceEntity);
             result.GeneratedCode = code;
-            result.OutputFilePath = Path.Combine("Mappers", $"{sourceEntity.Name}Mapper.cs");
+            result.OutputFilePath = BuildHintName(sourceEntity);
             result.MarkAsCompleted(GenerationStatus.Completed, 150);
 
             _logger.LogInformation("Mapper generated for: {EntityName}", sourceEntity.Name);
@@ -73,8 +88,7 @@ public sealed class MapperGeneratorService : IMapperGeneratorService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Mapper generation failed for: {EntityName}", sourceEntity.Name);
-            result.AddError(ex.Message);
-            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            ReportGenerationFailure(result, ex);
         }
 
         return await Task.FromResult(result);

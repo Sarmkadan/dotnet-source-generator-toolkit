@@ -16,12 +16,22 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates repository pattern implementations including interfaces and concrete classes
 /// with full CRUD operations and query methods for entities.
 /// </summary>
-public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
+public sealed class RepositoryGeneratorService : GeneratorServiceBase, IRepositoryGeneratorService
 {
     private readonly ILogger<RepositoryGeneratorService> _logger;
     private readonly ToolkitOptions? _options;
 
+    /// <inheritdoc />
+    protected override GeneratorType GeneratorKind => GeneratorType.Repository;
+
+    /// <summary>
+    /// Initializes the repository generator service.
+    /// </summary>
+    /// <param name="logger">The logger to use for generation diagnostics.</param>
+    /// <param name="options">Optional toolkit options used to resolve the target namespace.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> is null.</exception>
     public RepositoryGeneratorService(ILogger<RepositoryGeneratorService> logger, ToolkitOptions? options = null)
+        : base(logger)
     {
         _logger = logger;
         _options = options;
@@ -49,13 +59,19 @@ public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
             Status = GenerationStatus.InProgress,
         };
 
+        if (!ValidateOrReport(entity, result))
+        {
+            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            return result;
+        }
+
         try
         {
             var interfaceCode = GenerateRepositoryInterface(entity);
             var implementationCode = GenerateRepositoryImplementation(entity);
 
             result.GeneratedCode = interfaceCode + Environment.NewLine + Environment.NewLine + implementationCode;
-            result.OutputFilePath = Path.Combine("Repositories", $"{entity.Name}Repository.cs");
+            result.OutputFilePath = BuildHintName(entity);
             result.MarkAsCompleted(GenerationStatus.Completed, 200);
 
             _logger.LogInformation("Repository generated successfully for: {EntityName}", entity.Name);
@@ -63,8 +79,7 @@ public sealed class RepositoryGeneratorService : IRepositoryGeneratorService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Repository generation failed for entity: {EntityName}", entity.Name);
-            result.AddError(ex.Message);
-            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            ReportGenerationFailure(result, ex);
         }
 
         return await Task.FromResult(result);
