@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using DotNetSourceGeneratorToolkit.Domain;
 using DotNetSourceGeneratorToolkit.Exceptions;
 using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("dotnet-source-generator-toolkit.Tests")]
