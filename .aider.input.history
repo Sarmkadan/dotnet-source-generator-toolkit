@@ -14362,3 +14362,61 @@
 +- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
 +- perf: cache parsed templates and pool stringbuilders in template engine
 +- Tweak GenerationOptions
+
+# 2026-07-26 16:18:13.076285
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file mentioned below. Understand the current structure.
++2. Make the refactoring described - keep behavior identical.
++3. Run: dotnet build. If YOUR change broke it, revert and try a simpler approach.
++4. Commit with a descriptive message.
++
++TASK:
++Compare Infrastructure/EntityAnalyzer.cs against Infrastructure/IEntityAnalyzer.cs: ensure every public method of the class is on the interface, and all consumers depend on the interface rather than the concrete class (search usages). Adjust interface + call sites; do not change method behavior.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props unless the task explicitly says to.
++- Do NOT add NuGet packages unless the task explicitly requires it.
++- The whole solution MUST still compile with dotnet build.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- fix build in .aider.chat.history
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
+
+# 2026-07-26 16:18:13.077125
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file mentioned below. Understand the current structure.
++2. Make the refactoring described - keep behavior identical.
++3. Run: dotnet build. If YOUR change broke it, revert and try a simpler approach.
++4. Commit with a descriptive message.
++
++TASK:
++Compare Infrastructure/EntityAnalyzer.cs against Infrastructure/IEntityAnalyzer.cs: ensure every public method of the class is on the interface, and all consumers depend on the interface rather than the concrete class (search usages). Adjust interface + call sites; do not change method behavior.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props unless the task explicitly says to.
++- Do NOT add NuGet packages unless the task explicitly requires it.
++- The whole solution MUST still compile with dotnet build.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- fix build in .aider.chat.history
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
