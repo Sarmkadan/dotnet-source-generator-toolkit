@@ -84,3 +84,36 @@ public class GenerationConfigurationException : GenerationException
     public GenerationConfigurationException(string message, Exception innerException)
         : base(message, innerException) { }
 }
+
+/// <summary>
+/// Thrown when a template variable is missing from the context.
+/// </summary>
+public sealed class MissingVariableException : GenerationException
+{
+    /// <summary>Gets the name of the missing variable.</summary>
+    public string VariableName { get; }
+
+    /// <summary>Gets the template that contained the missing variable.</summary>
+    public string Template { get; }
+
+    /// <summary>Initializes a new instance of the <see cref="MissingVariableException"/> class.</summary>
+    /// <param name="variableName">Name of the missing variable.</param>
+    /// <param name="template">Template that contained the missing variable.</param>
+    public MissingVariableException(string variableName, string template)
+        : base($"Missing variable '{variableName}' in template: {template}")
+    {
+        VariableName = variableName;
+        Template = template;
+    }
+
+    /// <summary>Initializes a new instance of the <see cref="MissingVariableException"/> class.</summary>
+    /// <param name="variableName">Name of the missing variable.</param>
+    /// <param name="template">Template that contained the missing variable.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public MissingVariableException(string variableName, string template, Exception innerException)
+        : base($"Missing variable '{variableName}' in template: {template}", innerException)
+    {
+        VariableName = variableName;
+        Template = template;
+    }
+}

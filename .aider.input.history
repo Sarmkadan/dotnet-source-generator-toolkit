@@ -13594,3 +13594,147 @@
 +- tweak FileSystemService
 +- docs: small fix.
 +- doc comments for FileSystemService
+
+# 2026-07-26 00:26:31.770125
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Test TemplateEngineService malformed/missing-variable handling
++
++Likely relevant file/type: TemplateEngineService.cs / TemplateEngineServiceTests.cs (missing)
++
++Commit 'tweak TemplateEngineService' altered template rendering with no visible test coverage. Add tests for: (1) a template referencing a variable/token that is never supplied - assert it throws a clear, typed exception rather than silently emitting the literal placeholder or producing invalid code, (2) a template with mismatched/unbalanced placeholder delimiters, (3) an empty template string, (4) a template containing the same variable twice, (5) whitespace-only template input.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
++- .aider.hcat.history.md
++- CodeEmitter.cs
++- chore: tweak Customer.Mapper.g
+
+# 2026-07-26 00:26:31.770185
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Test TemplateEngineService malformed/missing-variable handling
++
++Likely relevant file/type: TemplateEngineService.cs / TemplateEngineServiceTests.cs (missing)
++
++Commit 'tweak TemplateEngineService' altered template rendering with no visible test coverage. Add tests for: (1) a template referencing a variable/token that is never supplied - assert it throws a clear, typed exception rather than silently emitting the literal placeholder or producing invalid code, (2) a template with mismatched/unbalanced placeholder delimiters, (3) an empty template string, (4) a template containing the same variable twice, (5) whitespace-only template input.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
++- .aider.hcat.history.md
++- CodeEmitter.cs
++- chore: tweak Customer.Mapper.g
+
+# 2026-07-26 00:26:44.266746
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Test TemplateEngineService malformed/missing-variable handling
++
++Likely relevant file/type: TemplateEngineService.cs / TemplateEngineServiceTests.cs (missing)
++
++Commit 'tweak TemplateEngineService' altered template rendering with no visible test coverage. Add tests for: (1) a template referencing a variable/token that is never supplied - assert it throws a clear, typed exception rather than silently emitting the literal placeholder or producing invalid code, (2) a template with mismatched/unbalanced placeholder delimiters, (3) an empty template string, (4) a template containing the same variable twice, (5) whitespace-only template input.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
++- .aider.hcat.history.md
++- CodeEmitter.cs
++- chore: tweak Customer.Mapper.g
+
+# 2026-07-26 00:26:44.266811
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Test TemplateEngineService malformed/missing-variable handling
++
++Likely relevant file/type: TemplateEngineService.cs / TemplateEngineServiceTests.cs (missing)
++
++Commit 'tweak TemplateEngineService' altered template rendering with no visible test coverage. Add tests for: (1) a template referencing a variable/token that is never supplied - assert it throws a clear, typed exception rather than silently emitting the literal placeholder or producing invalid code, (2) a template with mismatched/unbalanced placeholder delimiters, (3) an empty template string, (4) a template containing the same variable twice, (5) whitespace-only template input.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
++- .aider.hcat.history.md
++- CodeEmitter.cs
++- chore: tweak Customer.Mapper.g
