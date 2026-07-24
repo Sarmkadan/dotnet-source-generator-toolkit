@@ -14026,3 +14026,339 @@
 +- perf: cache parsed templates and pool stringbuilders in template engine
 +- Tweak GenerationOptions
 +- Tweak AttributeAnalyzer
+
+# 2026-07-26 15:51:48.592698
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:51:48.592811
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:53:02.000152
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:53:02.000825
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:53:14.162130
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:53:14.162296
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:54:23.915148
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
+
+# 2026-07-26 15:54:23.915213
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Extract a common IGeneratorService pipeline across the four generator services
++
++Likely relevant file/type: src/**/SerializerGeneratorService.cs
++
++The repo has parallel generator services (SerializerGeneratorService per test commit, plus repository/mapper/validator equivalents per the README). Independently evolved siblings drift: different null-handling, different diagnostic IDs, different naming of emitted files. Define a shared abstraction - IGeneratorService with Analyze(entityModel) -> GenerationResult and a template-method base class handling attribute validation, diagnostic reporting, and hint-name construction - then port all four services onto it. Acceptance: all four emit hint names via one shared formatter and use one diagnostic-ID range table.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++NOTE: three previous attempts at this task were reverted because the build broke. The exact compiler errors were:
++[after 886s] [auto-committed] [build-failed-reverted] /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/MapperGeneratorService.cs(20,68): error CS0535: 'MapperGeneratorService' does not implement interface member 'IMapperGeneratorService.GenerateMapperAsync(Entity, Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/Services/RepositoryGeneratorService.cs(21,21): error CS0534: 'RepositoryGeneratorService' does not implement inherited abstract member 'GeneratorServiceBase.AnalyzeAsync(Entity)' [/home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit/dotnet-source-generator-toolkit.csproj]
++
++Re-do the task from scratch avoiding these errors. If the error references a type that does not exist, use only types that actually exist in the repo.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
