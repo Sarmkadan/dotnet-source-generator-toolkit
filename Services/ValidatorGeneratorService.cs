@@ -14,13 +14,22 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates FluentValidation validators for entities with comprehensive
 /// validation rules based on entity property definitions.
 /// </summary>
-public sealed class ValidatorGeneratorService : IValidatorGeneratorService
+public sealed class ValidatorGeneratorService : GeneratorServiceBase, IValidatorGeneratorService
 {
     private readonly ILogger<ValidatorGeneratorService> _logger;
 
+    /// <inheritdoc />
+    protected override GeneratorType GeneratorKind => GeneratorType.Validator;
+
+    /// <summary>
+    /// Initializes the validator generator service.
+    /// </summary>
+    /// <param name="logger">The logger to use for generation diagnostics.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> is null.</exception>
     public ValidatorGeneratorService(ILogger<ValidatorGeneratorService> logger)
+        : base(logger)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger;
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllValidatorsAsync(List<Entity> entities)
@@ -53,11 +62,17 @@ public sealed class ValidatorGeneratorService : IValidatorGeneratorService
             Status = GenerationStatus.InProgress,
         };
 
+        if (!ValidateOrReport(entity, result))
+        {
+            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            return result;
+        }
+
         try
         {
             var code = GenerateValidatorCode(entity);
             result.GeneratedCode = code;
-            result.OutputFilePath = Path.Combine("Validators", $"{entity.Name}Validator.cs");
+            result.OutputFilePath = BuildHintName(entity);
             result.MarkAsCompleted(GenerationStatus.Completed, 180);
 
             _logger.LogInformation("Validator generated for: {EntityName}", entity.Name);
@@ -65,8 +80,7 @@ public sealed class ValidatorGeneratorService : IValidatorGeneratorService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Validator generation failed for: {EntityName}", entity.Name);
-            result.AddError(ex.Message);
-            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            ReportGenerationFailure(result, ex);
         }
 
         return await Task.FromResult(result);

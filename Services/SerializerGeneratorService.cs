@@ -14,13 +14,22 @@ namespace DotNetSourceGeneratorToolkit.Services;
 /// Generates serializer classes for converting entities to/from various formats
 /// including JSON, XML, and binary representations.
 /// </summary>
-public sealed class SerializerGeneratorService : ISerializerGeneratorService
+public sealed class SerializerGeneratorService : GeneratorServiceBase, ISerializerGeneratorService
 {
     private readonly ILogger<SerializerGeneratorService> _logger;
 
+    /// <inheritdoc />
+    protected override GeneratorType GeneratorKind => GeneratorType.Serializer;
+
+    /// <summary>
+    /// Initializes the serializer generator service.
+    /// </summary>
+    /// <param name="logger">The logger to use for generation diagnostics.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> is null.</exception>
     public SerializerGeneratorService(ILogger<SerializerGeneratorService> logger)
+        : base(logger)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger;
     }
 
     public async Task<IEnumerable<GenerationResult>> GenerateAllSerializersAsync(List<Entity> entities)
@@ -65,6 +74,12 @@ public sealed class SerializerGeneratorService : ISerializerGeneratorService
         };
         result.Metadata["Format"] = formatName;
 
+        if (!ValidateOrReport(entity, result))
+        {
+            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            return result;
+        }
+
         try
         {
             var code = format switch
@@ -76,7 +91,7 @@ public sealed class SerializerGeneratorService : ISerializerGeneratorService
             };
 
             result.GeneratedCode = code;
-            result.OutputFilePath = Path.Combine("Serializers", $"{entity.Name}{formatName}Serializer.cs");
+            result.OutputFilePath = BuildHintName(entity, formatName);
             result.MarkAsCompleted(GenerationStatus.Completed, 200);
 
             _logger.LogInformation("Serializer generated: {EntityName} ({Format})", entity.Name, formatName);
@@ -84,8 +99,7 @@ public sealed class SerializerGeneratorService : ISerializerGeneratorService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Serializer generation failed for: {EntityName}", entity.Name);
-            result.AddError(ex.Message);
-            result.MarkAsCompleted(GenerationStatus.Failed, 0);
+            ReportGenerationFailure(result, ex);
         }
 
         return await Task.FromResult(result);
