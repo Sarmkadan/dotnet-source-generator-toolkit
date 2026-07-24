@@ -135,21 +135,55 @@ class Program
 
         var formatterFactory = provider.GetRequiredService<IFormatterFactory>();
         var metricsCollector = provider.GetService<GenerationMetricsCollector>();
-        var projectInfo = provider.GetService<ProjectInfo>();
+        var sourceGeneratorService = provider.GetRequiredService<ISourceGeneratorService>();
+        var logger = provider.GetRequiredService<ILogger<Program>>();
 
-        // Create stats data
+        // Analyze the project to get project info with proper error handling
+        ProjectInfo? projectInfo = null;
+        var analysisErrors = new List<string>();
+        var analysisDuration = 0L;
+
+        try
+        {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            projectInfo = await sourceGeneratorService.AnalyzeProjectAsync(cliOptions.ProjectPath);
+            stopwatch.Stop();
+            analysisDuration = stopwatch.ElapsedMilliseconds;
+
+            // Collect any analysis errors that occurred during project analysis
+            if (projectInfo.AnalysisErrors.Count > 0)
+            {
+                analysisErrors.AddRange(projectInfo.AnalysisErrors);
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Partial analysis failed for project: {ProjectPath}", cliOptions.ProjectPath);
+            analysisErrors.Add($"Partial analysis error: {ex.Message}");
+        }
+
+        // Create stats data with proper null safety and edge-case handling
         var statsData = new StatsData
         {
             Timestamp = DateTime.UtcNow,
             ProjectPath = cliOptions.ProjectPath,
             EntityCount = projectInfo?.Entities.Count ?? 0,
             PropertyCount = projectInfo?.Entities.Sum(e => e.Properties.Count) ?? 0,
-            GenerationMetrics = metricsCollector?.GetSnapshot()
+            GenerationMetrics = metricsCollector?.GetSnapshot(),
+            HasAnalysisErrors = analysisErrors.Count > 0,
+            AnalysisErrors = analysisErrors
         };
 
         if (projectInfo != null)
         {
             statsData.ProjectStatistics = projectInfo.GetStatistics();
+        }
+
+        // Add analysis duration to metrics if available
+        if (statsData.GenerationMetrics != null && analysisDuration > 0)
+        {
+            // Note: Analysis duration is tracked separately as it's not a generation event
+            statsData.AnalysisDurationMs = analysisDuration;
         }
 
         // Format output
@@ -164,7 +198,7 @@ class Program
             OutputFilePath = "stats.txt",
             Status = GenerationStatus.Completed,
             CodeLineCount = statsData.ToString().Split(Environment.NewLine).Length,
-            GenerationDurationMs = 0
+            GenerationDurationMs = analysisDuration
         };
 
         var output = formatter.Format([statsResult]);
@@ -208,6 +242,9 @@ public sealed class StatsData
     public int PropertyCount { get; set; }
     public GenerationMetricsCollector.MetricsSnapshot? GenerationMetrics { get; set; }
     public ProjectStatistics? ProjectStatistics { get; set; }
+    public bool HasAnalysisErrors { get; set; }
+    public List<string> AnalysisErrors { get; set; } = new();
+    public long AnalysisDurationMs { get; set; }
 
     public override string ToString()
     {
@@ -216,37 +253,54 @@ public sealed class StatsData
         sb.AppendLine("====================================");
         sb.AppendLine($"Timestamp: {Timestamp:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine($"Project Path: {ProjectPath}");
-        sb.AppendLine();
 
+        if (HasAnalysisErrors)
+        {
+            sb.AppendLine();
+            sb.AppendLine("⚠️ Analysis Warnings:");
+            foreach (var error in AnalysisErrors)
+            {
+                sb.AppendLine($" • {error}");
+            }
+        }
+
+        sb.AppendLine();
         sb.AppendLine("📈 Entity & Property Counts:");
-        sb.AppendLine($"  Entities: {EntityCount}");
-        sb.AppendLine($"  Properties: {PropertyCount}");
+        sb.AppendLine($" Entities: {EntityCount}");
+        sb.AppendLine($" Properties: {PropertyCount}");
 
         if (ProjectStatistics != null)
         {
             sb.AppendLine();
             sb.AppendLine("📊 Project Statistics:");
-            sb.AppendLine($"  Total Entities: {ProjectStatistics.TotalEntities}");
-            sb.AppendLine($"  Total Properties: {ProjectStatistics.TotalProperties}");
-            sb.AppendLine($"  Successful Generations: {ProjectStatistics.TotalGenerated}");
-            sb.AppendLine($"  Failed Generations: {ProjectStatistics.TotalFailed}");
-            sb.AppendLine($"  Success Rate: {ProjectStatistics.SuccessRate:F2}%");
-            sb.AppendLine($"  Total Code Lines: {ProjectStatistics.TotalCodeLines}");
-            sb.AppendLine($"  Total Generation Time: {ProjectStatistics.TotalGenerationTime}ms");
+            sb.AppendLine($" Total Entities: {ProjectStatistics.TotalEntities}");
+            sb.AppendLine($" Total Properties: {ProjectStatistics.TotalProperties}");
+            sb.AppendLine($" Successful Generations: {ProjectStatistics.TotalGenerated}");
+            sb.AppendLine($" Failed Generations: {ProjectStatistics.TotalFailed}");
+            sb.AppendLine($" Success Rate: {ProjectStatistics.SuccessRate:F2}%");
+            sb.AppendLine($" Total Code Lines: {ProjectStatistics.TotalCodeLines}");
+            sb.AppendLine($" Total Generation Time: {ProjectStatistics.TotalGenerationTime}ms");
+        }
+
+        if (AnalysisDurationMs > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("⏱️ Analysis Performance:");
+            sb.AppendLine($" Analysis Duration: {AnalysisDurationMs}ms");
         }
 
         if (GenerationMetrics != null)
         {
             sb.AppendLine();
             sb.AppendLine("⚡ Generation Metrics:");
-            sb.AppendLine($"  Total Generations: {GenerationMetrics.TotalGenerations}");
-            sb.AppendLine($"  Successful: {GenerationMetrics.SuccessfulGenerations} ({GenerationMetrics.SuccessRate:F1}%)");
-            sb.AppendLine($"  Failed: {GenerationMetrics.FailedGenerations}");
-            sb.AppendLine($"  Total Duration: {GenerationMetrics.TotalDurationMs}ms");
-            sb.AppendLine($"  Average Duration: {GenerationMetrics.AverageDurationMs:F2}ms");
-            sb.AppendLine($"  First Generation: {GenerationMetrics.FirstGenerationStart?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"}");
-            sb.AppendLine($"  Last Generation: {GenerationMetrics.LastGenerationEnd.ToString("yyyy-MM-dd HH:mm:ss")}");
-            sb.AppendLine($"  Generation Rate: {GenerationMetrics.GenerationRatePerHour:F2} gen/hour");
+            sb.AppendLine($" Total Generations: {GenerationMetrics.TotalGenerations}");
+            sb.AppendLine($" Successful: {GenerationMetrics.SuccessfulGenerations} ({GenerationMetrics.SuccessRate:F1}%)");
+            sb.AppendLine($" Failed: {GenerationMetrics.FailedGenerations}");
+            sb.AppendLine($" Total Duration: {GenerationMetrics.TotalDurationMs}ms");
+            sb.AppendLine($" Average Duration: {GenerationMetrics.AverageDurationMs:F2}ms");
+            sb.AppendLine($" First Generation: {GenerationMetrics.FirstGenerationStart?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"}");
+            sb.AppendLine($" Last Generation: {GenerationMetrics.LastGenerationEnd.ToString("yyyy-MM-dd HH:mm:ss")}");
+            sb.AppendLine($" Generation Rate: {GenerationMetrics.GenerationRatePerHour:F2} gen/hour");
         }
 
         return sb.ToString();
@@ -266,6 +320,13 @@ public sealed class StatsData
         {
             timestamp = Timestamp.ToString("yyyy-MM-dd HH:mm:ss"),
             projectPath = ProjectPath,
+            analysis = new
+            {
+                hasErrors = HasAnalysisErrors,
+                errorCount = AnalysisErrors.Count,
+                errors = HasAnalysisErrors ? AnalysisErrors : null,
+                durationMs = AnalysisDurationMs
+            },
             entityCounts = new
             {
                 entities = EntityCount,
