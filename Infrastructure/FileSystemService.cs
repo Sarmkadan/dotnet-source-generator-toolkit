@@ -3,27 +3,32 @@
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
 // CTO & Software Architect
-// =============================================================================
+// =====================================================================
 
 using DotNetSourceGeneratorToolkit.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace DotNetSourceGeneratorToolkit.Infrastructure;
 
 /// <summary>
 /// Provides file system operations including reading, writing, and directory management.
-/// Includes error handling and logging for all operations.
+/// Includes error handling, logging, and security validation for all operations.
 /// </summary>
 public sealed class FileSystemService : IFileSystemService
 {
     private readonly ILogger<FileSystemService> _logger;
     private readonly IRetryPolicy _retryPolicy;
     private bool _dryRun;
+    private readonly string _baseOutputPath;
+    private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+    private static readonly char[] InvalidPathChars = Path.GetInvalidPathChars();
 
     public FileSystemService(ILogger<FileSystemService> logger, IRetryPolicy? retryPolicy = null)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _retryPolicy = retryPolicy ?? new RetryPolicy();
+        _baseOutputPath = Directory.GetCurrentDirectory();
     }
 
     /// <summary>
@@ -40,22 +45,121 @@ public sealed class FileSystemService : IFileSystemService
         }
     }
 
+    /// <summary>
+    /// Validates that a file path is safe and does not contain path traversal sequences.
+    /// </summary>
+    /// <param name="filePath">The file path to validate.</param>
+    /// <param name="operation">The type of operation being performed.</param>
+    /// <exception cref="ArgumentException">Thrown when the path is invalid or contains path traversal sequences.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when filePath is null.</exception>
+    private void ValidatePath(string filePath, string operation)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(filePath);
+
+        // Check for null bytes which can be used in path traversal attacks
+        if (filePath.Contains('\0'))
+        {
+            throw new FileSystemException($"Path contains null byte character: {filePath}");
+        }
+
+        // Normalize the path to resolve any path traversal sequences
+        var fullPath = Path.GetFullPath(filePath);
+
+        // Check for path traversal attempts (../ or ..\)
+        if (filePath.Contains("..") && fullPath.Contains(".."))
+        {
+            throw new FileSystemException($"Path traversal detected in {operation} operation: {filePath}");
+        }
+
+        // Check for absolute paths that could escape the intended directory
+        if (Path.IsPathRooted(filePath) && !filePath.StartsWith(_baseOutputPath, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new FileSystemException($"Absolute path outside base directory detected in {operation} operation: {filePath}");
+        }
+
+        // Check for invalid characters in the path
+        if (filePath.IndexOfAny(InvalidPathChars) >= 0)
+        {
+            throw new FileSystemException($"Path contains invalid characters in {operation} operation: {filePath}");
+        }
+
+        // Check if the resolved path stays within the base directory
+        if (!fullPath.StartsWith(_baseOutputPath, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new FileSystemException($"Resolved path escapes base directory in {operation} operation. Base: {_baseOutputPath}, Attempted: {fullPath}");
+        }
+    }
+
+    /// <summary>
+    /// Validates that a filename is safe and does not contain invalid characters.
+    /// </summary>
+    /// <param name="fileName">The filename to validate.</param>
+    /// <param name="operation">The type of operation being performed.</param>
+    /// <exception cref="ArgumentException">Thrown when the filename is invalid.</exception>
+    private void ValidateFileName(string fileName, string operation)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(fileName);
+
+        // Check for null bytes
+        if (fileName.Contains('\0'))
+        {
+            throw new FileSystemException($"Filename contains null byte character in {operation} operation: {fileName}");
+        }
+
+        // Check for invalid filename characters
+        if (fileName.IndexOfAny(InvalidFileNameChars) >= 0)
+        {
+            throw new FileSystemException($"Filename contains invalid characters in {operation} operation: {fileName}");
+        }
+
+        // Check for path separators in filename
+        if (fileName.Contains(Path.DirectorySeparatorChar) || fileName.Contains(Path.AltDirectorySeparatorChar))
+        {
+            throw new FileSystemException($"Filename contains path separators in {operation} operation: {fileName}");
+        }
+
+        // Check for Windows reserved names
+        var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+        if (IsReservedWindowsName(nameWithoutExt))
+        {
+            throw new FileSystemException($"Filename uses reserved Windows name in {operation} operation: {fileName}");
+        }
+    }
+
+    /// <summary>
+    /// Checks if a filename is a Windows reserved name that could cause issues.
+    /// </summary>
+    /// <param name="name">The name to check.</param>
+    /// <returns>True if the name is reserved; otherwise false.</returns>
+    private static bool IsReservedWindowsName(string name)
+    {
+        // List of Windows reserved names
+        var reservedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+        };
+
+        return reservedNames.Contains(name);
+    }
+
     public async Task<string> ReadFileAsync(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
 
         try
         {
+            ValidatePath(filePath, "read");
             _logger.LogInformation("Reading file: {FilePath}", filePath);
             var content = await File.ReadAllTextAsync(filePath);
             _logger.LogInformation("Successfully read file: {FilePath} ({Bytes} bytes)", filePath, content.Length);
             return content;
         }
-        catch (FileNotFoundException ex)
+        catch (FileSystemException)
         {
-            _logger.LogError(ex, "File not found: {FilePath}", filePath);
-            throw new FileSystemException($"File not found: {filePath}", ex);
+            // Re-throw FileSystemException as-is
+            throw;
         }
         catch (Exception ex)
         {
@@ -66,11 +170,13 @@ public sealed class FileSystemService : IFileSystemService
 
     public async Task WriteFileAsync(string filePath, string content)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
 
         try
         {
+            ValidatePath(filePath, "write");
+            ValidateFileName(Path.GetFileName(filePath), "write");
+
             var directory = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
@@ -100,6 +206,11 @@ public sealed class FileSystemService : IFileSystemService
                 }, filePath);
             }
         }
+        catch (FileSystemException)
+        {
+            // Re-throw FileSystemException as-is
+            throw;
+        }
         catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error writing file: {FilePath}", filePath);
@@ -109,11 +220,13 @@ public sealed class FileSystemService : IFileSystemService
 
     public async Task AppendFileAsync(string filePath, string content)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
 
         try
         {
+            ValidatePath(filePath, "append");
+            ValidateFileName(Path.GetFileName(filePath), "append");
+
             if (_dryRun)
             {
                 _logger.LogInformation("[DRY-RUN] Would append to file: {FilePath}\n{Content}", filePath, content);
@@ -128,6 +241,11 @@ public sealed class FileSystemService : IFileSystemService
                 }, filePath);
             }
         }
+        catch (FileSystemException)
+        {
+            // Re-throw FileSystemException as-is
+            throw;
+        }
         catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error appending to file: {FilePath}", filePath);
@@ -137,19 +255,28 @@ public sealed class FileSystemService : IFileSystemService
 
     public bool FileExists(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            return false;
+        ArgumentNullException.ThrowIfNull(filePath);
 
-        return File.Exists(filePath);
+        try
+        {
+            ValidatePath(filePath, "file existence check");
+            return File.Exists(filePath);
+        }
+        catch (FileSystemException)
+        {
+            // If path is invalid, file doesn't exist in a safe way
+            return false;
+        }
     }
 
     public async Task DeleteFileAsync(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentNullException(nameof(filePath));
+        ArgumentNullException.ThrowIfNull(filePath);
 
         try
         {
+            ValidatePath(filePath, "delete");
+
             if (File.Exists(filePath))
             {
                 if (_dryRun)
@@ -172,6 +299,11 @@ public sealed class FileSystemService : IFileSystemService
 
             await Task.CompletedTask;
         }
+        catch (FileSystemException)
+        {
+            // Re-throw FileSystemException as-is
+            throw;
+        }
         catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
@@ -181,11 +313,12 @@ public sealed class FileSystemService : IFileSystemService
 
     public async Task CreateDirectoryAsync(string dirPath)
     {
-        if (string.IsNullOrWhiteSpace(dirPath))
-            throw new ArgumentNullException(nameof(dirPath));
+        ArgumentNullException.ThrowIfNull(dirPath);
 
         try
         {
+            ValidatePath(dirPath, "directory creation");
+
             if (!Directory.Exists(dirPath))
             {
                 if (_dryRun)
@@ -208,6 +341,11 @@ public sealed class FileSystemService : IFileSystemService
 
             await Task.CompletedTask;
         }
+        catch (FileSystemException)
+        {
+            // Re-throw FileSystemException as-is
+            throw;
+        }
         catch (Exception ex) when (ex is not FileSystemException)
         {
             _logger.LogError(ex, "Error creating directory: {DirectoryPath}", dirPath);
@@ -217,17 +355,24 @@ public sealed class FileSystemService : IFileSystemService
 
     public async Task<IEnumerable<string>> GetFilesAsync(string dirPath, string searchPattern)
     {
-        if (string.IsNullOrWhiteSpace(dirPath))
-            throw new ArgumentNullException(nameof(dirPath));
+        ArgumentNullException.ThrowIfNull(dirPath);
+        ArgumentException.ThrowIfNullOrEmpty(searchPattern);
 
         try
         {
+            ValidatePath(dirPath, "file listing");
+
             if (!Directory.Exists(dirPath))
                 return [];
 
             var files = Directory.GetFiles(dirPath, searchPattern, SearchOption.AllDirectories);
             _logger.LogInformation("Found {Count} files matching pattern '{Pattern}' in {Directory}", files.Length, searchPattern, dirPath);
             return await Task.FromResult(files);
+        }
+        catch (FileSystemException)
+        {
+            // Re-throw FileSystemException as-is
+            throw;
         }
         catch (Exception ex)
         {
@@ -238,15 +383,23 @@ public sealed class FileSystemService : IFileSystemService
 
     public string GetDirectoryName(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-            return string.Empty;
+        ArgumentNullException.ThrowIfNull(filePath);
 
-        return Path.GetDirectoryName(filePath) ?? string.Empty;
+        try
+        {
+            ValidatePath(filePath, "directory name extraction");
+            return Path.GetDirectoryName(filePath) ?? string.Empty;
+        }
+        catch (FileSystemException)
+        {
+            return string.Empty;
+        }
     }
 
     public string CombinePath(params string[] segments)
     {
-        if (segments is null || segments.Length == 0)
+        ArgumentNullException.ThrowIfNull(segments);
+        if (segments.Length == 0)
             return string.Empty;
 
         return Path.Combine(segments);
