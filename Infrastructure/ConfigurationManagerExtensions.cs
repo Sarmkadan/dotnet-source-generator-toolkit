@@ -120,6 +120,62 @@ namespace DotNetSourceGeneratorToolkit.Infrastructure
 
             return configuration.GetAllConfig();
         }
-    }
 
+        // -----------------------------------------------------------------
+        // Typed getters for the IConfigurationManager abstraction
+        // -----------------------------------------------------------------
+
+        /// <summary>
+        /// Retrieves an integer configuration value. Returns <paramref name="fallback"/> if the key is missing or the value cannot be parsed.
+        /// </summary>
+        /// <param name="configuration">The configuration manager instance.</param>
+        /// <param name="key">Configuration key.</param>
+        /// <param name="fallback">Fallback integer value.</param>
+        /// <returns>Parsed integer or fallback.</returns>
+        public static int GetInt(this IConfigurationManager configuration, string key, int fallback = 0)
+        {
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentException.ThrowIfNullOrEmpty(key);
+
+            // Use the overload that supplies a default string value when the key is absent.
+            var raw = configuration.GetValue(key, fallback.ToString());
+
+            return int.TryParse(raw, out var result) ? result : fallback;
+        }
+
+        /// <summary>
+        /// Retrieves a boolean configuration value. Returns <paramref name="fallback"/> if the key is missing or the value cannot be parsed.
+        /// </summary>
+        /// <param name="configuration">The configuration manager instance.</param>
+        /// <param name="key">Configuration key.</param>
+        /// <param name="fallback">Fallback boolean value.</param>
+        /// <returns>Parsed boolean or fallback.</returns>
+        public static bool GetBool(this IConfigurationManager configuration, string key, bool fallback = false)
+        {
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentException.ThrowIfNullOrEmpty(key);
+
+            var raw = configuration.GetValue(key, fallback.ToString());
+
+            return bool.TryParse(raw, out var result) ? result : fallback;
+        }
+
+        /// <summary>
+        /// Retrieves an enum configuration value. Returns <paramref name="fallback"/> if the key is missing or the value cannot be parsed.
+        /// </summary>
+        /// <typeparam name="T">Enum type.</typeparam>
+        /// <param name="configuration">The configuration manager instance.</param>
+        /// <param name="key">Configuration key.</param>
+        /// <param name="fallback">Fallback enum value.</param>
+        /// <returns>Parsed enum value or fallback.</returns>
+        public static T GetEnum<T>(this IConfigurationManager configuration, string key, T fallback) where T : struct, Enum
+        {
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentException.ThrowIfNullOrEmpty(key);
+
+            var raw = configuration.GetValue(key, fallback.ToString());
+
+            return Enum.TryParse<T>(raw, ignoreCase: true, out var result) ? result : fallback;
+        }
+    }
 }
