@@ -13738,3 +13738,291 @@
 +- .aider.hcat.history.md
 +- CodeEmitter.cs
 +- chore: tweak Customer.Mapper.g
+
+# 2026-07-26 02:23:29.866404
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:23:29.866495
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:23:40.629010
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:23:40.629074
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:25:49.242118
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:25:49.242211
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:25:56.221167
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
+
+# 2026-07-26 02:25:56.221281
++In repo /home/redrocket/task-factory/workdir/dotnet-source-generator-toolkit, implement the following improvement.
++
++Title: Unify validation and error-throwing contract across the *GeneratorService family
++
++Likely relevant file/type: SerializerGeneratorService.cs, and sibling RepositoryGeneratorService/MapperGeneratorService/ValidatorGeneratorService (per README's stated scope: repositories, mappers, validators, serializers)
++
++The README states the toolkit generates repositories, mappers, validators, and serializers from attributes, implying four parallel *GeneratorService classes, but only SerializerGeneratorService shows up in recent test-focused commits. These sibling services almost certainly share the same shape (take a type symbol + attribute data, emit code) but were likely implemented independently over time, which is a classic source of divergence: one may null-check its `INamedTypeSymbol` argument and throw `ArgumentNullException`, another may throw a custom `GenerationException`, another may not check at all and NRE instead. Audit all *GeneratorService implementations for: (a) consistent argument validation on public entry points, (b) a single shared exception type for 'attribute misconfiguration' vs 'internal generator failure' rather than each service inventing its own, (c) consistent handling of an entity with zero eligible members (empty class) - some may emit a stub, others may throw. Document the intended shared contract and align all four services to it.
++
++Read the actual current code first - the file/type hint above is a starting pointer from a lightweight analysis, not a guarantee of exact current structure. If the described issue doesn't apply as stated (code already handles it, or the type/file differs), adapt the fix to what you actually find, or pick the closest genuinely useful improvement in the same area. Do not fabricate a problem that doesn't exist.
++
++QUALITY BAR (an automated review rejects the commit if violated):
++- Implement the feature COMPLETELY and for real. If some part cannot be implemented for real, omit it - never fake a result, never hardcode a return value, never write "simplified for demo" / "in a real application".
++- Guard clauses first: ArgumentNullException.ThrowIfNull(x) / ArgumentException.ThrowIfNullOrEmpty(s) at the top of each public method.
++- Modern C#: expression-bodied members where they fit, pattern matching over if-chains, target-typed new.
++- XML doc comments on every new public member, including <exception> tags for every throw.
++
++HARD RULES (build check runs after you; violating any fails the task):
++- Do NOT touch .csproj/.sln/.slnx/Directory.Build.props or any other existing file except what's needed for this task.
++- Do NOT write tests unless explicitly asked. Do NOT add NuGet packages unless explicitly needed and already-available in the BCL is not enough.
++- No mention of AI/assistant in code or commits.
++- The whole solution MUST still compile with `dotnet build`.
++- Commit message: conventional commits style, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak Program
++- Update GenerationResultAggregatorServiceTests
++- Tweak GenerationException
++- CodeEmitterTests.cs
++- update TemplateEngineService
++- Tweak FileSystemService
++- refactor: extract shared generator service pipeline across repository, mapper, serializer, and validator generators
++- perf: cache parsed templates and pool stringbuilders in template engine
++- Tweak GenerationOptions
++- Tweak AttributeAnalyzer
