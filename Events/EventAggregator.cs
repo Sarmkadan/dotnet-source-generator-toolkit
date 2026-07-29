@@ -7,6 +7,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 
 namespace DotNetSourceGeneratorToolkit.Events;
 
@@ -47,7 +48,7 @@ public sealed class EventAggregator : IEventPublisher
                 .First(m => m.Name == "GetServices" && m.GetParameters().Length == 1 && m.IsGenericMethod);
             var handlersMethod = getServicesMethod.MakeGenericMethod(handlerType);
 
-            var handlers = handlersMethod.Invoke(null, new object[] { _serviceProvider }) as System.Collections.IEnumerable;
+            var handlers = handlersMethod.Invoke(null, new object[] { _serviceProvider }) as IEnumerable;
 
             if (handlers is null || !handlers.GetEnumerator().MoveNext())
             {
@@ -58,9 +59,17 @@ public sealed class EventAggregator : IEventPublisher
                 return;
             }
 
+            // Create a snapshot of handlers to avoid collection-modified exceptions
+            var handlerList = new List<object>();
+            var enumerator = handlers.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                handlerList.Add(enumerator.Current);
+            }
+
             // Execute all handlers
             var handlerCount = 0;
-            foreach (var handler in handlers)
+            foreach (var handler in handlerList)
             {
                 var handleMethod = handlerType.GetMethod("HandleAsync")
                     ?? throw new InvalidOperationException($"Handler missing HandleAsync method");
