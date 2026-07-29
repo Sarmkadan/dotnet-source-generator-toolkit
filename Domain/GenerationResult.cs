@@ -1,4 +1,5 @@
 #nullable enable
+using System.Text;
 
 // =============================================================================
 // Author: Vladyslav Zaiets | https://sarmkadan.com
@@ -40,6 +41,9 @@ public sealed class GenerationResult
     public string? CreatedBy { get; set; }
 
     public Dictionary<string, string> Metadata { get; } = [];
+    public bool SuccessPredicate { get; set; } = false;
+    public long TotalBytes { get; set; }
+    public Dictionary<string, int> FilesByExtension { get; set; } = new Dictionary<string, int>();
 
     /// <summary>
     /// Alias for <see cref="GenerationDurationMs"/>, used by output formatters.
