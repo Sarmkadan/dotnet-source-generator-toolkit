@@ -15318,3 +15318,163 @@
 +- Update .aider.chat.history
 +- fix build in .aider.chat.history
 +- .
+
+# 2026-07-30 00:46:55.665588
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:46:55.666234
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:47:07.538344
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:47:07.538972
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:49:25.642423
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:49:25.642494
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:51:28.405321
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
+
+# 2026-07-30 00:51:28.405620
++In Services/TemplateEngineService.cs cache parsed templates keyed by template id/hash so repeat generations skip re-parsing.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
++- Add extension helpers for .aider.chat.history.
++- feat: add typed GetInt, GetBool, GetEnum to ConfigurationManagerExtensions
