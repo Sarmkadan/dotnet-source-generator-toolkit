@@ -16374,3 +16374,111 @@
 +- .aider.chat.history.md
 +- tweak .aider.chat.history
 +- (no commit message provided)
+
+# 2026-08-01 08:17:47.956291
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Metrics/MetricsCollector.cs make counter increments Interlocked-based for thread safety and guard against overflow.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore: .aider.chat.history.md
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
+
+# 2026-08-01 08:17:47.956344
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Metrics/MetricsCollector.cs make counter increments Interlocked-based for thread safety and guard against overflow.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore: .aider.chat.history.md
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
+
+# 2026-08-01 08:20:01.008837
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Metrics/MetricsCollector.cs make counter increments Interlocked-based for thread safety and guard against overflow.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore: .aider.chat.history.md
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
+
+# 2026-08-01 08:20:01.008922
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Metrics/MetricsCollector.cs make counter increments Interlocked-based for thread safety and guard against overflow.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history.md
++- chore: .aider.chat.history.md
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history

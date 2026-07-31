@@ -1,0 +1,1 @@
+Fixed thread safety issue in MetricsCollector.cs by making counter increments Interlocked-based
