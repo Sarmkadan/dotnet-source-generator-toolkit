@@ -41,7 +41,8 @@ public sealed class MetricsCollector : IMetricsCollector
             }
             else
             {
-                _counters[metricName] = current + amount;
+                Interlocked.Increment(ref current);
+                _counters[metricName] = current;
             }
         }
     }
