@@ -16192,3 +16192,111 @@
 +- (no commit message provided)
 +- refactor: snapshot handlers before invocation
 +- fix
+
+# 2026-08-01 05:21:11.906603
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Repositories/EntityRepository.cs ensure query methods return copies/read-only views so callers cannot mutate stored entities.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
+
+# 2026-08-01 05:21:11.906658
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Repositories/EntityRepository.cs ensure query methods return copies/read-only views so callers cannot mutate stored entities.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
+
+# 2026-08-01 05:21:19.713388
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Repositories/EntityRepository.cs ensure query methods return copies/read-only views so callers cannot mutate stored entities.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
+
+# 2026-08-01 05:21:19.713451
++STEP-BY-STEP INSTRUCTIONS (follow exactly):
++1. Read the file. Find the exact bug described below.
++2. Fix ONLY that bug. Do not refactor or change anything else.
++3. Run: dotnet build. Verify your fix compiles.
++4. Commit with message describing what was wrong and how you fixed it.
++
++BUG TO FIX:
++In Repositories/EntityRepository.cs ensure query methods return copies/read-only views so callers cannot mutate stored entities.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore(benchmarks): update ValidationExceptionBenchmarks
++- Tweak FileSystemServiceBenchmarks
++- Tweak
++- .aider.chat.history.md
++- Tweak CodeFormatterService
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
