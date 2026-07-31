@@ -86,7 +86,7 @@ public sealed class CodeFormatterService : ICodeFormatterService
             if (!string.IsNullOrWhiteSpace(trimmed))
             {
                 var indent = new string(' ', indentLevel * INDENT_SIZE);
-                formatted.AppendLine(indent + trimmed);
+                formatted.Append(indent).AppendLine(trimmed);
             }
             else if (formatted.Length > 0)
             {

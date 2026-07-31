@@ -15634,3 +15634,43 @@
 +- extension methods on .aider.chat.history
 +- tweak .aider.chat.history
 +- Add extension helpers for .aider.chat.history.
+
+# 2026-07-31 07:41:57.630803
++In Services/CodeFormatterService.cs eliminate string concatenation in loops; use StringBuilder with capacity estimate.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
+
+# 2026-07-31 07:41:57.630863
++In Services/CodeFormatterService.cs eliminate string concatenation in loops; use StringBuilder with capacity estimate.
++
++HARD RULES:
++- Do NOT touch .csproj/.sln unless told to. Do NOT add NuGet packages unless told to.
++- Solution MUST compile with dotnet build.
++- Commit: conventional commits, lowercase, no AI mentions.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- .aider.chat.history changes
++- .aider.chat.history.md
++- tweak .aider.chat.history
++- (no commit message provided)
++- refactor: snapshot handlers before invocation
++- fix
++- tweak.
++- (no commit message provided)
++- extension methods on .aider.chat.history
++- tweak .aider.chat.history
