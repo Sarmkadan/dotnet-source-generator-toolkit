@@ -1332,6 +1332,48 @@ attributes.Should().Contain("[Required]");
 attributes.Should().Contain("[MaxLength(256)]");
 ```
 
+## AttributeAnalyzerTests
+
+The `AttributeAnalyzerTests` class provides unit tests for the `AttributeAnalyzer` infrastructure component, covering attribute discovery, presence checks, and parameter extraction from raw C# source text. These tests validate edge cases such as null or empty input, single and multiple attributes, named versus positional arguments, case-insensitive and qualified attribute names, and duplicate attribute detection.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Moq;
+
+var mockLogger = new Mock<ILogger<AttributeAnalyzer>>();
+var analyzer = new AttributeAnalyzer(mockLogger.Object);
+
+var sourceCode = """
+[Serializable]
+[CustomAttribute(Name = "Test", Value = 42, Enabled = true)]
+public class MyClass
+{
+    public void MyMethod() { }
+}
+""";
+
+// Analyze all attributes found in the source
+var attributes = analyzer.AnalyzeAttributes(sourceCode);
+foreach (var attribute in attributes)
+{
+    Console.WriteLine($"{attribute.Name}: {attribute.Parameters.Count} parameter(s)");
+}
+
+// Check whether a specific attribute is present
+var hasSerializable = analyzer.HasAttribute(sourceCode, "Serializable");
+Console.WriteLine($"Has [Serializable]: {hasSerializable}");
+
+// Extract parameters for a specific attribute by name
+var customParameters = analyzer.GetAttributeParameters(sourceCode, "CustomAttribute");
+if (customParameters is not null)
+{
+    Console.WriteLine($"Name = {customParameters["Name"]}, Value = {customParameters["Value"]}");
+}
+```
+
 ## AutoImplementGeneratorDiagnosticTests
 
 The `AutoImplementGeneratorDiagnosticTests` class verifies that the `AutoImplementGenerator` reports the expected compiler diagnostics with correct IDs and severities for invalid inputs, and stays silent for valid ones. This test suite ensures that the auto-implementation generator properly validates its inputs and provides meaningful diagnostic messages to developers.
