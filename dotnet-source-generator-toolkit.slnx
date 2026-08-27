@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/examples/" />
+  <Folder Name="/examples/v2-basic-usage/">
+    <Project Path="examples/v2-basic-usage/docker-source-generator-toolkit-example.csproj" />
+  </Folder>
   <Project Path="dotnet-source-generator-toolkit.csproj" />
   <Project Path="tests/dotnet-source-generator-toolkit.Tests/dotnet-source-generator-toolkit.Tests.csproj" />
 </Solution>
