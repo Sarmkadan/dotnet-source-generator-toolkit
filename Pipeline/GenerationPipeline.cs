@@ -9,6 +9,7 @@ using DotNetSourceGeneratorToolkit.Domain;
 using DotNetSourceGeneratorToolkit.Infrastructure;
 using DotNetSourceGeneratorToolkit.Services;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace DotNetSourceGeneratorToolkit.Pipeline;
 
@@ -16,7 +17,7 @@ namespace DotNetSourceGeneratorToolkit.Pipeline;
 /// Orchestrates the complete code generation pipeline from analysis to output.
 /// Coordinates all services and manages the generation workflow.
 /// </summary>
-public sealed class GenerationPipeline
+public sealed partial class GenerationPipeline
 {
     private readonly ISourceGeneratorService _generatorService;
     private readonly IRepositoryGeneratorService _repositoryGenerator;
@@ -84,10 +85,11 @@ public sealed class GenerationPipeline
         bool dryRun = false)
     {
         var result = new PipelineResult();
+        var stopwatch = Stopwatch.StartNew();
 
         try
         {
-            _logger.LogInformation("Starting generation pipeline for: {ProjectPath}", projectPath);
+            LoggerMessages.StartingGenerationPipeline(_logger, projectPath);
 
             // Phase 1: Analyze project
             var projectInfo = await _generatorService.AnalyzeProjectAsync(projectPath);
@@ -95,13 +97,17 @@ public sealed class GenerationPipeline
 
             if (projectInfo.Entities.Count == 0)
             {
-                _logger.LogWarning("No entities found in project");
+                LoggerMessages.NoEntitiesFound(_logger);
                 return result;
             }
+
+            LoggerMessages.AnalyzeProjectCompleted(_logger, projectInfo.Entities.Count);
 
             // Phase 2: Generate code
             var generationResults = await _generatorService.GenerateAllAsync(projectInfo);
             result.GeneratedFiles = generationResults.Count();
+
+            LoggerMessages.CodeGenerationCompleted(_logger, generationResults.Count());
 
             // Phase 3: Write results (unless dry-run)
             int written = 0;
@@ -110,22 +116,23 @@ public sealed class GenerationPipeline
                 written = await WriteGeneratedFilesAsync(generationResults, outputPath);
             }
 
+            LoggerMessages.FileWritingCompleted(_logger, written);
+
+            stopwatch.Stop();
             IsSuccessful = true;
             EntitiesFound = projectInfo.Entities.Count;
             GeneratedFiles = generationResults.Count();
             FilesWritten = written;
             ExecutedAt = DateTime.UtcNow;
-            _logger.LogInformation(
-                "Pipeline completed successfully: {Entities} entities, {Files} files generated",
-                EntitiesFound,
-                GeneratedFiles);
+            LoggerMessages.PipelineCompletedSuccessfully(_logger, stopwatch.ElapsedMilliseconds, EntitiesFound, GeneratedFiles);
         }
         catch (Exception ex)
         {
+            stopwatch.Stop();
             IsSuccessful = false;
             ErrorMessage = ex.Message;
             ExecutedAt = DateTime.UtcNow;
-            _logger.LogError(ex, "Pipeline execution failed");
+            LoggerMessages.PipelineExecutionFailed(_logger, stopwatch.ElapsedMilliseconds, ex);
         }
 
         return result;
@@ -145,15 +152,46 @@ public sealed class GenerationPipeline
                 var outputFile = Path.Combine(outputPath, Path.GetFileName(result.OutputFilePath));
                 await _fileSystemService.WriteFileAsync(outputFile, result.GeneratedCode);
                 filesWritten++;
-                _logger.LogInformation("Generated file: {OutputFile}", outputFile);
+                LoggerMessages.GeneratedFile(_logger, outputFile);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to write generated file: {OutputPath}", result.OutputFilePath);
+                LoggerMessages.FailedToWriteGeneratedFile(_logger, result.OutputFilePath, ex);
             }
         }
 
         return filesWritten;
+    }
+
+    // Logger messages
+    private static partial class LoggerMessages
+    {
+        [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Starting generation pipeline for: {ProjectPath}")]
+        public static partial void StartingGenerationPipeline(ILogger logger, string projectPath);
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Pipeline completed successfully in {ElapsedMs}ms: {Entities} entities, {Files} files generated")]
+        public static partial void PipelineCompletedSuccessfully(ILogger logger, long elapsedMs, int entities, int files);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "Pipeline execution failed after {ElapsedMs}ms")]
+        public static partial void PipelineExecutionFailed(ILogger logger, long elapsedMs, Exception ex);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Warning, Message = "No entities found in project")]
+        public static partial void NoEntitiesFound(ILogger logger);
+
+        [LoggerMessage(EventId = 4, Level = LogLevel.Information, Message = "Generated file: {OutputFile}")]
+        public static partial void GeneratedFile(ILogger logger, string outputFile);
+
+        [LoggerMessage(EventId = 5, Level = LogLevel.Error, Message = "Failed to write generated file: {OutputPath}")]
+        public static partial void FailedToWriteGeneratedFile(ILogger logger, string outputPath, Exception ex);
+
+        [LoggerMessage(EventId = 6, Level = LogLevel.Debug, Message = "Analyze project completed: {EntityCount} entities found")]
+        public static partial void AnalyzeProjectCompleted(ILogger logger, int entityCount);
+
+        [LoggerMessage(EventId = 7, Level = LogLevel.Debug, Message = "Code generation completed: {GeneratedCount} files generated")]
+        public static partial void CodeGenerationCompleted(ILogger logger, int generatedCount);
+
+        [LoggerMessage(EventId = 8, Level = LogLevel.Debug, Message = "File writing completed: {WrittenCount} files written")]
+        public static partial void FileWritingCompleted(ILogger logger, int writtenCount);
     }
 }
 
