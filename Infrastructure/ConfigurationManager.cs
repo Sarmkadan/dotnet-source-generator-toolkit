@@ -20,25 +20,50 @@ public sealed class ConfigurationManager : IConfigurationManager
     private readonly Dictionary<string, string> _config;
     private readonly ILogger<ConfigurationManager> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConfigurationManager"/> class.
+    /// </summary>
+    /// <param name="logger">The logger instance used for logging configuration operations.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> is <see langword="null"/>.</exception>
     public ConfigurationManager(ILogger<ConfigurationManager> logger)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
         _config = new Dictionary<string, string>();
         LoadDefaultConfiguration();
     }
 
+    /// <summary>
+    /// Gets the configuration value for the specified key, or an empty string if not found.
+    /// </summary>
+    /// <param name="key">The configuration key to look up.</param>
+    /// <returns>The configuration value, or an empty string if the key is not present.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key"/> is whitespace.</exception>
+    /// <exception cref="ConfigurationException">Thrown when an error occurs while reading the configuration value.</exception>
     public string GetValue(string key)
     {
+        ArgumentNullException.ThrowIfNull(key);
         if (string.IsNullOrWhiteSpace(key))
-            throw new ArgumentNullException(nameof(key));
+            throw new ArgumentException("Key cannot be whitespace", nameof(key));
 
         return GetValue(key, string.Empty);
     }
 
+    /// <summary>
+    /// Gets the configuration value for the specified key, falling back to a default value when not found.
+    /// </summary>
+    /// <param name="key">The configuration key to look up.</param>
+    /// <param name="defaultValue">The value to return when the key is not present.</param>
+    /// <returns>The configuration value, or <paramref name="defaultValue"/> if the key is not present.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key"/> is whitespace.</exception>
+    /// <exception cref="ConfigurationException">Thrown when an error occurs while reading the configuration value.</exception>
     public string GetValue(string key, string defaultValue)
     {
+        ArgumentNullException.ThrowIfNull(key);
         if (string.IsNullOrWhiteSpace(key))
-            throw new ArgumentNullException(nameof(key));
+            throw new ArgumentException("Key cannot be whitespace", nameof(key));
 
         try
         {
@@ -60,10 +85,19 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Sets the configuration value for the specified key.
+    /// </summary>
+    /// <param name="key">The configuration key to set.</param>
+    /// <param name="value">The value to set for the key.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key"/> is whitespace.</exception>
+    /// <exception cref="ConfigurationException">Thrown when an error occurs while setting the configuration value.</exception>
     public void SetValue(string key, string value)
     {
+        ArgumentNullException.ThrowIfNull(key);
         if (string.IsNullOrWhiteSpace(key))
-            throw new ArgumentNullException(nameof(key));
+            throw new ArgumentException("Key cannot be whitespace", nameof(key));
 
         try
         {
@@ -77,6 +111,12 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Determines whether the specified configuration key exists.
+    /// </summary>
+    /// <param name="key">The configuration key to check.</param>
+    /// <returns><see langword="true"/> if the key exists in configuration or environment variables; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="ConfigurationException">Thrown when an error occurs while checking the configuration key.</exception>
     public bool HasKey(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
@@ -93,6 +133,11 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Gets the output directory for generated files.
+    /// </summary>
+    /// <returns>The absolute path to the output directory.</returns>
+    /// <exception cref="ConfigurationException">Thrown when the output directory is not configured or an error occurs while resolving it.</exception>
     public string GetOutputDirectory()
     {
         try
@@ -110,6 +155,11 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Gets the template directory for source templates.
+    /// </summary>
+    /// <returns>The absolute path to the template directory.</returns>
+    /// <exception cref="ConfigurationException">Thrown when the template directory is not configured or an error occurs while resolving it.</exception>
     public string GetTemplateDirectory()
     {
         try
@@ -127,6 +177,11 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Gets the project root directory.
+    /// </summary>
+    /// <returns>The absolute path to the project root directory.</returns>
+    /// <exception cref="ConfigurationException">Thrown when the project root is not configured or an error occurs while resolving it.</exception>
     public string GetProjectRoot()
     {
         try
@@ -144,6 +199,11 @@ public sealed class ConfigurationManager : IConfigurationManager
         }
     }
 
+    /// <summary>
+    /// Gets all configuration values as a read-only dictionary.
+    /// </summary>
+    /// <returns>A read-only dictionary containing all configuration key-value pairs.</returns>
+    /// <exception cref="ConfigurationException">Thrown when an error occurs while retrieving the configuration.</exception>
     public IReadOnlyDictionary<string, string> GetAllConfig()
     {
         try
