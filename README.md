@@ -328,6 +328,62 @@ foreach (var webhook in webhooks)
 await webhookService.UnregisterWebhookAsync(webhookId);
 Console.WriteLine("Webhook unregistered");
 ```
+## HttpClientService
+
+The `HttpClientService` implements an HTTP client with resilience features including retry logic and timeouts. All requests include proper exception handling and logging. It provides methods for common HTTP operations (GET, POST, PUT, DELETE) and a generic send method for custom HTTP methods.
+
+### Usage Example
+
+```csharp
+using DotNetSourceGeneratorToolkit.Integration;
+using DotNetSourceGeneratorToolkit.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
+using System.Text;
+
+// Configure logging (typically done via dependency injection)
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+// Set up dependency injection
+var services = new ServiceCollection();
+services.AddLogging(builder => builder.AddConsole());
+services.AddHttpClient(); // Registers HttpClient
+services.AddSingleton<IHttpClientService, HttpClientService>();
+
+var serviceProvider = services.BuildServiceProvider();
+var httpClientService = serviceProvider.GetRequiredService<IHttpClientService>();
+
+// GET request with automatic JSON deserialization
+var user = await httpClientService.GetAsync<User>("https://api.example.com/users/123");
+
+// POST request with JSON serialization
+var newUser = new User { Name = "John Doe", Email = "john@example.com" };
+var createdUser = await httpClientService.PostAsync<UserCreateDto, User>(
+    "https://api.example.com/users", 
+    newUser
+);
+
+// PUT request for updating resources
+await httpClientService.PutAsync<UserUpdateDto>(
+    "https://api.example.com/users/123",
+    new UserUpdateDto { Name = "Johnny Doe" }
+);
+
+// DELETE request
+await httpClientService.DeleteAsync("https://api.example.com/users/123");
+
+// Generic send method for custom HTTP methods or non-JSON content
+var response = await httpClientService.SendAsync(
+    HttpMethod.Patch,
+    "https://api.example.com/users/123",
+    new StringContent("{ \"name\": \"Johnny\" }", Encoding.UTF8, "application/json")
+);
+```
 
 ## GenerationStartedEvent
 
