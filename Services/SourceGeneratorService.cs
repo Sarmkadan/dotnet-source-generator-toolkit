@@ -23,9 +23,9 @@ namespace DotNetSourceGeneratorToolkit.Services;
 public sealed class SourceGeneratorService : ISourceGeneratorService
 {
     private readonly IEntityAnalyzer _entityAnalyzer;
-
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<SourceGeneratorService> _logger;
+    private readonly AnalysisLimits _analysisLimits;
 
     public SourceGeneratorService(
         IEntityAnalyzer entityAnalyzer,
@@ -34,7 +34,8 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
         IMapperGeneratorService mapperGeneratorService,
         IValidatorGeneratorService validatorGeneratorService,
         ISerializerGeneratorService serializerGeneratorService,
-        ILogger<SourceGeneratorService> logger)
+        ILogger<SourceGeneratorService> logger,
+        AnalysisLimits analysisLimits)
     {
         _entityAnalyzer = entityAnalyzer;
         _fileSystemService = fileSystemService;
@@ -43,6 +44,7 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
         _validatorGeneratorService = validatorGeneratorService;
         _serializerGeneratorService = serializerGeneratorService;
         _logger = logger;
+        _analysisLimits = analysisLimits;
     }
 
     private readonly IRepositoryGeneratorService _repositoryGeneratorService;
@@ -68,11 +70,51 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
 
         try
         {
-            // Find all C# files in the project
-            var csFiles = Directory.GetFiles(projectPath, "*.cs", SearchOption.AllDirectories);
-            _logger.LogInformation("Found {Count} C# files to analyze", csFiles.Length);
+            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(_analysisLimits.AnalysisTimeoutSeconds));
+            var cancellationToken = cancellationTokenSource.Token;
 
-            foreach (var filePath in csFiles)
+            int fileCount = 0;
+
+            // Collect files with limits and cancellation support
+            var filePaths = new List<string>();
+            await Task.Run(() =>
+            {
+                void GetFiles(string path, int depth)
+                {
+                    if (depth > _analysisLimits.MaxRecursionDepth)
+                        return;
+
+                    try
+                    {
+                        var files = Directory.EnumerateFiles(path, "*.cs");
+                        foreach (var file in files)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            if (++fileCount > _analysisLimits.MaxFileCount)
+                            {
+                                throw new GenerationException($"Exceeded maximum file count limit of {_analysisLimits.MaxFileCount}.");
+                            }
+                            filePaths.Add(file);
+                        }
+
+                        var subDirs = Directory.EnumerateDirectories(path);
+                        foreach (var subDir in subDirs)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            GetFiles(subDir, depth + 1);
+                        }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // Ignore folders we cannot access
+                    }
+                }
+
+                GetFiles(projectPath, 0);
+            }, cancellationToken);
+
+            // Process collected files
+            foreach (var filePath in filePaths)
             {
                 try
                 {
@@ -85,11 +127,22 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
                         _logger.LogInformation("Added entity: {EntityName}", entity.Name);
                     }
                 }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    // Break out of the loop and then we'll check for cancellation after the loop
+                    break;
+                }
                 catch (Exception ex)
                 {
                     _logger.LogWarning(ex, "Error analyzing file: {FilePath}", filePath);
                     projectInfo.AnalysisErrors.Add($"Error in {filePath}: {ex.Message}");
                 }
+            }
+
+            // After the loop, check if cancellation was requested
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new GenerationException($"Project analysis timed out after {_analysisLimits.AnalysisTimeoutSeconds} seconds.");
             }
 
             if (projectInfo.Entities.Count == 0)
@@ -192,4 +245,3 @@ public sealed class SourceGeneratorService : ISourceGeneratorService
         return await Task.FromResult(result);
     }
 }
-

@@ -49,6 +49,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<ICache, MemoryCache>();
         services.TryAddSingleton<IFileSystemService, FileSystemService>();
         services.TryAddSingleton<IConfigurationManager, ConfigurationManager>();
+        services.TryAddSingleton<AnalysisLimits>();
 
         // CLI services
         services.TryAddSingleton<CLI.ICliArgumentParser, CLI.CliArgumentParser>();
