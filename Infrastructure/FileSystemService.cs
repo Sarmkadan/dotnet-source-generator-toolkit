@@ -24,11 +24,11 @@ public sealed class FileSystemService : IFileSystemService
     private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
     private static readonly char[] InvalidPathChars = Path.GetInvalidPathChars();
 
-    public FileSystemService(ILogger<FileSystemService> logger, IRetryPolicy? retryPolicy = null)
+    public FileSystemService(ILogger<FileSystemService> logger, IRetryPolicy? retryPolicy = null, string? baseOutputPath = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _retryPolicy = retryPolicy ?? new RetryPolicy();
-        _baseOutputPath = Directory.GetCurrentDirectory();
+        _baseOutputPath = baseOutputPath ?? Directory.GetCurrentDirectory();
     }
 
     /// <summary>

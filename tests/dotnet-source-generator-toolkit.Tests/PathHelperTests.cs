@@ -24,6 +24,13 @@ namespace DotNetSourceGeneratorToolkit.Tests
         [Fact]
         public void NormalizePath_HandlesForwardSlashOnWindows()
         {
+            if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(
+                System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                // This test is Windows-specific: C:\ drive paths are not meaningful on Linux/macOS
+                return;
+            }
+
             // Arrange
             var forwardSlashPath = "C:/Temp/Folder/";
             var expected = Path.GetFullPath("C:\\Temp\\Folder");

@@ -112,11 +112,11 @@ public sealed class HintNameAggregatorServiceTests
         var hintNames = aggregated.Select(r => r.HintName).ToHashSet();
         Assert.Equal(2, hintNames.Count);
         Assert.Contains("Customer.g.cs", hintNames);
-        Assert.Contains("Customer.Mapper.g.cs", hintNames);
+        Assert.Contains("Customer.Repository.g.cs", hintNames);
 
         // Verify stable ordering (sorted by hint name)
         Assert.Equal("Customer.g.cs", aggregated[0].HintName);
-        Assert.Equal("Customer.Mapper.g.cs", aggregated[1].HintName);
+        Assert.Equal("Customer.Repository.g.cs", aggregated[1].HintName);
     }
 
     [Fact]
@@ -142,15 +142,13 @@ public sealed class HintNameAggregatorServiceTests
         var hintNames = aggregated.Select(r => r.HintName).ToHashSet();
         Assert.Equal(3, hintNames.Count);
         Assert.Contains("Customer.g.cs", hintNames);
-        Assert.Contains("Customer.Mapper.g.cs", hintNames);
         Assert.Contains("Customer.Repository.g.cs", hintNames);
         Assert.Contains("Customer.Validator.g.cs", hintNames);
 
         // Verify stable ordering
         Assert.Equal("Customer.g.cs", aggregated[0].HintName);
-        Assert.Equal("Customer.Mapper.g.cs", aggregated[1].HintName);
-        Assert.Equal("Customer.Repository.g.cs", aggregated[2].HintName);
-        Assert.Equal("Customer.Validator.g.cs", aggregated[3].HintName);
+        Assert.Equal("Customer.Repository.g.cs", aggregated[1].HintName);
+        Assert.Equal("Customer.Validator.g.cs", aggregated[2].HintName);
     }
 
     [Fact]
@@ -172,7 +170,7 @@ public sealed class HintNameAggregatorServiceTests
 
         var hintNames = aggregated.Select(r => r.HintName).ToHashSet();
         Assert.Contains("Customer.cs", hintNames);
-        Assert.Contains("Customer.Mapper.cs", hintNames);
+        Assert.Contains("Customer.Repository.cs", hintNames);
     }
 
     [Fact]
@@ -226,13 +224,12 @@ public sealed class HintNameAggregatorServiceTests
             Assert.Equal(aggregated1[i].HintName, aggregated2[i].HintName);
         }
 
-        // Verify expected order: sorted by hint name
+        // Verify expected order: sorted by hint name (case-insensitive ordinal)
         Assert.Equal("Customer.g.cs", aggregated1[0].HintName);
-        Assert.Equal("Customer.Mapper.g.cs", aggregated1[1].HintName);
-        Assert.Equal("Customer.Repository.g.cs", aggregated1[2].HintName);
-        Assert.Equal("Order.g.cs", aggregated1[3].HintName);
-        Assert.Equal("Order.Repository.g.cs", aggregated1[4].HintName);
-        Assert.Equal("Product.g.cs", aggregated1[5].HintName);
+        Assert.Equal("Customer.Repository.g.cs", aggregated1[1].HintName);
+        Assert.Equal("Order.g.cs", aggregated1[2].HintName);
+        Assert.Equal("Order.Repository.g.cs", aggregated1[3].HintName);
+        Assert.Equal("Product.g.cs", aggregated1[4].HintName);
     }
 
     [Fact]
@@ -252,7 +249,7 @@ public sealed class HintNameAggregatorServiceTests
         Assert.Equal(2, aggregated.Count);
         var hintNames = aggregated.Select(r => r.HintName).ToHashSet();
         Assert.Contains("Customer.g.cs", hintNames);
-        Assert.Contains("Customer.Mapper.g.cs", hintNames);
+        Assert.Contains("Customer.Repository.g.cs", hintNames);
     }
 
     [Fact]

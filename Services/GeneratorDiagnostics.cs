@@ -79,7 +79,7 @@ public static class GeneratorDiagnostics
     /// <param name="entity">The entity model to validate.</param>
     /// <returns>A sequence of diagnostic messages, prefixed with their diagnostic ID.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="entity"/> is null.</exception>
-    public static IEnumerable<string> ValidateEntityModel(GeneratorType generatorType, Entity entity)
+    public static IEnumerable<string> ValidateEntityModel(GeneratorType generatorType, Entity entity, bool requireProperties = true)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -89,7 +89,7 @@ public static class GeneratorDiagnostics
         if (string.IsNullOrWhiteSpace(entity.Namespace))
             yield return $"{FormatId(generatorType, NamespaceRequiredOffset)}: Entity namespace is required.";
 
-        if (entity.Properties.Count == 0)
+        if (requireProperties && entity.Properties.Count == 0)
             yield return $"{FormatId(generatorType, NoPropertiesOffset)}: Entity '{entity.Name}' must have at least one property.";
 
         foreach (var group in entity.Properties.GroupBy(p => p.Name).Where(g => g.Count() > 1))

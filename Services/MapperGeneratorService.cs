@@ -21,6 +21,9 @@ public sealed class MapperGeneratorService : GeneratorServiceBase, IMapperGenera
     /// <inheritdoc />
     protected override GeneratorType GeneratorKind => GeneratorType.Mapper;
 
+    /// <inheritdoc />
+    protected override bool RequiresProperties => false;
+
     /// <summary>
     /// Initializes the mapper generator service.
     /// </summary>

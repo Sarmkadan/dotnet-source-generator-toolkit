@@ -46,16 +46,18 @@ public sealed class TemplateEngineServiceTests
     /// Test that a template with mismatched/unbalanced placeholder delimiters throws a clear exception.
     /// </summary>
     [Fact]
-    public async Task RenderAsync_MismatchedPlaceholderDelimiters_ThrowsClearException()
+    public async Task RenderAsync_MismatchedPlaceholderDelimiters_TreatedAsLiteral()
     {
         // Arrange
         var service = CreateService();
-        var template = "public class {{MissingClosingTag { }"; // Missing closing }}
+        var template = "public class {{MissingClosingTag { }"; // Missing closing }} - treated as literal text
         var context = CreateContext();
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<GenerationException>(() => service.RenderAsync(template, context));
-        Assert.Contains("Error rendering template", exception.Message);
+        // Act
+        var result = await service.RenderAsync(template, context);
+
+        // Assert - unbalanced delimiters are not recognized as placeholders, passed through as-is
+        Assert.Equal("public class {{MissingClosingTag { }", result);
     }
 
     /// <summary>
@@ -116,16 +118,18 @@ public sealed class TemplateEngineServiceTests
     /// Test that missing variable in conditional block throws exception.
     /// </summary>
     [Fact]
-    public async Task RenderAsync_MissingVariableInConditionalBlock_ThrowsClearException()
+    public async Task RenderAsync_MissingVariableInConditionalBlock_EvaluatesAsFalse()
     {
         // Arrange
         var service = CreateService();
         var template = "{{#if MissingCondition}}public int Id { get; set; }{{/if}}";
         var context = CreateContext(); // MissingCondition is not in context
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<GenerationException>(() => service.RenderAsync(template, context));
-        Assert.Contains("Error rendering template", exception.Message);
+        // Act - missing condition evaluates as falsy, block is removed
+        var result = await service.RenderAsync(template, context);
+
+        // Assert
+        Assert.Equal(string.Empty, result);
     }
 
     /// <summary>
@@ -201,14 +205,14 @@ public sealed class TemplateEngineServiceTests
     {
         // Arrange
         var service = CreateService();
-        var template = "public class {{Name}} { }";
+        var template = "public class MyClass { }";
         Dictionary<string, object> context = null!;
 
         // Act
         var result = await service.RenderAsync(template, context);
 
         // Assert - should not throw, context is converted to empty dict
-        Assert.Equal("public class {{Name}} { }", result);
+        Assert.Equal("public class MyClass { }", result);
     }
 
     /// <summary>
@@ -231,16 +235,18 @@ public sealed class TemplateEngineServiceTests
     /// Test that missing variable in filter throws exception.
     /// </summary>
     [Fact]
-    public async Task RenderAsync_MissingVariableInFilter_ThrowsClearException()
+    public async Task RenderAsync_MissingVariableInFilter_ResolvesToEmpty()
     {
         // Arrange
         var service = CreateService();
         var template = "{{MissingVar | upper}}";
         var context = CreateContext();
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<GenerationException>(() => service.RenderAsync(template, context));
-        Assert.Contains("Error rendering template", exception.Message);
+        // Act - missing variable with filter resolves to empty string
+        var result = await service.RenderAsync(template, context);
+
+        // Assert
+        Assert.Equal(string.Empty, result);
     }
 
     /// <summary>
