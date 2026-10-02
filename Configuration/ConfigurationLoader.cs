@@ -287,12 +287,16 @@ public sealed class ConfigurationLoader
 
                 case "defaultnamespace":
                 case "namespace":
-                    options.DefaultNamespace = value.Trim('"').Trim();
+                    var trimmedNamespace = value.Trim('"').Trim();
+                    if (!string.IsNullOrEmpty(trimmedNamespace))
+                        options.DefaultNamespace = trimmedNamespace;
                     break;
 
                 case "outputdirectory":
                 case "outputdir":
-                    options.OutputDirectory = value.Trim('"').Trim();
+                    var trimmedOutputDir = value.Trim('"').Trim();
+                    if (!string.IsNullOrEmpty(trimmedOutputDir))
+                        options.OutputDirectory = trimmedOutputDir;
                     break;
 
                 case "backupexistingfiles":

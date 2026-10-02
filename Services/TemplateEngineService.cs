@@ -137,7 +137,7 @@ public sealed class TemplateEngineService : ITemplateEngineService
         RegexOptions.Singleline | RegexOptions.Compiled);
 
     private static readonly Regex FiltersRegex = new(
-        @"{{\s*(\w+)\s*|\s*(\w+)\s*}}",
+        @"{{\s*(\w+)\s*\|\s*(\w+)\s*}}",
         RegexOptions.Compiled);
 
     private static readonly Regex SnakeCasePattern = new(
@@ -169,12 +169,24 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
     public async Task<string> RenderAsync(string template, Dictionary<string, object> context)
     {
-        return await RenderAsync(template, context, GenerationOptions.Default);
+        return await RenderCoreAsync(template, context);
     }
 
     public async Task<string> RenderAsync(string template, Dictionary<string, object> context, GenerationOptions options)
     {
-        if (string.IsNullOrEmpty(template))
+        var result = await RenderCoreAsync(template, context);
+
+        // Apply generation options to the result
+        result = ApplyGenerationOptions(result, options);
+
+        return result;
+    }
+
+    private async Task<string> RenderCoreAsync(string template, Dictionary<string, object> context)
+    {
+        ArgumentNullException.ThrowIfNull(template);
+
+        if (template.Length == 0)
             return template;
 
         if (context is null)
@@ -184,10 +196,7 @@ public sealed class TemplateEngineService : ITemplateEngineService
 
         try
         {
-            // Parse (or fetch from cache) the template's conditional structure. Parsing happens
-            // once per distinct template text for the lifetime of this service instance; variable
-            // substitution and conditional branch selection - which are context-dependent - still
-            // run on every call.
+            // Parse (or fetch from cache) the template's conditional structure.
             var compiled = TemplateCache.GetOrAdd(template, CompileTemplate);
 
             // Process variable substitutions and conditional blocks together
@@ -202,11 +211,19 @@ public sealed class TemplateEngineService : ITemplateEngineService
             // Process special case transforms: {{snake_case}} and {{camelCase}}
             result = ProcessSpecialCaseTransforms(result);
 
-            // Apply generation options to the result
-            result = ApplyGenerationOptions(result, options);
+            // Check for any remaining unresolved placeholders
+            ValidateNoUnresolvedPlaceholders(result);
 
             _logger.LogInformation("Template rendered successfully ({Length} characters)", new { Length = result.Length });
             return await Task.FromResult(result);
+        }
+        catch (ArgumentNullException)
+        {
+            throw;
+        }
+        catch (GenerationException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -342,6 +359,23 @@ public sealed class TemplateEngineService : ITemplateEngineService
         {
             _logger.LogError(ex, "Error registering default filters");
             throw new GenerationException("Error registering default filters", ex);
+        }
+    }
+
+    private static readonly Regex UnresolvedPlaceholderRegex = new(
+        @"\{\{[^}]+\}\}",
+        RegexOptions.Compiled);
+
+    /// <summary>
+    /// Validates that no unresolved <c>{{...}}</c> placeholders remain in the rendered output.
+    /// Throws a <see cref="GenerationException"/> if any are found.
+    /// </summary>
+    private void ValidateNoUnresolvedPlaceholders(string rendered)
+    {
+        var match = UnresolvedPlaceholderRegex.Match(rendered);
+        if (match.Success)
+        {
+            throw new GenerationException($"Error rendering template: unresolved placeholder '{match.Value}' found in output.");
         }
     }
 

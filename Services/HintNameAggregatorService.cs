@@ -88,26 +88,33 @@ public sealed class HintNameAggregatorService : IHintNameAggregatorService
             var finalHintName = originalHintName;
             var collisionInfo = collisionTracker[originalHintName];
 
-            // Check if this original hint name has collisions
+            // Check if this original hint name has collisions and is already taken
             bool hasCollision = collisionInfo.Count > 1;
 
-            if (hasCollision)
+            if (hasCollision && assignedHintNames.Contains(originalHintName))
             {
                 // This is a collision - need to deduplicate
                 var baseFileName = Path.GetFileNameWithoutExtension(originalHintName);
                 var extension = Path.GetExtension(originalHintName);
                 var directory = Path.GetDirectoryName(originalHintName) ?? string.Empty;
 
+                // Handle double extensions like ".g.cs"
+                if (baseFileName.EndsWith(".g", StringComparison.Ordinal))
+                {
+                    extension = ".g" + extension;
+                    baseFileName = baseFileName[..^2];
+                }
+
                 // Try to find an available unique name by adding the generator category
                 var prefixedName = $"{baseFileName}.{generatorCategory}{extension}";
-                var candidatePath = Path.Combine(directory, prefixedName);
+                var candidatePath = string.IsNullOrEmpty(directory) ? prefixedName : Path.Combine(directory, prefixedName);
 
                 // If that's already taken by a previously processed result, add a numeric suffix
                 int suffix = 1;
                 while (assignedHintNames.Contains(candidatePath))
                 {
                     prefixedName = $"{baseFileName}.{generatorCategory}{suffix}{extension}";
-                    candidatePath = Path.Combine(directory, prefixedName);
+                    candidatePath = string.IsNullOrEmpty(directory) ? prefixedName : Path.Combine(directory, prefixedName);
                     suffix++;
                 }
 
@@ -145,7 +152,7 @@ public sealed class HintNameAggregatorService : IHintNameAggregatorService
 
         // Third pass: ensure stable ordering by sorting deterministically
         var orderedResults = processedResults
-            .OrderBy(r => r.HintName, StringComparer.Ordinal)
+            .OrderBy(r => r.HintName, StringComparer.OrdinalIgnoreCase)
             .ThenBy(r => r.GeneratorCategory, StringComparer.Ordinal)
             .Select(r => (r.HintName, r.SourceText));
 

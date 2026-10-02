@@ -118,6 +118,7 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
         {
             // Arrange
             var entity = CreateTestEntity("TestEntity");
+            entity.AddProperty(new EntityProperty { Name = "Id", Type = "int" });
             var invalidFormat = (SerializerFormat)999; // Invalid enum value
 
             // Act

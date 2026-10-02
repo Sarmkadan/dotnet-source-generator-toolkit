@@ -26,6 +26,12 @@ public abstract class GeneratorServiceBase : IGeneratorService
     /// </summary>
     protected abstract GeneratorType GeneratorKind { get; }
 
+    /// <summary>
+    /// Whether this generator requires the entity to have at least one property.
+    /// Override to return <see langword="false"/> for generators that can handle empty entities.
+    /// </summary>
+    protected virtual bool RequiresProperties => true;
+
     /// <summary>The logger used by this generator service.</summary>
     protected ILogger Logger { get; }
 
@@ -53,7 +59,7 @@ public abstract class GeneratorServiceBase : IGeneratorService
             Status = GenerationStatus.InProgress,
         };
 
-        var diagnostics = GeneratorDiagnostics.ValidateEntityModel(GeneratorKind, entityModel).ToList();
+        var diagnostics = GeneratorDiagnostics.ValidateEntityModel(GeneratorKind, entityModel, RequiresProperties).ToList();
         if (diagnostics.Count > 0)
         {
             foreach (var diagnostic in diagnostics)
@@ -98,7 +104,7 @@ public abstract class GeneratorServiceBase : IGeneratorService
         ArgumentNullException.ThrowIfNull(entity);
         ArgumentNullException.ThrowIfNull(result);
 
-        var diagnostics = GeneratorDiagnostics.ValidateEntityModel(GeneratorKind, entity).ToList();
+        var diagnostics = GeneratorDiagnostics.ValidateEntityModel(GeneratorKind, entity, RequiresProperties).ToList();
         foreach (var diagnostic in diagnostics)
             result.AddError(diagnostic);
 

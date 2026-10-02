@@ -19,9 +19,9 @@ namespace DotNetSourceGeneratorToolkit.Tests
 		/// Creates a new instance of <see cref="FileSystemService"/> with a null logger.
 		/// </summary>
 		/// <returns>A new <see cref="FileSystemService"/> instance.</returns>
-		private FileSystemService CreateService()
+		private FileSystemService CreateService(string? baseOutputPath = null)
 		{
-			return new FileSystemService(NullLogger<FileSystemService>.Instance);
+			return new FileSystemService(NullLogger<FileSystemService>.Instance, baseOutputPath: baseOutputPath);
 		}
 
 		[Fact]
@@ -38,7 +38,7 @@ namespace DotNetSourceGeneratorToolkit.Tests
 
 			try
 			{
-				var service = CreateService();
+				var service = CreateService(tempDir);
 
 				await service.WriteFileAsync(filePath, content);
 				var readContent = await service.ReadFileAsync(filePath);
@@ -67,7 +67,7 @@ namespace DotNetSourceGeneratorToolkit.Tests
 
 			try
 			{
-				var service = CreateService();
+				var service = CreateService(tempDir);
 
 				await Assert.ThrowsAsync<FileSystemException>(async () =>
 					await service.ReadFileAsync(missingFile));
@@ -94,7 +94,7 @@ namespace DotNetSourceGeneratorToolkit.Tests
 
 			try
 			{
-				var service = CreateService();
+				var service = CreateService(tempDir);
 
 				await service.CreateDirectoryAsync(nestedDir);
 
@@ -122,7 +122,7 @@ namespace DotNetSourceGeneratorToolkit.Tests
 
 			try
 			{
-				var service = CreateService();
+				var service = CreateService(tempDir);
 
 				await service.WriteFileAsync(filePath, "delete me");
 				Assert.True(service.FileExists(filePath));
@@ -154,7 +154,7 @@ namespace DotNetSourceGeneratorToolkit.Tests
 
 			try
 			{
-				var service = CreateService();
+				var service = CreateService(tempDir);
 
 				await service.WriteFileAsync(filePath, initial);
 				await service.AppendFileAsync(filePath, appended);
