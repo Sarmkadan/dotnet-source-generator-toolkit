@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
@@ -39,9 +40,9 @@ public static class BenchmarksExtensions
     {
         ValidateBenchmarksParameter(benchmarks);
         ArgumentNullException.ThrowIfNull(results);
-        ArgumentNullException.ThrowIfNull(results.Benchmarks);
+        ArgumentNullException.ThrowIfNull(results.Reports);
 
-        if (!results.Benchmarks.Any())
+        if (!results.Reports.Any())
         {
             return "No benchmark results available.";
         }
@@ -50,18 +51,18 @@ public static class BenchmarksExtensions
         sb.AppendLine("| Method | Mean | Error | StdDev | Median | Gen0 | Allocated |");
         sb.AppendLine("|-------|-------|-------|-------|-------|------|-----------|");
 
-        foreach (var benchmark in results.Benchmarks)
+        foreach (var benchmark in results.Reports)
         {
-            var method = benchmark.Descriptor.WorkloadMethodDisplayInfo;
+            var method = benchmark.BenchmarkCase.Descriptor.WorkloadMethodDisplayInfo;
             var statistics = benchmark.ResultStatistics;
-            var memory = benchmark.Memory;
+            var gcStats = benchmark.GcStats;
 
             var mean = statistics?.Mean.ToString("N3", CultureInfo.InvariantCulture) ?? "N/A";
             var error = statistics?.StandardError.ToString("N3", CultureInfo.InvariantCulture) ?? "N/A";
             var stdDev = statistics?.StandardDeviation.ToString("N3", CultureInfo.InvariantCulture) ?? "N/A";
             var median = statistics?.Median.ToString("N3", CultureInfo.InvariantCulture) ?? "N/A";
-            var gen0 = memory?.GetValue(GcStats.Gen0Collections)?.ToString() ?? "N/A";
-            var allocated = memory?.GetValue(GcStats.BytesAllocatedPerOperation)?.ToString("N0", CultureInfo.InvariantCulture) ?? "N/A";
+            var gen0 = gcStats.Gen0Collections.ToString(CultureInfo.InvariantCulture);
+            var allocated = gcStats.GetBytesAllocatedPerOperation(benchmark.BenchmarkCase)?.ToString("N0", CultureInfo.InvariantCulture) ?? "N/A";
 
             sb.AppendLine($"| {method} | {mean} | {error} | {stdDev} | {median} | {gen0} | {allocated} |");
         }
@@ -80,14 +81,14 @@ public static class BenchmarksExtensions
     {
         ValidateBenchmarksParameter(benchmarks);
         ArgumentNullException.ThrowIfNull(results);
-        ArgumentNullException.ThrowIfNull(results.Benchmarks);
+        ArgumentNullException.ThrowIfNull(results.Reports);
 
-        if (!results.Benchmarks.Any())
+        if (!results.Reports.Any())
         {
             return null;
         }
 
-        return results.Benchmarks
+        return results.Reports
             .OrderByDescending(b => b.ResultStatistics?.Mean ?? double.MinValue)
             .First();
     }
@@ -103,14 +104,14 @@ public static class BenchmarksExtensions
     {
         ValidateBenchmarksParameter(benchmarks);
         ArgumentNullException.ThrowIfNull(results);
-        ArgumentNullException.ThrowIfNull(results.Benchmarks);
+        ArgumentNullException.ThrowIfNull(results.Reports);
 
-        if (!results.Benchmarks.Any())
+        if (!results.Reports.Any())
         {
             return null;
         }
 
-        return results.Benchmarks
+        return results.Reports
             .OrderBy(b => b.ResultStatistics?.Mean ?? double.MaxValue)
             .First();
     }
@@ -126,13 +127,13 @@ public static class BenchmarksExtensions
     {
         ValidateBenchmarksParameter(benchmarks);
         ArgumentNullException.ThrowIfNull(results);
-        ArgumentNullException.ThrowIfNull(results.Benchmarks);
+        ArgumentNullException.ThrowIfNull(results.Reports);
 
-        if (!results.Benchmarks.Any())
+        if (!results.Reports.Any())
         {
             return 0;
         }
 
-        return results.Benchmarks.Sum(b => b.ResultStatistics?.Mean ?? 0);
+        return results.Reports.Sum(b => b.ResultStatistics?.Mean ?? 0);
     }
 }
