@@ -5,13 +5,18 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace DotNetSourceGeneratorToolkit.Batch;
 
 /// <summary>
 /// Processes items in configurable batch sizes with parallel execution.
-/// Provides error isolation - failure of one item doesn't stop the batch.
+/// Provides error isolation – failure of one item doesn't stop the batch.
 /// </summary>
 public sealed class BatchProcessor<T> : IBatchProcessor<T>
 {
@@ -41,8 +46,10 @@ public sealed class BatchProcessor<T> : IBatchProcessor<T>
         var results = new List<BatchResult<T>>();
         var errorCount = 0;
 
-        _logger.LogInformation("Starting batch processing: {ItemCount} items, batch size: {BatchSize}",
-            itemsList.Count, batchSize);
+        _logger.LogInformation(
+            "Starting batch processing: {ItemCount} items, batch size: {BatchSize}",
+            itemsList.Count,
+            batchSize);
 
         var batches = Partition(itemsList, batchSize);
 
