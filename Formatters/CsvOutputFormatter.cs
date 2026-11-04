@@ -15,6 +15,29 @@ namespace DotNetSourceGeneratorToolkit.Formatters;
 /// </summary>
 public sealed class CsvOutputFormatter : IOutputFormatter
 {
+    private const string Delimiter = ",";
+    private const string Quote = "\"";
+    private const string EscapedQuote = "\"\"";
+    private const string NewLine = "\n";
+
+    private const string EntityNameColumn = "EntityName";
+    private const string GeneratorTypeColumn = "GeneratorType";
+    private const string StatusColumn = "Status";
+    private const string OutputFilePathColumn = "OutputFilePath";
+    private const string CodeLengthColumn = "CodeLength";
+    private const string ExecutionTimeMsColumn = "ExecutionTimeMs";
+    private const string ErrorMessageColumn = "ErrorMessage";
+
+    private static readonly string Header = string.Join(
+        Delimiter,
+        EntityNameColumn,
+        GeneratorTypeColumn,
+        StatusColumn,
+        OutputFilePathColumn,
+        CodeLengthColumn,
+        ExecutionTimeMsColumn,
+        ErrorMessageColumn);
+
     public string FileExtension => ".csv";
     public string FormatName => "CSV";
 
@@ -23,7 +46,7 @@ public sealed class CsvOutputFormatter : IOutputFormatter
         var sb = new StringBuilder();
 
         // Write header
-        sb.AppendLine("EntityName,GeneratorType,Status,OutputFilePath,CodeLength,ExecutionTimeMs,ErrorMessage");
+        sb.AppendLine(Header);
 
         // Write data rows
         foreach (var result in results)
@@ -39,7 +62,7 @@ public sealed class CsvOutputFormatter : IOutputFormatter
                 EscapeCsvField(result.ErrorMessage ?? string.Empty),
             };
 
-            sb.AppendLine(string.Join(",", row));
+            sb.AppendLine(string.Join(Delimiter, row));
         }
 
         return sb.ToString();
@@ -60,9 +83,9 @@ public sealed class CsvOutputFormatter : IOutputFormatter
         if (string.IsNullOrEmpty(field))
             return string.Empty;
 
-        if (field.Contains(',') || field.Contains('"') || field.Contains('\n'))
+        if (field.Contains(Delimiter) || field.Contains(Quote) || field.Contains(NewLine))
         {
-            return $"\"{field.Replace("\"", "\"\"")}\"";
+            return $"{Quote}{field.Replace(Quote, EscapedQuote)}{Quote}";
         }
 
         return field;
