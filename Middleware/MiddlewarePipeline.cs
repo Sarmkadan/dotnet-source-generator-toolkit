@@ -30,7 +30,7 @@ public sealed class MiddlewarePipeline : IMiddlewarePipeline
 
     public IMiddlewarePipeline Use<TMiddleware>() where TMiddleware : IMiddleware
     {
-        _middlewares.Add(context =>
+        _middlewares.Add(_ =>
         {
             var middleware = _serviceProvider.GetRequiredService<TMiddleware>();
             return middleware;
@@ -58,7 +58,10 @@ public sealed class MiddlewarePipeline : IMiddlewarePipeline
         if (context is null)
             throw new ArgumentNullException(nameof(context));
 
-        _logger.LogInformation("Starting middleware pipeline execution for request {RequestId}", context.RequestId);
+        _logger.LogInformation(
+            "Starting middleware pipeline execution for request {RequestId}",
+            context.RequestId);
+
         var startTime = DateTime.UtcNow;
 
         try
@@ -84,12 +87,19 @@ public sealed class MiddlewarePipeline : IMiddlewarePipeline
             await next(context);
 
             var duration = DateTime.UtcNow - startTime;
-            _logger.LogInformation("Middleware pipeline completed in {DurationMs}ms for request {RequestId}", duration.TotalMilliseconds, context.RequestId);
+            _logger.LogInformation(
+                "Middleware pipeline completed in {DurationMs}ms for request {RequestId}",
+                duration.TotalMilliseconds,
+                context.RequestId);
         }
         catch (Exception ex)
         {
             var duration = DateTime.UtcNow - startTime;
-            _logger.LogError(ex, "Middleware pipeline failed after {DurationMs}ms for request {RequestId}", duration.TotalMilliseconds, context.RequestId);
+            _logger.LogError(
+                ex,
+                "Middleware pipeline failed after {DurationMs}ms for request {RequestId}",
+                duration.TotalMilliseconds,
+                context.RequestId);
             throw;
         }
     }
