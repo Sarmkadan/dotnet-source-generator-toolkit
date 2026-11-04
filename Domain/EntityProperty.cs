@@ -146,4 +146,12 @@ public sealed class EntityProperty
 
         return errors;
     }
+
+    /// <summary>
+    /// Returns a short "Name: Type" representation of the property for diagnostics and logging.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"{Name}: {Type}";
+    }
 }
