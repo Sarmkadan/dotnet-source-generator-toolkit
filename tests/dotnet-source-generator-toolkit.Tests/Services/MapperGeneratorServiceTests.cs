@@ -10,15 +10,28 @@ using Xunit;
 
 namespace DotNetSourceGeneratorToolkit.Tests.Services
 {
+    /// <summary>
+    /// Unit tests for <see cref="MapperGeneratorService"/> covering argument validation, the generated DTO and mapper shape,
+    /// per-property mapping in both directions, null guards in the generated code, and batch generation through
+    /// <c>GenerateAllMappersAsync</c>.
+    /// </summary>
     public class MapperGeneratorServiceTests
     {
+        /// <summary>The service under test, constructed with a null logger in the test constructor.</summary>
         private readonly MapperGeneratorService _service;
 
+        /// <summary>
+        /// Creates a fresh <see cref="MapperGeneratorService"/> backed by <see cref="Microsoft.Extensions.Logging.Abstractions.NullLogger{T}"/>
+        /// so every test runs against an isolated service instance.
+        /// </summary>
         public MapperGeneratorServiceTests()
         {
             _service = new MapperGeneratorService(NullLogger<MapperGeneratorService>.Instance);
         }
 
+        /// <summary>
+        /// Verifies that <c>GenerateMapperAsync</c> throws <see cref="ArgumentNullException"/> when the source entity is null.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_WithNullSourceEntity_ShouldThrowArgumentNullException()
         {
@@ -30,6 +43,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.GenerateMapperAsync(nullSource!, targetEntity));
         }
 
+        /// <summary>
+        /// Verifies that <c>GenerateMapperAsync</c> throws <see cref="ArgumentNullException"/> when the target entity is null.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_WithNullTargetEntity_ShouldThrowArgumentNullException()
         {
@@ -41,6 +57,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.GenerateMapperAsync(sourceEntity, nullTarget!));
         }
 
+        /// <summary>
+        /// Verifies that a valid entity with four properties produces a <c>Completed</c> result with no errors or warnings,
+        /// non-empty generated code, and the output path <c>Mappers/UserMapper.cs</c>.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_WithValidEntity_ShouldGenerateValidMapper()
         {
@@ -63,6 +83,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             result.OutputFilePath.Should().Be("Mappers/UserMapper.cs");
         }
 
+        /// <summary>
+        /// Verifies that the generated <c>ProductDto</c> is a public sealed class whose properties carry the entity's
+        /// types (<c>Guid</c>, <c>string</c>, <c>decimal</c>, <c>bool</c>) with get/set accessors.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldGenerateDtoClassWithCorrectProperties()
         {
@@ -85,6 +109,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("public bool IsActive { get; set; }");
         }
 
+        /// <summary>
+        /// Verifies that the generated <c>CustomerMapper</c> exposes <c>MapToDto</c>, <c>MapFromDto</c>, and <c>MapToDtos</c>
+        /// with the expected nullable parameter and return signatures.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldGenerateMapperClassWithCorrectMethods()
         {
@@ -104,6 +132,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("public static IEnumerable<CustomerDto> MapToDtos(IEnumerable<Customer>? entities)");
         }
 
+        /// <summary>
+        /// Verifies that the entity-to-DTO direction assigns every property, for example <c>dto.OrderId = entity.OrderId;</c>.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldMapAllPropertiesFromEntityToDto()
         {
@@ -125,6 +156,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("dto.Status = entity.Status;");
         }
 
+        /// <summary>
+        /// Verifies that the DTO-to-entity direction assigns every property, for example <c>entity.EmployeeId = dto.EmployeeId;</c>.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldMapAllPropertiesFromDtoToEntity()
         {
@@ -146,6 +180,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("entity.Department = dto.Department;");
         }
 
+        /// <summary>
+        /// Verifies that <c>MapToDto</c> guards against a null entity with an <c>if (entity is null)</c> check that returns null.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldIncludeNullCheckInMapToDto()
         {
@@ -162,6 +199,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("return null;");
         }
 
+        /// <summary>
+        /// Verifies that <c>MapFromDto</c> guards against a null DTO with an <c>if (dto is null)</c> check that returns null.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldIncludeNullCheckInMapFromDto()
         {
@@ -178,6 +218,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("return null;");
         }
 
+        /// <summary>
+        /// Verifies that <c>MapToDtos</c> guards against a null collection by returning an empty <c>List</c> of the DTO type.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldIncludeNullCheckInMapToDtos()
         {
@@ -194,6 +237,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("return new List<BookDto>();");
         }
 
+        /// <summary>
+        /// Verifies that the generated <c>MapToDtos</c> body iterates the entities, maps each one through <c>MapToDto</c>,
+        /// skips nulls, and adds the non-null DTOs to the results list.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldGenerateMapToDtosMethod()
         {
@@ -214,6 +261,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("results.Add(dto);");
         }
 
+        /// <summary>
+        /// Verifies that an entity with no properties still yields a <c>Completed</c> result with no errors and declares both
+        /// the DTO and mapper classes.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldHandleEntityWithNoProperties()
         {
@@ -234,6 +285,10 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             result.GeneratedCode.Should().Contain("public sealed class EmptyEntityMapper");
         }
 
+        /// <summary>
+        /// Verifies that properties of common C# types (<c>string</c>, <c>int</c>, <c>bool</c>, <c>DateTime</c>, <c>Guid</c>, <c>decimal</c>)
+        /// are emitted with the same type names in the generated DTO.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldHandleEntityWithDifferentTypes()
         {
@@ -259,6 +314,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("public decimal DecimalProp { get; set; }");
         }
 
+        /// <summary>
+        /// Verifies that properties marked <c>IsNullable</c> are emitted with the <c>?</c> suffix on their value types.
+        /// </summary>
         [Fact]
         public async Task GenerateMapperAsync_ShouldHandleNullableValueTypes()
         {
@@ -278,6 +336,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             generatedCode.Should().Contain("public decimal? NullableDecimal { get; set; }");
         }
 
+        /// <summary>
+        /// Verifies that <c>GenerateAllMappersAsync</c> throws <see cref="ArgumentException"/> when the entity list is null.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_WithNullEntities_ShouldThrowArgumentException()
         {
@@ -288,6 +349,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             await Assert.ThrowsAsync<ArgumentException>(() => _service.GenerateAllMappersAsync(nullEntities!));
         }
 
+        /// <summary>
+        /// Verifies that <c>GenerateAllMappersAsync</c> throws <see cref="ArgumentException"/> when the entity list is empty.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_WithEmptyEntities_ShouldThrowArgumentException()
         {
@@ -298,6 +362,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             await Assert.ThrowsAsync<ArgumentException>(() => _service.GenerateAllMappersAsync(emptyEntities));
         }
 
+        /// <summary>
+        /// Verifies that <c>GenerateAllMappersAsync</c> returns one result per entity, each with a <c>Completed</c> status and no errors.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_ShouldGenerateMappersForAllEntities()
         {
@@ -322,6 +389,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             results.All(r => r.Errors.Count == 0).Should().BeTrue();
         }
 
+        /// <summary>
+        /// Verifies that each result returned by <c>GenerateAllMappersAsync</c> carries the <c>EntityName</c> of its source entity.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_ShouldReturnResultsWithCorrectEntityNames()
         {
@@ -342,6 +412,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             resultList.Select(r => r.EntityName).Should().BeEquivalentTo("Customer", "Vendor");
         }
 
+        /// <summary>
+        /// Verifies that every result returned by <c>GenerateAllMappersAsync</c> has <see cref="GeneratorType.Mapper"/> as its generator type.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_ShouldSetCorrectGeneratorType()
         {
@@ -359,6 +432,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             );
         }
 
+        /// <summary>
+        /// Verifies that the output file paths follow the <c>Mappers/{Name}Mapper.cs</c> pattern and keep the input order.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_ShouldSetCorrectOutputFilePaths()
         {
@@ -380,6 +456,9 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             resultList[1].OutputFilePath.Should().Be("Mappers/ProductMapper.cs");
         }
 
+        /// <summary>
+        /// Verifies that the reported <c>CodeLineCount</c> is greater than zero for a generated mapper.
+        /// </summary>
         [Fact]
         public async Task GenerateAllMappersAsync_ShouldSetCorrectCodeLineCount()
         {
@@ -399,6 +478,12 @@ namespace DotNetSourceGeneratorToolkit.Tests.Services
             resultList[0].CodeLineCount.Should().BeGreaterThan(0);
         }
 
+        /// <summary>
+        /// Creates a minimal <see cref="Entity"/> with the given name, the namespace <c>TestNamespace</c>,
+        /// and a fixed description. The entity has no properties; tests add them as needed.
+        /// </summary>
+        /// <param name="name">The entity name, used for the class name and the generated DTO and mapper names.</param>
+        /// <returns>A new <see cref="Entity"/> with no properties.</returns>
         private static Entity CreateTestEntity(string name)
         {
             return new Entity
