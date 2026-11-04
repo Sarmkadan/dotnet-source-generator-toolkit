@@ -128,13 +128,17 @@ public sealed class WebhookService : IWebhookService
 
     public sealed class WebhookPayload
     {
-        [JsonPropertyName("eventType")]
+        private const string EventTypePropertyName = "eventType";
+        private const string TimestampPropertyName = "timestamp";
+        private const string DataPropertyName = "data";
+
+        [JsonPropertyName(EventTypePropertyName)]
         public WebhookEventType EventType { get; set; }
 
-        [JsonPropertyName("timestamp")]
+        [JsonPropertyName(TimestampPropertyName)]
         public DateTime Timestamp { get; set; }
 
-        [JsonPropertyName("data")]
+        [JsonPropertyName(DataPropertyName)]
         public object? Data { get; set; }
     }
 }
