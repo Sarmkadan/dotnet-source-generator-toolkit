@@ -43,10 +43,10 @@ namespace DotNetSourceGeneratorToolkit.Domain
         }
 
         /// <summary>
-        /// Gets all validation messages for the entity as a read‑only list.
+        /// Gets all validation messages for the entity as a read-only list.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        /// <returns>A read‑only list of validation messages.</returns>
+        /// <returns>A read-only list of validation messages.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="entity"/> is <c>null</c>.</exception>
         public static IReadOnlyList<string> GetValidationMessages(this Entity entity)
         {
@@ -69,7 +69,7 @@ namespace DotNetSourceGeneratorToolkit.Domain
             var primaryKey = entity.GetPrimaryKeyProperty()?.GetClrTypeName() ?? "none";
             var propertyCount = entity.Properties.Count;
 
-            return $"{access} {modifiers}{entity.Name} (PK: {primaryKey}, Props: {propertyCount})" ;
+            return $"{access} {modifiers}{entity.Name} (PK: {primaryKey}, Props: {propertyCount})";
         }
     }
 }
