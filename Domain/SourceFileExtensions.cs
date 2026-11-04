@@ -42,6 +42,18 @@ public static class SourceFileExtensions
     }
 
     /// <summary>
+    /// Gets the file extension of the source file, including the leading dot (for example, <c>.cs</c>).
+    /// </summary>
+    /// <param name="sourceFile">The source file to inspect.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <returns>The extension of <see cref="SourceFile.FileName"/>, or an empty string if the file has no extension.</returns>
+    public static string GetFileExtension(this SourceFile sourceFile)
+    {
+        ArgumentNullException.ThrowIfNull(sourceFile);
+        return Path.GetExtension(sourceFile.FileName) ?? string.Empty;
+    }
+
+    /// <summary>
     /// Determines whether the source file exceeds the large file threshold (> 1000 lines).
     /// </summary>
     /// <param name="sourceFile">The source file to evaluate.</param>
