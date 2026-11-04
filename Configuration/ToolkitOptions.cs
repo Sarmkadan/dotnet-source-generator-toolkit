@@ -97,4 +97,18 @@ public sealed class ToolkitOptions
     /// summarizing their purpose. Default: <c>true</c>.
     /// </summary>
     public bool GenerateXmlComments { get; set; } = true;
+
+    /// <summary>
+    /// Returns a short summary of the key configuration values for diagnostics and logging.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"EnableCaching={EnableCaching}, CacheExpirationMinutes={CacheExpirationMinutes}, " +
+               $"EnableCodeFormatting={EnableCodeFormatting}, CodeFormattingLineLength={CodeFormattingLineLength}, " +
+               $"MaxDegreeOfParallelism={MaxDegreeOfParallelism}, OperationTimeoutSeconds={OperationTimeoutSeconds}, " +
+               $"OutputDirectory={OutputDirectory}, DefaultNamespace={DefaultNamespace ?? "none"}, " +
+               $"GenerateDtos={GenerateDtos}, GenerateInterfaces={GenerateInterfaces}, " +
+               $"GenerateXmlComments={GenerateXmlComments}, BackupExistingFiles={BackupExistingFiles}, " +
+               $"VerboseLogging={VerboseLogging}";
+    }
 }
