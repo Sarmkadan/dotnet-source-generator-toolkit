@@ -17098,3 +17098,223 @@
 +- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
 +- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
 +- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:52:24.543564
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:52:24.543660
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:53:35.111775
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:53:35.111869
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:54:45.543049
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:54:45.543112
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:55:58.887628
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:55:58.887742
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:56:07.505062
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 11:56:07.505292
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to Exceptions/ValidationException.cs class and constructors. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++- docs: add XML doc comments to CacheDiagnostics properties and methods
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: update PathHelper documentation in README.md
++- docs(tests): add xml documentation to MapperGeneratorServiceTests
++- chore: maintenance updates
++- fix(benchmarks): adapt to BenchmarkDotNet 0.13 API and add missing DI using
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
