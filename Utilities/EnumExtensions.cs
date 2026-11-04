@@ -60,6 +60,20 @@ public static class EnumExtensions
         return Enum.TryParse<T>(value, ignoreCase: true, out result);
     }
 
+    /// <summary>
+    /// Parse a string to enum value with case-insensitive matching, falling back to a default value when parsing fails.
+    /// </summary>
+    /// <param name="value">The string value to parse; null or unparseable input yields <paramref name="defaultValue"/>.</param>
+    /// <param name="defaultValue">The value returned when parsing fails.</param>
+    /// <typeparam name="T">The enum type.</typeparam>
+    /// <returns>The parsed enum value if successful; otherwise, <paramref name="defaultValue"/>.</returns>
+    public static T ParseOrDefault<T>(string? value, T defaultValue) where T : struct, Enum
+    {
+        return value is not null && Enum.TryParse<T>(value, ignoreCase: true, out var result)
+            ? result
+            : defaultValue;
+    }
+
 
     /// <summary>
     /// Convert enum values to CSV-friendly string representation.
