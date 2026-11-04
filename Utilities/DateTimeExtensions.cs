@@ -140,4 +140,14 @@ public static class DateTimeExtensions
             ? throw new ArgumentException("All DateTime values must be in UTC kind for comparison")
             : dateTime >= startDate && dateTime <= endDate;
     }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="DateTime"/> falls on a Saturday or Sunday.
+    /// </summary>
+    /// <param name="dateTime">The date and time to check.</param>
+    /// <returns><see langword="true"/> if the date is a Saturday or Sunday; otherwise, <see langword="false"/>.</returns>
+    public static bool IsWeekend(this DateTime dateTime)
+    {
+        return dateTime.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+    }
 }
