@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DotNetSourceGeneratorToolkit.Infrastructure;
@@ -139,6 +140,26 @@ public static class FileSystemServiceExtensions
         ArgumentException.ThrowIfNullOrEmpty(filePath);
 
         return await service.ReadFileAsync(filePath);
+    }
+
+    /// <summary>
+    /// Reads the specified file and deserializes its JSON content into an object of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the JSON content into.</typeparam>
+    /// <param name="service">The file system service.</param>
+    /// <param name="filePath">The path to the JSON file.</param>
+    /// <param name="options">The serializer options to use, or <c>null</c> to use the default options.</param>
+    /// <returns>A task that represents the asynchronous read and deserialize operation. The task result contains the deserialized object, or <c>null</c> if the JSON content is <c>null</c>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="service"/> or <paramref name="filePath"/> is null.</exception>
+    /// <exception cref="FileSystemException">Thrown when the file cannot be read.</exception>
+    /// <exception cref="JsonException">Thrown when the file content is not valid JSON for type <typeparamref name="T"/>.</exception>
+    public static async Task<T?> ReadJsonAsync<T>(this IFileSystemService service, string filePath, JsonSerializerOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentException.ThrowIfNullOrEmpty(filePath);
+
+        var content = await service.ReadFileAsync(filePath);
+        return JsonSerializer.Deserialize<T>(content, options);
     }
 
     /// <summary>
