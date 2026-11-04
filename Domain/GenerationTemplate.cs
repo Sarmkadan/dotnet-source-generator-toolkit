@@ -89,6 +89,14 @@ public sealed class GenerationTemplate
     public bool SupportsGeneratorType(GeneratorType type) => GeneratorType == type;
 
     /// <summary>
+    /// Returns the template name and its output file name pattern.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"{Name}: {OutputFileNamePattern}";
+    }
+
+    /// <summary>
     /// Simple pluralization helper for common English words.
     /// </summary>
     private static string Pluralize(string word)
