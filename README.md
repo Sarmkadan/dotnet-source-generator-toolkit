@@ -2180,26 +2180,25 @@ Console.WriteLine($"Created custom formatter: {yamlFormatter.GetType().Name}");
 
 ## PathHelper
 
-The `PathHelper` class provides utility methods for working with file and directory paths safely across different platforms. It includes utilities for path normalization, validation, conversion between absolute and relative paths, and ensuring consistent path formatting. This class is particularly useful for code generation scenarios where paths need to be processed consistently regardless of the operating system.
+The `PathHelper` class provides static path-normalization helpers used when generated file paths need to be compared, joined, or displayed consistently. It covers full-path normalization, absolute/relative conversion, common-parent lookup, and adding or removing trailing directory separators. It does not check whether a path exists on disk.
 
 ### Public Members
 
-- `NormalizePath(string path)` - Normalizes a path for the current platform
-- `ToRelativePath(string absolutePath, string basePath)` - Converts an absolute path to a relative path from a base directory
-- `IsAbsolute(string path)` - Checks if a path is absolute
-- `GetCommonPath(params string[] paths)` - Gets the common parent directory of multiple paths
-- `EnsureTrailingSeparator(string path)` - Ensures a directory path ends with a separator
-- `RemoveTrailingSeparator(string path)` - Removes trailing separator from a path
+- `NormalizePath(string path)` - Returns the full path (via `Path.GetFullPath`) with any trailing separator removed
+- `ToRelativePath(string absolutePath, string basePath)` - Returns the path relative to a base directory, or `null` if conversion fails
+- `IsAbsolute(string path)` - Checks whether a path is rooted (`Path.IsPathRooted`)
+- `GetCommonPath(params string[] paths)` - Returns the longest shared directory prefix of the given paths, or `null` if none are passed
+- `EnsureTrailingSeparator(string path)` - Appends `Path.DirectorySeparatorChar` if the path does not already end with it
+- `RemoveTrailingSeparator(string path)` - Trims all trailing `/` and `\` characters
 
 ### Usage Example
 
 ```csharp
 using DotNetSourceGeneratorToolkit.Utilities;
 
-// Normalize paths for consistent formatting across platforms
-string windowsPath = "C:\\Projects\\MyApp\\src";
-string normalizedPath = PathHelper.NormalizePath(windowsPath);
-Console.WriteLine(normalizedPath); // "C:\\Projects\\MyApp\\src" or "/home/user/Projects/MyApp/src" depending on platform
+// Normalize: resolves to a full path and drops a trailing separator
+string normalizedPath = PathHelper.NormalizePath("/home/user/Projects/MyApp/src/");
+Console.WriteLine(normalizedPath); // "/home/user/Projects/MyApp/src"
 
 // Convert absolute paths to relative paths
 string projectRoot = "/home/user/Projects/MyApp";
@@ -2208,8 +2207,8 @@ string relativePath = PathHelper.ToRelativePath(absolutePath, projectRoot);
 Console.WriteLine(relativePath); // "src/Entities/Product.cs"
 
 // Check if a path is absolute
-string relativePath = "src/Entities/Product.cs";
-bool isAbsolute = PathHelper.IsAbsolute(relativePath); // false
+string relativeInput = "src/Entities/Product.cs";
+bool isAbsolute = PathHelper.IsAbsolute(relativeInput); // false
 bool isAbsolute2 = PathHelper.IsAbsolute(projectRoot); // true
 
 // Get the common parent directory of multiple paths
@@ -2230,10 +2229,19 @@ string withoutSeparator = PathHelper.RemoveTrailingSeparator(pathWithSeparator);
 Console.WriteLine(withoutSeparator); // "/home/user/Projects/MyApp/src"
 
 // Example: Normalize paths before file generation
+// Relative input is resolved against the current working directory
 string outputDir = PathHelper.NormalizePath("./output/generated");
 string filePath = PathHelper.NormalizePath($"{outputDir}/ProductRepository.cs");
-Console.WriteLine($"Will generate file at: {filePath}");
+Console.WriteLine($"Will generate file at: {filePath}"); // e.g. "/work/app/output/generated/ProductRepository.cs" when run from /work/app
 ```
+
+### Behavior Notes
+
+- `NormalizePath` returns `null` or an empty string unchanged. Relative paths are resolved against the current working directory. On Windows, `Path.GetFullPath` also converts `/` to `\`. A filesystem root such as `/` becomes an empty string after trailing-separator removal.
+- `NormalizePath` and `GetCommonPath` do not catch exceptions, so invalid input (for example, a path containing a null character) propagates to the caller. `ToRelativePath` is the only method that catches and returns `null`.
+- `IsAbsolute` is a syntactic check only. On Windows, a rooted path without a drive letter (such as `\temp`) also returns `true`.
+- `GetCommonPath` compares segments split on `Path.DirectorySeparatorChar`. When the only shared prefix is the root, it returns an empty string rather than the root.
+- `EnsureTrailingSeparator` and `RemoveTrailingSeparator` handle separators differently. `EnsureTrailingSeparator` checks only `Path.DirectorySeparatorChar`, so on Windows `EnsureTrailingSeparator("C:/temp/")` returns `"C:/temp/\"`. `RemoveTrailingSeparator` trims both `/` and `\`. On Linux, both separator characters are `/`, so this difference does not apply.
 
 ## StringValidator
 
