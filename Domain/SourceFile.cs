@@ -152,6 +152,14 @@ public sealed class SourceFile
             return FilePath[basePath.Length..].TrimStart('\\', '/');
         return FilePath;
     }
+
+    /// <summary>
+    /// Returns a short "FileName: FilePath" representation of the source file for diagnostics and logging.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"{FileName}: {FilePath}";
+    }
 }
 
 public enum SourceFileType
