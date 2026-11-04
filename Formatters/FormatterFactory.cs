@@ -51,4 +51,3 @@ public sealed class FormatterFactory : IFormatterFactory
         return _formatters.ContainsKey(format);
     }
 }
-
