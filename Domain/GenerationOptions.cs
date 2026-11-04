@@ -241,4 +241,15 @@ public sealed record GenerationOptions
     {
         return string.IsNullOrWhiteSpace(LangVersion) ? string.Empty : $"#pragma warning disable CS8901 // Target runtime mono won't support this syntax\n#langversion {LangVersion}\n";
     }
+
+    /// <summary>
+    /// Returns a short summary of the key generation options for diagnostics and logging.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"NullableContext={NullableContext}, NamespaceStyle={NamespaceStyle}, " +
+               $"EmitGeneratedCodeAttribute={EmitGeneratedCodeAttribute}, " +
+               $"HeaderComment={(string.IsNullOrWhiteSpace(HeaderComment) ? "none" : "set")}, " +
+               $"LangVersion={LangVersion ?? "default"}, IndentSize={IndentSize}";
+    }
 }
