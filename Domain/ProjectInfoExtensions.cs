@@ -201,4 +201,21 @@ public static class ProjectInfoExtensions
             .Distinct()
             .Count();
     }
+
+    /// <summary>
+    /// Gets a display name for the project that combines its name and version.
+    /// </summary>
+    /// <param name="projectInfo">The project information.</param>
+    /// <returns>A display string in the format "Name vVersion", using "unknown" when no version property is set.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="projectInfo"/> is null.</exception>
+    public static string GetDisplayName(this ProjectInfo projectInfo)
+    {
+        ArgumentNullException.ThrowIfNull(projectInfo);
+
+        var version = projectInfo.ProjectProperties.TryGetValue("Version", out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : "unknown";
+
+        return $"{projectInfo.ProjectName} v{version}";
+    }
 }
