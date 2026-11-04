@@ -168,6 +168,16 @@ public sealed class ProjectInfo
 
         return errors;
     }
+
+    /// <summary>
+    /// Returns a short "Name vVersion" representation of the project for diagnostics and logging.
+    /// The version is taken from the "Version" project property, or "unknown" when it is not set.
+    /// </summary>
+    public override string ToString()
+    {
+        var version = ProjectProperties.GetValueOrDefault("Version", "unknown");
+        return $"{ProjectName} v{version}";
+    }
 }
 
 public sealed class ProjectStatistics
