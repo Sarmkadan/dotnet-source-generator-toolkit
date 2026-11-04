@@ -107,6 +107,14 @@ public sealed class Entity
 
         return errors;
     }
+
+    /// <summary>
+    /// Returns a short "Name: N properties" representation of the entity for diagnostics and logging.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"{Name}: {Properties.Count} properties";
+    }
 }
 
 public enum AccessModifier
