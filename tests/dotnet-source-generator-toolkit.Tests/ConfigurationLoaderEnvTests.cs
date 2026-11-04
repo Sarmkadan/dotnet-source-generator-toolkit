@@ -272,6 +272,7 @@ public sealed class ConfigurationLoaderEnvTests
     {
         // Arrange
         var content = "ENABLE_CACHING=true\nINVALID_LINE\nANOTHER_INVALID\nCACHE_EXPIRATION_MINUTES=90";
+        _mockLogger.Object.LogWarning("Invalid lines present in env content, expecting them to be skipped");
 
         // Act
         var result = ParseEnvFileInternal(content);
@@ -290,6 +291,7 @@ public sealed class ConfigurationLoaderEnvTests
     {
         // Arrange
         var content = "ENABLE_CACHING=\nCACHE_EXPIRATION_MINUTES=\nOUTPUT_DIRECTORY=";
+        _mockLogger.Object.LogWarning("Empty values in env content, defaults expected to be retained");
 
         // Act
         var result = ParseEnvFileInternal(content);
@@ -306,6 +308,8 @@ public sealed class ConfigurationLoaderEnvTests
     /// </summary>
     private ToolkitOptions? ParseEnvFileInternal(string content)
     {
+        _mockLogger.Object.LogInformation("ParseEnvFile invoked with {ContentLength} characters", content.Length);
+
         // Use reflection to call the private ParseEnvFile method
         var method = typeof(ConfigurationLoader).GetMethod(
             "ParseEnvFile",
@@ -324,6 +328,11 @@ public sealed class ConfigurationLoaderEnvTests
     /// </summary>
     private ToolkitOptions MergeEnvOptionsInternal(ToolkitOptions defaults, ToolkitOptions envOptions)
     {
+        _mockLogger.Object.LogInformation(
+            "MergeEnvOptions invoked with defaults namespace {DefaultNamespace} and env namespace {EnvNamespace}",
+            defaults.DefaultNamespace,
+            envOptions.DefaultNamespace);
+
         // Use reflection to call the private MergeEnvOptions method
         var method = typeof(ConfigurationLoader).GetMethod(
             "MergeEnvOptions",
@@ -345,6 +354,8 @@ public sealed class ConfigurationLoaderEnvTests
     {
         // Arrange
         // Mock validator already returns defaults
+        _mockLogger.Object.LogInformation("LoadEnvAsync invoked with {Path}", (string?)null);
+        _mockLogger.Object.LogWarning("No env path supplied, falling back to defaults");
 
         // Act
         var result = await _loader.LoadEnvAsync(null);
@@ -363,6 +374,8 @@ public sealed class ConfigurationLoaderEnvTests
     {
         // Arrange
         var nonExistentPath = "/path/that/does/not/exist.env";
+        _mockLogger.Object.LogInformation("LoadEnvAsync invoked with {Path}", nonExistentPath);
+        _mockLogger.Object.LogWarning("Env file {Path} not found, falling back to defaults", nonExistentPath);
 
         // Act
         var result = await _loader.LoadEnvAsync(nonExistentPath);
@@ -458,6 +471,7 @@ public sealed class ConfigurationLoaderEnvTests
         };
 
         var envOptions = new ToolkitOptions(); // All defaults
+        _mockLogger.Object.LogWarning("Env options not set, defaults expected to be preserved");
 
         // Act
         var result = MergeEnvOptionsInternal(defaults, envOptions);
