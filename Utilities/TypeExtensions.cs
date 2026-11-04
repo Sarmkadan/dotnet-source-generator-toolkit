@@ -26,6 +26,19 @@ public static class TypeExtensions
     }
 
     /// <summary>
+    /// Check if a type is a nullable value type (<see cref="Nullable{T}"/>).
+    /// Unlike <see cref="IsNullable(Type)"/>, reference types are not considered.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns>True if the type is <see cref="Nullable{T}"/>; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="type"/> is null.</exception>
+    public static bool IsNullableValueType(this Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        return Nullable.GetUnderlyingType(type) is not null;
+    }
+
+    /// <summary>
     /// Check if a type is a numeric type.
     /// </summary>
     /// <param name="type">The type to check.</param>
