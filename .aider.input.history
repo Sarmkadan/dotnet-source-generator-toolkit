@@ -17538,3 +17538,47 @@
 +- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
 +- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
 +- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 12:07:37.892678
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to properties of Domain/ProjectInfo.cs. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: add XML comments to FileSystemException class and constructors
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of LoggingEventHandler
++- chore: apply workspace updates
++- docs: add XML documentation to ValidationException class and constructors
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
+
+# 2026-11-04 12:07:37.892747
++In repo dotnet-source-generator-toolkit, add <summary> XML doc comments to properties of Domain/ProjectInfo.cs. HARD RULES: Do NOT touch .csproj/.sln. Do NOT change behavior. Do NOT add NuGet. Must compile. Conventional commit.
++
++Recent commits in this repo (other automated tasks - avoid undoing or conflicting with this work, e.g. don't remove inheritance from a class another commit just derived from, don't re-add something already added):
++- chore: apply workspace updates
++- chore: apply workspace updates
++- docs: add XML comments to FileSystemException class and constructors
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of LoggingEventHandler
++- chore: apply workspace updates
++- docs: add XML documentation to ValidationException class and constructors
++- chore: apply workspace updates
++- docs: add XML doc comments to public members of GenerationMetricsCollector
++- chore: apply workspace updates
++
++[INFRASTRUCTURE SAFETY] Mandatory. You run on a shared production server that is reachable from the internet.
++- Docker: always `--rm`; publish ports ONLY on localhost (`-p 127.0.0.1:HOST:CONTAINER`, in compose `"127.0.0.1:HOST:CONTAINER"`), never bare `-p HOST:CONTAINER` or 0.0.0.0.
++- Before you finish, stop and remove every container, network and volume you created. `timeout` on `docker run -d` does NOT limit container lifetime.
++- Prefer SQLite / in-memory providers / Testcontainers (auto-cleanup) over long-lived database containers.
++- Never start network listeners (python -m http.server, dev servers, debuggers) on 0.0.0.0; bind 127.0.0.1 and stop them before finishing.
++- Never hardcode or print real credentials; test passwords stay inside the test run.
